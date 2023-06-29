@@ -3,18 +3,20 @@ import { useState } from 'react';
 import './login.css';
 import signIn from '../../firebase/auth/signin';
 import { onAuthStateChanged } from 'firebase/auth';
+import { getDatabase, ref } from "firebase/database";
 import { auth } from '../../firebase/config';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
 import logo from '../../public/assets/images/logo.png';
-import { getUserDataNew, getUsers } from '../api/helper/users/userService';
+import { getUser } from '../api/helper/users/userService';
 
 const Login = () => {
     const [ emailValue, setEmailValue ] = useState('');
     const [ passwordValue, setPasswordValue ] = useState('');
     const [ userIsLogged, setUserIsLogged ] = useState(false);
+    const [ logedUser, setLogedUser ] = useState([]);
     const dispatch = useDispatch();
 
     const handleMailVal = (event: any) => {
@@ -26,18 +28,31 @@ const Login = () => {
     }
 
     const monitorState = async () => {
-        getUsers().then( users => console.log(users) );
-
         await onAuthStateChanged( auth, (user: any) => {
             if ( user ) {
+                setLogedUser(user);
                 // Successful login!
-                console.log('Login success!', user);
+                console.log('Login success!');
+                getUser().then( res => {
+                    console.log(res);
+                    return res.find( (usersData: any) => {
+                        for( let user in usersData ) {
+                            const separateUser = usersData.data.sitterData;
+                            const currentUser = separateUser.find( (user: any) => user.mailVal === emailValue );
+                        }
+                    } )
+                } );
+
                 dispatch(storeActions.currentUserId(user.auth.currentUser.uid));
                 setUserIsLogged(true);
             } else {
                 console.error('You are NOT logged in');
             }
         } );
+
+        const db = getDatabase();
+        const starCountRef = ref(db, 'petSitters');
+        console.log(db.app.options.messagingSenderId);
     }
 
     const handleBackToHome = () => {

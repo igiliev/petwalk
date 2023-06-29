@@ -77,17 +77,6 @@ export function createUserChat(id, name, currentUserId) {
     });
 }
 
-export async function getUserDataNew() {
-    const db = getDatabase();
-    const starCountRef = ref(db, 'petSitters');
-    const storeData = [];
-    onValue(starCountRef, (snapshot) => {
-        const data = snapshot.val();
-        storeData.push(data);
-    });
-    return storeData;
-}
-
 //Update the sent message
 export function updateMessage(id, message) {
     const db = getDatabase();
@@ -106,4 +95,29 @@ export async function getSelectedUserChat(id) {
         storeData.push(data);
     });
     return storeData;
+}
+
+export async function getUser (email = '') {
+    // const db = getDatabase();
+    // const starCountRef = ref(db, 'petSitters');
+    // const storeData = [];
+    // onValue(starCountRef, (snapshot) => {
+    //     const data = snapshot.val();
+    //     storeData.push(data);
+    // });
+    // return storeData;
+
+    const getResponse = async () => {
+        const fetchUsers = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json');
+        const chatTojson = await fetchUsers.json();
+        const storeUserChat = [];
+
+        for( const id in chatTojson ) {
+            storeUserChat.push({ id, data: chatTojson[id] });
+        }
+
+        return storeUserChat;
+    }
+
+    return getResponse();
 }
