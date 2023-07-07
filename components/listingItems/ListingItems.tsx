@@ -8,8 +8,8 @@ import { useSelector } from "react-redux";
 import { createUserChat } from "../../app/api/helper/users/userService";
 
 const ListingItems = (props: any) => {
-    const userIdState: string = useSelector( (state:any) => state.dataStore.currentUserId );
-
+    const userId: string = useSelector( (state: any) => state.dataStore.currentUserId );
+    const currentUserName: string = useSelector( (state: any) => state.dataStore.currentUserName );
     const handleChange = () => {
 
     }
@@ -19,7 +19,7 @@ const ListingItems = (props: any) => {
     }
 
     const startChat = async (id: any, name: string) => {
-        return createUserChat( id, name, userIdState )
+        return createUserChat( id, name, userId, currentUserName );
     }
 
     const mappedUsers: any = props.userData.map( (user: any): any => {
@@ -40,7 +40,7 @@ const ListingItems = (props: any) => {
                         <div className="my-3">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <button className="bg-red-400 p-2" onClick={()=>startChat(user.id, user.name)}><Link href={`/userChat/${user.id}`}>Изпрати съобщение</Link></button>
+                        <button className="bg-red-400 rounded p-3" onClick={()=>startChat(user.id, user.name)}><Link className="text-white font-medium" href={`/userChat/${user.id}`}>Изпрати съобщение</Link></button>
                     </div>
                 </div>
             </div>
@@ -56,7 +56,7 @@ const ListingItems = (props: any) => {
                 <button className="hover:bg-gray-300 hover:text-black mt-3 border rounded bg-red-500 text-white py-1 text-lg" type="submit" onClick={handleSearch}>Търсене</button>
             </div>
             <div className="w-full lg:ml-20 p-7 border-1 border-black">
-                <h1 className="text-center text-xl mb-5">Налични гледачи в избраните квартали</h1>
+                <h1 className="text-center text-4xl  mb-10">Налични гледачи в избраните квартали</h1>
                 { mappedUsers }
             </div>
         </div>

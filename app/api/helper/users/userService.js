@@ -67,13 +67,13 @@ export async function getUserChat() {
 }
 
 //Creating the new /userChat collection in the DB
-export function createUserChat(id, name, currentUserId) {
+export function createUserChat(id, name, currentUserId, currentUserName) {
     const db = getDatabase();
     set(ref(db, 'userChat/' + id), {
         username: name,
         combinedId: id + currentUserId,
         date: new Date().toLocaleString(),
-        messages: { [name]: 'me default', [name]: 'you default' }
+        messages: { [currentUserName]: 'me default', [name]: 'you default' }
     });
 }
 
@@ -97,16 +97,7 @@ export async function getSelectedUserChat(id) {
     return storeData;
 }
 
-export async function getUser (email = '') {
-    // const db = getDatabase();
-    // const starCountRef = ref(db, 'petSitters');
-    // const storeData = [];
-    // onValue(starCountRef, (snapshot) => {
-    //     const data = snapshot.val();
-    //     storeData.push(data);
-    // });
-    // return storeData;
-
+export async function getUser () {
     const getResponse = async () => {
         const fetchUsers = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json');
         const chatTojson = await fetchUsers.json();
@@ -115,9 +106,20 @@ export async function getUser (email = '') {
         for( const id in chatTojson ) {
             storeUserChat.push({ id, data: chatTojson[id] });
         }
-
         return storeUserChat;
     }
 
     return getResponse();
+}
+
+export async function getChatMessages(id) {
+    const db = getDatabase();
+    const starCountRef = ref(db, 'userChat/' + id + '/messages');
+    const storeData = [];
+    onValue(starCountRef, (snapshot) => {
+        const data = snapshot.val();
+        storeData.push(data);
+    });
+
+    return storeData;
 }

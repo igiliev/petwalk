@@ -1,28 +1,33 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { getUserChat, updateMessage } from "../../app/api/helper/users/userService";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
+import { useParams } from "next/navigation";
 
 const Chat = () => {
     const [ userChatData, setUserChatData ] = useState([]);
     const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
+    const currentuserId: string = useSelector( (state: any) => state.dataStore.currentUserId );
+    const routeParams = useParams();
 
     useEffect( () => {
+        const userId: string = routeParams.userChats;
+        setSelectedUserId(userId);
         getUserChat().then( (res: any[])=> {
-            console.log(res);
             res.map( userData => {
-                setUserChatData(  (prevVal: any): any => [ ...prevVal, userData ] );
+                //Show only the chat users that have cominedId which includes my current user ID
+                if ( userData.data.combinedId.includes(currentuserId) ) {
+                    setUserChatData(  (prevVal: any): any => [ ...prevVal, userData ] );
+                } else {
+                    setUserChatData([]);
+                }
             } );
         } );
-    }, [] );
-
-    const userSelect = (id: string) => {
-        setUserChatClicked(true);
-        setSelectedUserId(id);
-    }
+    }, [ ] );
 
     const handleEnter = (event: any) => {
         if ( event.key === 'Enter' ) {
@@ -35,11 +40,18 @@ const Chat = () => {
 
     }
 
-    const mapNames = userChatData.map( (user: any) => (
-        <a onClick={()=>userSelect(user.id)} key={user.id} className="cursor-pointer">
+    const mapNames = userChatData.map( (user: any) => {
+        console.log(user);
+        return <a onClick={ () => userSelect(user.id)} key={user.id} className="cursor-pointer">
             <p className="hover:underline p-3 text-center">{ user.data.username }</p>
         </a> 
-    ));
+    });
+
+    const userSelect = (id: string) => {
+        setUserChatClicked(true);
+        setSelectedUserId(id);
+    }
+
 
     return(
         <div className="chat-wrapper m-auto mt-24 border border-black rounded">
@@ -50,7 +62,9 @@ const Chat = () => {
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5">
-                        <ChatMessages />
+                        {/* Checking if the ID from the router has fetched then send it else show message */}
+                        { selectedUserId ? <ChatMessages id={selectedUserId} /> : <p>No chat messages</p>  }
+                        
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
                         <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />

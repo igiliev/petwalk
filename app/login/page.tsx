@@ -33,14 +33,18 @@ const Login = () => {
                 setLogedUser(user);
                 // Successful login!
                 console.log('Login success!');
-                getUser().then( res => {
-                    console.log(res);
-                    return res.find( (usersData: any) => {
-                        for( let user in usersData ) {
-                            const separateUser = usersData.data.sitterData;
-                            const currentUser = separateUser.find( (user: any) => user.mailVal === emailValue );
+                const userId = '';
+                getUser().then( (res: any) => {
+                    for (let i = 0; i < res.length; i++) {
+                        const obj = res[i];
+                        const getName = obj.data.sitterData.find( (item: any) => item.nameVal ).nameVal;
+                        const getMail = obj.data.sitterData.find( (user: any) => user.mailVal ).mailVal;
+
+                        if ( getMail === emailValue ) {
+                            //Storing the current loged in user full name to the store
+                            dispatch(storeActions.currentUserName(getName));
                         }
-                    } )
+                      }
                 } );
 
                 dispatch(storeActions.currentUserId(user.auth.currentUser.uid));
