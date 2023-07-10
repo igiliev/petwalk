@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getUserChat, updateMessage } from "../../app/api/helper/users/userService";
+import { getUserChat, updateCurrUserMessage } from "../../app/api/helper/users/userService";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
 import { useParams } from "next/navigation";
@@ -12,11 +12,12 @@ const Chat = () => {
     const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const currentuserId: string = useSelector( (state: any) => state.dataStore.currentUserId );
+    const currentUserName: string = useSelector( (state: any) => state.dataStore.currentUserName );
     const routeParams = useParams();
 
     useEffect( () => {
-        const userId: string = routeParams.userChats;
-        setSelectedUserId(userId);
+        //Passing the ID taken from the URL
+        setSelectedUserId(routeParams.userChats);
         getUserChat().then( (res: any[])=> {
             res.map( userData => {
                 //Show only the chat users that have cominedId which includes my current user ID
@@ -27,12 +28,12 @@ const Chat = () => {
                 }
             } );
         } );
-    }, [ ] );
+    }, [ currentuserId, routeParams.userChats ] );
 
     const handleEnter = (event: any) => {
         if ( event.key === 'Enter' ) {
             // Adding the types in chat message
-            updateMessage(selectedUserId, event.target.value);
+            updateCurrUserMessage(selectedUserId, event.target.value, currentUserName);
         }
     }
 
@@ -40,12 +41,11 @@ const Chat = () => {
 
     }
 
-    const mapNames = userChatData.map( (user: any) => {
-        console.log(user);
-        return <a onClick={ () => userSelect(user.id)} key={user.id} className="cursor-pointer">
+    const mapNames = userChatData.map( (user: any) => (
+        <a onClick={ () => userSelect(user.id)} key={user.id} className="cursor-pointer">
             <p className="hover:underline p-3 text-center">{ user.data.username }</p>
         </a> 
-    });
+    ));
 
     const userSelect = (id: string) => {
         setUserChatClicked(true);

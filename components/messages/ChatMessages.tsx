@@ -13,7 +13,7 @@ const ChatMessages = ( props: any ) => {
             if( !res ) return;
             res.map( chatItem => setUsersChat( Object.entries(chatItem) ) );
         } );
-    }, [] );
+    }, [ props.id ] );
 
     return (
         <div className="messageContainer">

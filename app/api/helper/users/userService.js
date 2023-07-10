@@ -78,10 +78,10 @@ export function createUserChat(id, name, currentUserId, currentUserName) {
 }
 
 //Update the sent message
-export function updateMessage(id, message) {
+export function updateCurrUserMessage(id, message, currentUserName) {
     const db = getDatabase();
      update(ref(db, `userChat/${id}`), {
-         messages: { me: message, you: 'updated!' }
+         messages: { [currentUserName]: message }
      })
 }
 
