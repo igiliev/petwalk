@@ -2,6 +2,7 @@ import './globals.css'
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { Providers } from './redux/providers';
+import './styles.css';
 
 export const metadata = {
   title: 'Petwalk',

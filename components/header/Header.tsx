@@ -44,7 +44,7 @@ const Header = () => {
                         {
                             userLoggedin ?
                                 <>
-                                    <Link href="/userChat" className="nav-link relative">Профил</Link>
+                                    <Link href="/userChat/EkVKbIXHCtWQR7lXuHeX" className="nav-link relative">Профил</Link>
                                     <button className="nav-link relative" onClick={handleLogout}>Изход</button>
                                 </>
                                 :

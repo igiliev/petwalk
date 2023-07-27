@@ -2,6 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import signUp from '../../firebase/auth/signup';
 import { storeActions } from "../../app/redux/store";
+import { setDoc, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 export interface getStoreData {
     dataStore: { data: any, step: number, userLoggedin: boolean };
@@ -26,6 +28,7 @@ const RegistrationComplete = () => {
             }
         });
 
+        
         const data = await response.json();
         // TODO: Fix types
         const userEmail = getUserDataState.find( (user:any):any => user['mailVal']).mailVal;
@@ -33,10 +36,13 @@ const RegistrationComplete = () => {
         const { result, error } = await signUp( userEmail, userPassword );
         dispatch(storeActions.setUserLogin(true));
 
-        if ( error ) {
-            return console.error('Error signing in: ', error);
-        }
-   }
+        // try {
+        //     if ( result )
+        //     await setDoc(doc(db, "userChats", result.user.uid), {});
+        //   } catch (err) {
+        //     console.log(err);
+        // }
+    }
 
     return (
         <div className="flex flex-col justify-center items-center">

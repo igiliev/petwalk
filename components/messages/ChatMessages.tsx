@@ -1,40 +1,42 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { getChatMessages } from "../../app/api/helper/users/userService";
+import { useSelector } from "react-redux";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const ChatMessages = ( props: any ) => {
     const [ usersChat, setUsersChat ]: any[] = useState([]);
+    const currentUserId: string = useSelector( (state: any) => state.dataStore.currentUserId );
 
     useEffect( () => {
-        console.log(props.id);
-        getChatMessages(props.id).then( res => {
-            console.log('are we even here', res, props.id);
-            if( !res ) return;
-            res.map( chatItem => setUsersChat( Object.entries(chatItem) ) );
-        } );
-    }, [ props.id ] );
+        const getChats = () => {
+            const unsub = onSnapshot(doc(db, "userChats", currentUserId), (doc) => {
+                return setUsersChat(doc.data());
+            });
+      
+            return () => {
+              unsub();
+            };
+          };
+      
+          currentUserId && getChats();
+    }, [ currentUserId ] );
+
+    // console.log(usersChat);
 
     return (
         <div className="messageContainer">
             <div className="w-full mb-5">
-                { usersChat.length ?
-                    <div className="bg-white w-40 text-center py-3 text-xl rounded-lg">
-                        <span>{usersChat[0][0]}: </span>
-                        <p>{usersChat[0][1]}</p>
-                    </div>
-                    : <p>No chat messages</p>
-                }
+                <div className="bg-white w-40 text-center py-3 text-xl rounded-lg">
+                    <p></p>
+                </div>                    
             </div>
 
             <div className="w-full">
-                { usersChat.length ?
-                    <div className="bg-blue-300 w-40 text-center py-3 text-white text-xl rounded-lg float-right">
-                        <span>{usersChat[1][0]}: </span>
-                        <p>{usersChat[1][1]}</p>
-                    </div>
-                    : <p>No chat messages</p>
-                }
+                <div className="bg-blue-300 w-40 text-center py-3 text-white text-xl rounded-lg float-right">
+                    <p>{props.message}</p>
+                </div>
             </div>
         </div>
     )

@@ -97,9 +97,9 @@ export async function getSelectedUserChat(id) {
     return storeData;
 }
 
-export async function getUser () {
+export async function getUser(id) {
     const getResponse = async () => {
-        const fetchUsers = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json');
+        const fetchUsers = await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json/${id}`);
         const chatTojson = await fetchUsers.json();
         const storeUserChat = [];
 

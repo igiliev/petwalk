@@ -10,7 +10,6 @@ import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
 import logo from '../../public/assets/images/logo.png';
-import { getUser } from '../api/helper/users/userService';
 
 const Login = () => {
     const [ emailValue, setEmailValue ] = useState('');
@@ -32,20 +31,7 @@ const Login = () => {
             if ( user ) {
                 setLogedUser(user);
                 // Successful login!
-                console.log('Login success!');
-                const userId = '';
-                getUser().then( (res: any) => {
-                    for (let i = 0; i < res.length; i++) {
-                        const obj = res[i];
-                        const getName = obj.data.sitterData.find( (item: any) => item.nameVal ).nameVal;
-                        const getMail = obj.data.sitterData.find( (user: any) => user.mailVal ).mailVal;
-
-                        if ( getMail === emailValue ) {
-                            //Storing the current loged in user full name to the store
-                            dispatch(storeActions.currentUserName(getName));
-                        }
-                      }
-                } );
+                console.log(user.auth.currentUser.uid, 'Login success!');
 
                 dispatch(storeActions.currentUserId(user.auth.currentUser.uid));
                 setUserIsLogged(true);

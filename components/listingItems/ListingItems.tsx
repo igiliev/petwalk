@@ -4,12 +4,15 @@ import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import Link from "next/link";
-import { useSelector } from "react-redux";
-import { createUserChat } from "../../app/api/helper/users/userService";
+import { useDispatch, useSelector } from "react-redux";
+import { updateDoc, setDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { storeActions } from "../../app/redux/store";
 
 const ListingItems = (props: any) => {
-    const userId: string = useSelector( (state: any) => state.dataStore.currentUserId );
-    const currentUserName: string = useSelector( (state: any) => state.dataStore.currentUserName );
+    const currentUserId: string = useSelector( (state: any) => state.dataStore.currentUserId );
+    const dispatch = useDispatch();
+
     const handleChange = () => {
 
     }
@@ -19,7 +22,33 @@ const ListingItems = (props: any) => {
     }
 
     const startChat = async (id: any, name: string) => {
-        return createUserChat( id, name, userId, currentUserName );
+        const combinedId = currentUserId + id;
+        dispatch(storeActions.combinedId(combinedId));
+        console.log(combinedId);
+
+        try {
+            const res = await getDoc(doc(db, "chats", combinedId));
+
+            if ( !res.exists() ) {
+                setDoc(doc(db, "chats", combinedId), { messages: [] });
+                setDoc(doc(db, "userChats", combinedId), {});
+
+                //add data to userChats
+                await updateDoc(doc(db, "userChats", combinedId), {
+                    [combinedId + ".userInfo"]: {
+                      id,
+                      displayName: name
+                    }
+                  });
+
+                  await updateDoc(doc(db, "userChats", id), {
+                    [combinedId + ".userInfo"]: {
+                      id: currentUserId,
+                      displayName: name,
+                    }
+                  });
+            }
+        } catch(err) {}
     }
 
     const mappedUsers: any = props.userData.map( (user: any): any => {

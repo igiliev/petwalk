@@ -11,7 +11,6 @@ import {
   faQuoteLeft,
   faQuoteRight
 } from "@fortawesome/free-solid-svg-icons";
-import './styles.css';
 import ladyDog from '../public/assets/images/home-second.png';
 import dollar from '../public/assets/images/icons/dollar-tag.svg';
 import pin from '../public/assets/images/icons/geo-locator.svg';
