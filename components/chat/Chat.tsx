@@ -1,33 +1,61 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { getUserChat, updateMessage } from "../../app/api/helper/users/userService";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
+import { getDoc, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import { useSelector } from "react-redux";
 
 const Chat = () => {
-    const [ userChatData, setUserChatData ] = useState([]);
+    const [ userChat, setUserChat ] = useState([{}]);
     const [ selectedUserId, setSelectedUserId ] = useState('');
+    const [ currCombinedId, setCurrCombinedId ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
+    const [ messages, setMessages ] = useState('');
+    const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
 
     useEffect( () => {
-        getUserChat().then( (res: any[])=> {
-            console.log(res);
-            res.map( userData => {
-                setUserChatData(  (prevVal: any): any => [ ...prevVal, userData ] );
-            } );
-        } );
-    }, [] );
+        //TODO: use onSnapshot instead of getDoc
+        // const getChats = async () => {
+        //     const unsub = await onSnapshot(doc(db, "userChats", currentUserId), (doc) => {
+        //         return setUsersChat( (prevData: any) => [...prevData, doc.data() ] );
+        //     });
+            
+        //     return () => {
+        //         unsub();
+        //     };
+        // };
+        //   currentUserId && getChats();
+        const getChats = async () => {
+            const res = await getDoc(doc(db, "userChats", currCombinedId ));
 
-    const userSelect = (id: string) => {
-        setUserChatClicked(true);
-        setSelectedUserId(id);
-    }
+            if ( res.exists() ) {
+                console.log(res.data());
+                setUserChat( Object.entries(res.data()) );
+            } else { console.error('User was not fetched from /userChats') }
 
-    const handleEnter = (event: any) => {
+            //unsubbing
+            return () => {
+                getChats();
+            }
+        }
+
+        currentUserId && getChats();
+    }, [ messages ] );
+	
+    const handleEnter = async (event: any) => {
+        setChatInput(event.target.value);
+
         if ( event.key === 'Enter' ) {
-            // Adding the types in chat message
-            updateMessage(selectedUserId, event.target.value);
+            await updateDoc(doc(db, 'chats', currCombinedId ), {
+                messages: arrayUnion({
+                    text: event.target.value,
+                    id: currentUserId,
+                    userId: selectedUserId,
+                })
+           });
+
         }
     }
 
@@ -35,13 +63,24 @@ const Chat = () => {
 
     }
 
-    const mapNames = userChatData.map( (user: any) => (
-        <a onClick={()=>userSelect(user.id)} key={user.id} className="cursor-pointer">
-            <p className="hover:underline p-3 text-center">{ user.data.username }</p>
+	const mapNames = usersChat.map( (user: any) => {    
+        const combinedId: string = user[0];
+        const id: string = user[1].userInfo.id;
+        const name: string = user[1].userInfo.displayName;
+        return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
+            <p className="hover:underline p-3 text-center">{ name }</p>
         </a> 
-    ));
+    });
 
-    return(
+    const userSelect = (combinedId: string, selectedId: string, name: string) => {
+        onSnapshot(doc(db, "chats", combinedId), (doc) => {
+            return doc.exists() && setMessages(doc.data().messages);
+        });
+        setSelectedUserId(selectedId);
+        setCurrCombinedId(combinedId);
+    }
+
+    return (
         <div className="chat-wrapper m-auto mt-24 border border-black rounded">
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">

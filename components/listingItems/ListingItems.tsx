@@ -4,19 +4,46 @@ import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useSelector } from "react-redux";
-import { createUserChat } from "../../app/api/helper/users/userService";
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from "../../firebase/config";
+import Link from "next/link";
 
 const ListingItems = (props: any) => {
-    const userIdState: string = useSelector( (state:any) => state.dataStore.currentUserId );
+    const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const handleChange = () => { };
 
     const handleSearch = () => { };
 
     const startChat = async (id: any, name: string) => {
-        return createUserChat( id, name, userIdState );
+        const combinedId = currentUserId + id;
+        console.log(combinedId);
+
+        try {
+            const res = await getDoc(doc(db, "chats", combinedId));
+
+            if ( !res.exists() ) {
+                setDoc(doc(db, "chats", combinedId), { messages: [] });
+                setDoc(doc(db, "userChats", combinedId), {});
+
+                //add data to userChats
+                await updateDoc(doc(db, "userChats", combinedId), {
+                    [combinedId + ".userInfo"]: {
+                      id,
+                      displayName: name
+                    }
+                  });
+
+                  await updateDoc(doc(db, "userChats", id), {
+                    [combinedId + ".userInfo"]: {
+                      id: currentUserId,
+                      displayName: name,
+                    }
+                  });
+            }
+        } catch(err) {}
     }
 
-    const mappedUsers: any = props.userData.map( (user: any): any => {
+	const mappedUsers: any = props.userData.map( (user: any): any => {
         const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="test inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
         const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
 
@@ -32,7 +59,8 @@ const ListingItems = (props: any) => {
                         <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
                         <div className="py-5">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
-                        <p className="py-5"><span>Oписание: </span>{user.describtion}</p>
+                        <p className="my-3">{user.describtion}</p>
+                        <button className="bg-red-400 rounded p-3" onClick={()=>startChat(user.id, user.name)}><Link className="text-white font-medium" href={`/userChat/${user.id}`}>Изпрати съобщение</Link></button>
                     </div>
                 </div>
                 <div className="msg-btn-wrapper">
