@@ -11,6 +11,7 @@ const Chat = () => {
     const [ userChat, setUserChat ] = useState([{}]);
     const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ currCombinedId, setCurrCombinedId ] = useState('');
+    const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ messages, setMessages ] = useState('');
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
@@ -27,9 +28,10 @@ const Chat = () => {
         //     };
         // };
         //   currentUserId && getChats();
+        // const combinedId = currentUserId + 
+        console.log(currCombinedId);
         const getChats = async () => {
             const res = await getDoc(doc(db, "userChats", currCombinedId ));
-
             if ( res.exists() ) {
                 console.log(res.data());
                 setUserChat( Object.entries(res.data()) );
@@ -59,17 +61,16 @@ const Chat = () => {
         }
     }
 
-    const sendMsgClick = () => {
+    const sendMsgClick = () => { };
 
-    }
-
-	const mapNames = usersChat.map( (user: any) => {    
-        const combinedId: string = user[0];
-        const id: string = user[1].userInfo.id;
-        const name: string = user[1].userInfo.displayName;
-        return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
-            <p className="hover:underline p-3 text-center">{ name }</p>
-        </a> 
+	const mapNames = userChat.map( (user: any) => {
+        console.log(user);
+        // const combinedId: string = user[0];
+        // const id: string = user[1].userInfo.id;
+        // const name: string = user[1].userInfo.displayName;
+        // return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
+        //     <p className="hover:underline p-3 text-center">{ name }</p>
+        // </a> 
     });
 
     const userSelect = (combinedId: string, selectedId: string, name: string) => {
@@ -85,11 +86,11 @@ const Chat = () => {
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    <div>{ mapNames }</div>
+                    {/* <div>{ mapNames }</div> */}
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5">
-                        <ChatMessages />
+                        <ChatMessages messages={messages} />
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
                         <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />

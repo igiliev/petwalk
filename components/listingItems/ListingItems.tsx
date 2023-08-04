@@ -33,7 +33,7 @@ const ListingItems = (props: any) => {
                     }
                   });
 
-                  await updateDoc(doc(db, "userChats", id), {
+                  await updateDoc(doc(db, "userChats", combinedId), {
                     [combinedId + ".userInfo"]: {
                       id: currentUserId,
                       displayName: name,
@@ -48,7 +48,7 @@ const ListingItems = (props: any) => {
         const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
 
         return (
-            <div className="flex lg:flex-row flex-col items-center w-full border bg-gray-100 my-5 shadow-lg p-5 rounded-md border-l-4 border-l-red-400 justify-between" key={user.id}>
+            <div className="flex lg:flex-row flex-col items-center w-full border bg-gray-100 my-10 shadow-lg p-5 rounded-md border-l-4 border-l-red-400" key={user.id}>
                 <div className="p-5">
                     <Image src={ user.userImage === 'default' ? defaultUserImg : user.userImage } alt="user profile image" width="70" height="40" />
                 </div>
@@ -63,9 +63,9 @@ const ListingItems = (props: any) => {
                         <button className="bg-red-400 rounded p-3" onClick={()=>startChat(user.id, user.name)}><Link className="text-white font-medium" href={`/userChat/${user.id}`}>Изпрати съобщение</Link></button>
                     </div>
                 </div>
-                <div className="msg-btn-wrapper">
+                {/* <div className="msg-btn-wrapper">
                     <a href={`mailto: ${user.mail}`} className="bg-red-400 p-3 rounded-md text-white whitespace-nowrap" onClick={()=>startChat(user.id, user.name)}>Изпрати съобщение</a>
-                </div>
+                </div> */}
             </div>
         )
     } );

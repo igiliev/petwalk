@@ -6,7 +6,9 @@ const ChatMessages = (props: any) => {
             </div>
 
             <div className="w-full">
-                <div className="bg-blue-300 w-40 text-center py-3 text-white text-xl rounded-lg float-right">My message</div>
+                <div className="bg-blue-300 w-40 text-center py-3 text-white text-xl rounded-lg float-right">
+                    <p>{props.messages}</p>
+                </div>
             </div>
         </div>
     )
