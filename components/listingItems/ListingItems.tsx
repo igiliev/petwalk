@@ -3,20 +3,23 @@ import Footer from "../footer/Footer";
 import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from "../../firebase/config";
 import Link from "next/link";
+import { storeActions } from "../../app/redux/store";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
+    const dispatch = useDispatch()
+
     const handleChange = () => { };
 
     const handleSearch = () => { };
 
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
-        console.log(combinedId);
+        dispatch(storeActions.combinedId(combinedId));
 
         try {
             const res = await getDoc(doc(db, "chats", combinedId));
@@ -60,12 +63,9 @@ const ListingItems = (props: any) => {
                         <div className="py-5">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <button className="bg-red-400 rounded p-3" onClick={()=>startChat(user.id, user.name)}><Link className="text-white font-medium" href={`/userChat/${user.id}`}>Изпрати съобщение</Link></button>
+                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.id, user.name)}>Изпрати съобщение</Link>
                     </div>
                 </div>
-                {/* <div className="msg-btn-wrapper">
-                    <a href={`mailto: ${user.mail}`} className="bg-red-400 p-3 rounded-md text-white whitespace-nowrap" onClick={()=>startChat(user.id, user.name)}>Изпрати съобщение</a>
-                </div> */}
             </div>
         )
     } );

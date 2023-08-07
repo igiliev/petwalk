@@ -10,28 +10,15 @@ import { useSelector } from "react-redux";
 const Chat = () => {
     const [ userChat, setUserChat ] = useState([{}]);
     const [ selectedUserId, setSelectedUserId ] = useState('');
-    const [ currCombinedId, setCurrCombinedId ] = useState('');
     const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ messages, setMessages ] = useState('');
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
+    const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
     useEffect( () => {
-        //TODO: use onSnapshot instead of getDoc
-        // const getChats = async () => {
-        //     const unsub = await onSnapshot(doc(db, "userChats", currentUserId), (doc) => {
-        //         return setUsersChat( (prevData: any) => [...prevData, doc.data() ] );
-        //     });
-            
-        //     return () => {
-        //         unsub();
-        //     };
-        // };
-        //   currentUserId && getChats();
-        // const combinedId = currentUserId + 
-        console.log(currCombinedId);
         const getChats = async () => {
-            const res = await getDoc(doc(db, "userChats", currCombinedId ));
+            const res = await getDoc(doc(db, "userChats", combinedId ));
             if ( res.exists() ) {
                 console.log(res.data());
                 setUserChat( Object.entries(res.data()) );
@@ -50,7 +37,7 @@ const Chat = () => {
         setChatInput(event.target.value);
 
         if ( event.key === 'Enter' ) {
-            await updateDoc(doc(db, 'chats', currCombinedId ), {
+            await updateDoc(doc(db, 'chats', combinedId ), {
                 messages: arrayUnion({
                     text: event.target.value,
                     id: currentUserId,
@@ -64,13 +51,15 @@ const Chat = () => {
     const sendMsgClick = () => { };
 
 	const mapNames = userChat.map( (user: any) => {
-        console.log(user);
-        // const combinedId: string = user[0];
-        // const id: string = user[1].userInfo.id;
-        // const name: string = user[1].userInfo.displayName;
-        // return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
-        //     <p className="hover:underline p-3 text-center">{ name }</p>
-        // </a> 
+        if( user.length ) {
+            const combinedId: string = user[0];
+            const id: string = user[1].userInfo.id;
+            const name: string = user[1].userInfo.displayName;
+
+            return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
+                <p className="hover:underline p-3 text-center">{ name }</p>
+            </a> 
+        }
     });
 
     const userSelect = (combinedId: string, selectedId: string, name: string) => {
@@ -78,7 +67,6 @@ const Chat = () => {
             return doc.exists() && setMessages(doc.data().messages);
         });
         setSelectedUserId(selectedId);
-        setCurrCombinedId(combinedId);
     }
 
     return (
@@ -86,7 +74,7 @@ const Chat = () => {
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    {/* <div>{ mapNames }</div> */}
+                    <div>{ mapNames }</div>
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5">
