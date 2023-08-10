@@ -8,7 +8,7 @@ import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 
 const Chat = () => {
-    const [ userChat, setUserChat ] = useState([{}]);
+    const [ userChat, setUserChat ] = useState([]);
     const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
@@ -17,21 +17,19 @@ const Chat = () => {
     const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
     useEffect( () => {
-        const getChats = async () => {
-            const res = await getDoc(doc(db, "userChats", combinedId ));
-            if ( res.exists() ) {
-                console.log(res.data());
-                setUserChat( Object.entries(res.data()) );
-            } else { console.error('User was not fetched from /userChats') }
+        const getChats = () => {
+            const res = onSnapshot(doc(db, "userChats", combinedId ), (doc: any) => {
+                setUserChat( doc.data() );
+            });
 
-            //unsubbing
+            //unsub
             return () => {
-                getChats();
+                res();
             }
         }
-
         currentUserId && getChats();
-    }, [ messages ] );
+        console.log(userChat);
+    }, [ currentUserId ] );
 	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -43,26 +41,26 @@ const Chat = () => {
                     id: currentUserId,
                     userId: selectedUserId,
                 })
-           });
-
+            });
         }
     }
 
     const sendMsgClick = () => { };
 
-	const mapNames = userChat.map( (user: any) => {
-        if( user.length ) {
+	const mapNames = Object.entries(userChat).map( (user: any) => {
+        if ( user.length ) {
+            console.log(user);
             const combinedId: string = user[0];
             const id: string = user[1].userInfo.id;
             const name: string = user[1].userInfo.displayName;
 
-            return <a onClick={ () => userSelect(combinedId, id, name)} key={id} className="cursor-pointer">
+            return <a onClick={ () => userSelect(combinedId, id)} key={id} className="cursor-pointer">
                 <p className="hover:underline p-3 text-center">{ name }</p>
             </a> 
         }
     });
 
-    const userSelect = (combinedId: string, selectedId: string, name: string) => {
+    const userSelect = (combinedId: string, selectedId: string) => {
         onSnapshot(doc(db, "chats", combinedId), (doc) => {
             return doc.exists() && setMessages(doc.data().messages);
         });
