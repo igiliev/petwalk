@@ -1,4 +1,6 @@
 const ChatMessages = (props: any) => {
+
+    console.log(props.messages);
     return (
         <div className="messageContainer">
             <div className="w-full mb-5">

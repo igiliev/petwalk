@@ -33,6 +33,7 @@ const Chat = () => {
 	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
+        console.log(combinedId);
 
         if ( event.key === 'Enter' ) {
             await updateDoc(doc(db, 'chats', combinedId ), {
@@ -49,7 +50,6 @@ const Chat = () => {
 
 	const mapNames = Object.entries(userChat).map( (user: any) => {
         if ( user.length ) {
-            console.log(user);
             const combinedId: string = user[0];
             const id: string = user[1].userInfo.id;
             const name: string = user[1].userInfo.displayName;
@@ -61,10 +61,10 @@ const Chat = () => {
     });
 
     const userSelect = (combinedId: string, selectedId: string) => {
-        onSnapshot(doc(db, "chats", combinedId), (doc) => {
-            return doc.exists() && setMessages(doc.data().messages);
-        });
-        setSelectedUserId(selectedId);
+        // onSnapshot(doc(db, "chats", combinedId), (doc) => {
+        //     return doc.exists() && setMessages(doc.data().messages);
+        // });
+        // setSelectedUserId(selectedId);
     }
 
     return (
