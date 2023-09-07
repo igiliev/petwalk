@@ -36,7 +36,7 @@ const Chat = () => {
             let combineNames: string[] = [];
             res.forEach((doc) => {
                 const dataArr = Object.entries(doc.data());
-                setAllUsersChat( prevData => [...allChatUsers, dataArr]);
+                // setAllUsersChat( prevData => [...allChatUsers, dataArr]);
                 if( doc.id.includes(myId) ) {
                     const getVal = Object.values(doc.data());
                     const userNames = getVal[0].userInfo.displayName;
