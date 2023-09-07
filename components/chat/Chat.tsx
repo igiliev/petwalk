@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { getDoc, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { getDoc, getDocs, collection, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 
@@ -12,14 +12,17 @@ const Chat = () => {
     const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
-    const [ messages, setMessages ] = useState('');
+    const [ userChatNames, setUserChatNames ] = useState(['']);
+    const [ allChatUsers, setAllUsersChat ] = useState([]);
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
     useEffect( () => {
+        const myId = combinedId.slice(0, 15);
         const getChats = () => {
             const res = onSnapshot(doc(db, "userChats", combinedId ), (doc: any) => {
-                setUserChat( doc.data() );
+                const userData = doc.data();
+                setUserChat( userData );
             });
 
             //unsub
@@ -27,15 +30,29 @@ const Chat = () => {
                 res();
             }
         }
+
+        const fetchChatNames = async () => {
+            const res = await getDocs(collection(db, 'userChats'));
+            let combineNames: string[] = [];
+            res.forEach((doc) => {
+                const dataArr = Object.entries(doc.data());
+                setAllUsersChat( prevData => [...allChatUsers, dataArr]);
+                if( doc.id.includes(myId) ) {
+                    const getVal = Object.values(doc.data());
+                    const userNames = getVal[0].userInfo.displayName;
+                    combineNames.push(userNames);
+                }
+              });
+              setUserChatNames(combineNames);
+        }
+        fetchChatNames();
+        
         currentUserId && getChats();
-        console.log(userChat);
     }, [ currentUserId ] );
 	
     const handleEnter = async (event: any) => {
-        setChatInput(event.target.value);
-        console.log(combinedId);
-
         if ( event.key === 'Enter' ) {
+            setChatInput(event.target.value);
             await updateDoc(doc(db, 'chats', combinedId ), {
                 messages: arrayUnion({
                     text: event.target.value,
@@ -54,17 +71,19 @@ const Chat = () => {
             const id: string = user[1].userInfo.id;
             const name: string = user[1].userInfo.displayName;
 
-            return <a onClick={ () => userSelect(combinedId, id)} key={id} className="cursor-pointer">
-                <p className="hover:underline p-3 text-center">{ name }</p>
+            return <a onClick={ () => userSelect()} key={id} className="cursor-pointer">
+                { userChatNames.map( name => <p className="hover:underline p-3 text-center">{name}</p> ) }
             </a> 
         }
     });
 
-    const userSelect = (combinedId: string, selectedId: string) => {
+    const userSelect = ( ) => {
         // onSnapshot(doc(db, "chats", combinedId), (doc) => {
         //     return doc.exists() && setMessages(doc.data().messages);
         // });
         // setSelectedUserId(selectedId);
+        // console.log(userChat);
+        console.log(allChatUsers);
     }
 
     return (
@@ -76,7 +95,7 @@ const Chat = () => {
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5">
-                        <ChatMessages messages={messages} />
+                        <ChatMessages combinedId={combinedId} messages={chatInput} />
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
                         <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />
