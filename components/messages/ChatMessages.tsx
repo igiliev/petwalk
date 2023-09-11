@@ -19,7 +19,7 @@ const ChatMessages = (props: any) => {
         }
     }, [ props.messages ]);
 
-    const chatElem = convTxt.map( item => <p className="">{item}</p> );
+    const chatElem = convTxt.map( item => <p key={item} className="">{item}</p> );
 
     return (
         <div className="messageContainer">
