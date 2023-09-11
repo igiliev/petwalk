@@ -8,3 +8,22 @@ export interface ChatData {
     date: string;
     username: string;
 };
+
+export interface PassedMessages {
+    messages: [
+        {
+            text: string;
+            userId: string;
+            id: string;
+        }
+    ]
+}
+
+export interface ClickedUser {
+    [ key: string ]: {
+        userInfo: {
+            id: string;
+            displayName: string;
+        }
+    }
+}

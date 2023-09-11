@@ -6,6 +6,16 @@ import ChatMessages from "../messages/ChatMessages";
 import { getDoc, getDocs, collection, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
+import { ClickedUser } from "../../public/interfaces/globals";
+import { log } from "console";
+
+export interface ChatData {
+    id: string;
+    data: {
+        displayName: string;
+        id: string;
+    } ;
+}
 
 const Chat = () => {
     const [ userChat, setUserChat ] = useState([]);
@@ -13,7 +23,7 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ userChatNames, setUserChatNames ] = useState(['']);
-    const [ allChatUsers, setAllUsersChat ] = useState([]);
+    const [ allChatUsers, setAllUsersChat ] = useState([{}]);
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
@@ -33,17 +43,23 @@ const Chat = () => {
 
         const fetchChatNames = async () => {
             const res = await getDocs(collection(db, 'userChats'));
-            let combineNames: string[] = [];
+            const combineNames: string[] = [];
+            const combinedUsers = [{}];
             res.forEach((doc) => {
-                const dataArr = Object.entries(doc.data());
-                // setAllUsersChat( prevData => [...allChatUsers, dataArr]);
-                if( doc.id.includes(myId) ) {
-                    const getVal = Object.values(doc.data());
-                    const userNames = getVal[0].userInfo.displayName;
+                if ( doc.id.includes(myId) ) {
+                    const data: ClickedUser = doc.data();
+                    const dataToArray = Object.values(doc.data());
+                    const userNames = dataToArray[0].userInfo.displayName;
                     combineNames.push(userNames);
+
+                    for( let key in data ) {
+                        combinedUsers.push({ id: doc.id, data: data[key].userInfo });
+                    }
                 }
               });
               setUserChatNames(combineNames);
+              setAllUsersChat(combinedUsers);
+              
         }
         fetchChatNames();
         
@@ -65,26 +81,29 @@ const Chat = () => {
 
     const sendMsgClick = () => { };
 
+    const userSelect = ( event: any ) => {
+        const getSelected = allChatUsers.find( ( user: any ) => {
+            if( !user.hasOwnProperty('id') ) return;
+            return user.data.displayName === event.target.innerHTML;
+        } );
+
+        onSnapshot(doc(db, "chats", combinedId), (doc) => {
+            // return doc.exists() && setMessages(doc.data().messages);
+        });
+        // setSelectedUserId(selectedId);
+    }
+
 	const mapNames = Object.entries(userChat).map( (user: any) => {
         if ( user.length ) {
             const combinedId: string = user[0];
             const id: string = user[1].userInfo.id;
             const name: string = user[1].userInfo.displayName;
 
-            return <a onClick={ () => userSelect()} key={id} className="cursor-pointer">
+            return <a onClick={ userSelect } key={id} className="cursor-pointer">
                 { userChatNames.map( name => <p className="hover:underline p-3 text-center">{name}</p> ) }
             </a> 
         }
     });
-
-    const userSelect = ( ) => {
-        // onSnapshot(doc(db, "chats", combinedId), (doc) => {
-        //     return doc.exists() && setMessages(doc.data().messages);
-        // });
-        // setSelectedUserId(selectedId);
-        // console.log(userChat);
-        console.log(allChatUsers);
-    }
 
     return (
         <div className="chat-wrapper m-auto mt-24 border border-black rounded">

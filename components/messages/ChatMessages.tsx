@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 import { onSnapshot, doc } from "firebase/firestore";
 import { db } from "../../firebase/config";
-
-export interface PassedMessages {
-    messages: [
-        {
-            text: string;
-            userId: string;
-            id: string;
-        }
-    ]
-}
+import { PassedMessages } from "../../public/interfaces/globals";
 
 const ChatMessages = (props: any) => {
     const [ personalText, setPersonalText ] = useState(['']);
