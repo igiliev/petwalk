@@ -100,7 +100,7 @@ const Chat = () => {
             const name: string = user[1].userInfo.displayName;
 
             return <a onClick={ userSelect } key={id} className="cursor-pointer">
-                { userChatNames.map( name => <p className="hover:underline p-3 text-center">{name}</p> ) }
+                { userChatNames.map( name => <p id={combinedId} className="hover:underline p-3 text-center">{name}</p> ) }
             </a> 
         }
     });
