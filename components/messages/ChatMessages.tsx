@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { onSnapshot, doc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { PassedMessages } from "../../public/interfaces/globals";
+import { v4 } from 'uuid';
 
 const ChatMessages = (props: any) => {
     const [ personalText, setPersonalText ] = useState(['']);
-    const convTxt = personalText && personalText.join(',').split(',');
 
     useEffect( () => {
         const res = onSnapshot(doc(db, "chats", props.combinedId ), (doc: any) => {
@@ -13,13 +13,15 @@ const ChatMessages = (props: any) => {
             textData.messages.forEach( data => setPersonalText( prevText => [ ...personalText, data.text ] ));
         });
 
+        // console.log(props.selectedUserMsgs);
         //unsub
         return () => {
             res();
         }
-    }, [ props.messages ]);
+        
+    }, [ props.selectedUserMsgs ]);
 
-    const chatElem = convTxt.map( item => <p key={item} className="">{item}</p> );
+    const chatElem = props.selectedUserMsgs.map( (item: any) => <p key={item.id + v4()} className="bg-blue-300 my-2 p-3 rounded-xl">{item.text}</p> );
 
     return (
         <div className="messageContainer">
@@ -28,7 +30,7 @@ const ChatMessages = (props: any) => {
             </div>
 
             <div className="w-full">
-                <div className="bg-blue-300 w-40 text-center py-3 text-white text-xl rounded-lg float-right">
+                <div className="text-center text-white text-xl rounded-lg float-right">
                     {chatElem}
                 </div>
             </div>

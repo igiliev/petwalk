@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { getDoc, getDocs, collection, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { getDocs, collection, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { ClickedUser } from "../../public/interfaces/globals";
-import { log } from "console";
 
 export interface ChatData {
     id: string;
@@ -23,7 +22,8 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ userChatNames, setUserChatNames ] = useState(['']);
-    const [ allChatUsers, setAllUsersChat ] = useState([{}]);
+    const [ allChatUsers, setAllUsersChat ]: any = useState([]);
+    const [ selectedUserMessages, setSelectedUserMessages ] = useState([]);
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
@@ -44,7 +44,7 @@ const Chat = () => {
         const fetchChatNames = async () => {
             const res = await getDocs(collection(db, 'userChats'));
             const combineNames: string[] = [];
-            const combinedUsers = [{}];
+            const combinedUsers: ChatData[] = [];
             res.forEach((doc) => {
                 if ( doc.id.includes(myId) ) {
                     const data: ClickedUser = doc.data();
@@ -82,15 +82,18 @@ const Chat = () => {
     const sendMsgClick = () => { };
 
     const userSelect = ( event: any ) => {
-        const getSelected = allChatUsers.find( ( user: any ) => {
+        
+        const getSelected: ChatData = allChatUsers.find( ( user: any ) => {
             if( !user.hasOwnProperty('id') ) return;
             return user.data.displayName === event.target.innerHTML;
         } );
+        console.log(currentUserId);
+        console.log(getSelected);
+        
 
-        onSnapshot(doc(db, "chats", combinedId), (doc) => {
-            // return doc.exists() && setMessages(doc.data().messages);
+        onSnapshot(doc(db, "chats", getSelected.id), (doc) => {
+            if( doc.exists() ) setSelectedUserMessages(doc.data().messages);
         });
-        // setSelectedUserId(selectedId);
     }
 
 	const mapNames = Object.entries(userChat).map( (user: any) => {
@@ -100,7 +103,7 @@ const Chat = () => {
             const name: string = user[1].userInfo.displayName;
 
             return <a onClick={ userSelect } key={id} className="cursor-pointer">
-                { userChatNames.map( name => <p key={combinedId} className="hover:underline p-3 text-center">{name}</p> ) }
+                { userChatNames.map( name => <p key={name} className="hover:underline p-3 text-center">{name}</p> ) }
             </a> 
         }
     });
@@ -113,8 +116,8 @@ const Chat = () => {
                     <div>{ mapNames }</div>
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
-                    <div className="h-full bg-yellow-100 p-5">
-                        <ChatMessages combinedId={combinedId} messages={chatInput} />
+                    <div className="h-full bg-yellow-100 p-5 overflow-auto overflow-y-scroll">
+                        <ChatMessages combinedId={combinedId} messages={chatInput} selectedUserMsgs={selectedUserMessages} />
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
                         <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />
@@ -123,7 +126,6 @@ const Chat = () => {
                 </div>
             </div>
         </div>
-
     )
 }
 

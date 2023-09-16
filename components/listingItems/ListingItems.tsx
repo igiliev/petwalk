@@ -19,6 +19,12 @@ const ListingItems = (props: any) => {
 
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
+        const combinedId2 =
+        currentUserId > id
+          ? currentUserId + id
+          : id + currentUserId;
+
+        
         dispatch(storeActions.combinedId(combinedId));
 
         try {
