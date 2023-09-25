@@ -12,7 +12,7 @@ export interface storeAction {
 
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '' },
+    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', currName: '' },
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -31,6 +31,9 @@ const dataSlice = createSlice({
         },
         combinedId(state, action) {
             state.combinedId = action.payload;
+        },
+        setCurrName(state, action) {
+            state.currName = action.payload;
         }
     }
 });

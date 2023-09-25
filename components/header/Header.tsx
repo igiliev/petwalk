@@ -4,7 +4,7 @@ import logo from '../../public/assets/images/logo.png';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { getStoreData } from "../forms/RegistrationComplete";
+import { GetStoreData } from "../forms/RegistrationComplete";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions } from "../../app/redux/store";
@@ -12,7 +12,7 @@ import { useState } from "react";
 
 
 const Header = () => {
-    const userLoggedin = useSelector<getStoreData>(state => state.dataStore.userLoggedin);
+    const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
     const dispatch = useDispatch();
 
     const handleLogout = async () => {

@@ -11,6 +11,7 @@ import { storeActions } from "../../app/redux/store";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
+    const currentUserName: string = useSelector( (state:any) => state.dataStore.currName );
     const dispatch = useDispatch()
 
     const handleChange = () => { };
@@ -19,11 +20,11 @@ const ListingItems = (props: any) => {
 
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
-        const combinedId2 =
-        currentUserId > id
-          ? currentUserId + id
-          : id + currentUserId;
 
+        //Clicked person's name - name
+        console.log(name);
+        const namer = props.userData.find( (item: any) => item.name );
+        console.log(currentUserName);
         
         dispatch(storeActions.combinedId(combinedId));
 

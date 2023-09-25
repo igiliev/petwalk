@@ -3,18 +3,21 @@ import Link from "next/link";
 import signUp from '../../firebase/auth/signup';
 import { storeActions } from "../../app/redux/store";
 
-export interface getStoreData {
+export interface GetStoreData {
     dataStore: { data: any, step: number, userLoggedin: boolean };
 }
 
 const RegistrationComplete = () => {
-    const getUserDataState: any = useSelector<getStoreData>( state => state.dataStore.data );
+    const getUserDataState: any = useSelector<GetStoreData>( state => state.dataStore.data );
     const dispatch = useDispatch();
 
-   const handleClick = async () => {
+    
+    const handleClick = async () => {
         if ( getUserDataState.length > 7 ) {
             dispatch(storeActions.storeData('clear'));
         }
+        const currentName = getUserDataState.find( (user:any) => user['nameVal'] && user['nameVal'] );
+        
         // Send the data to the BE when we have reached the final step of registration
         const response = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json', {
             method: 'POST',
@@ -25,8 +28,9 @@ const RegistrationComplete = () => {
                 'Content-Type': 'application/json'
             }
         });
-
-        const data = await response.json();
+        
+        
+        // setDoc(doc(db, "users", currentName.nameVal ), { userData: getUserDataState });
         // TODO: Fix types
         const userEmail = getUserDataState.find( (user:any):any => user['mailVal']).mailVal;
         const userPassword = getUserDataState.find( (user:any):any => user['passVal']).passVal;
