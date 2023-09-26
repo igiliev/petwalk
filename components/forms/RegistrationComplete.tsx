@@ -2,6 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import signUp from '../../firebase/auth/signup';
 import { storeActions } from "../../app/redux/store";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase/config";
 
 export interface GetStoreData {
     dataStore: { data: any, step: number, userLoggedin: boolean };
@@ -28,18 +30,7 @@ const RegistrationComplete = () => {
                 'Content-Type': 'application/json'
             }
         });
-        
-        
-        // setDoc(doc(db, "users", currentName.nameVal ), { userData: getUserDataState });
-        // TODO: Fix types
-        const userEmail = getUserDataState.find( (user:any):any => user['mailVal']).mailVal;
-        const userPassword = getUserDataState.find( (user:any):any => user['passVal']).passVal;
-        const { result, error } = await signUp( userEmail, userPassword );
         dispatch(storeActions.setUserLogin(true));
-
-        if ( error ) {
-            return console.error('Error signing in: ', error);
-        }
    }
 
     return (

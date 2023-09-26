@@ -26,10 +26,10 @@ const dataSlice = createSlice({
         setUserLogin(state, action) {
             state.userLoggedin = action.payload;
         },
-        currentUserId(state, action) {
+        setCurrentUserId(state, action) {
             state.currentUserId = action.payload;
         },
-        combinedId(state, action) {
+        setCombinedId(state, action) {
             state.combinedId = action.payload;
         },
         setCurrName(state, action) {

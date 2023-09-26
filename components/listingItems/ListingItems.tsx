@@ -1,3 +1,5 @@
+'use client';
+
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Image from "next/image";
@@ -5,31 +7,53 @@ import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch, useSelector } from "react-redux";
 import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from "../../firebase/config";
+import { db, auth } from "../../firebase/config";
+import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
+import { getUserDataNew } from "../../app/api/helper/users/userService";
+import { useEffect, useState } from "react";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
-    const currentUserName: string = useSelector( (state:any) => state.dataStore.currName );
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const [ currentId, setCurrentId] = useState('');
 
     const handleChange = () => { };
 
     const handleSearch = () => { };
 
+    useEffect( () => {
+        onAuthStateChanged( auth, (user: any) => {
+            if ( user ) {
+                // Successful login!
+                // console.log('Login success!', user.uid);
+                // setCurrentId(user.uid);
+            } else {
+                console.error('You are NOT logged in');
+            }
+        } );
+    }, [] )
+
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
+        const res = await getDoc(doc(db, "chats", combinedId));
+        let chatId: string = ''
+        dispatch(storeActions.setCombinedId(combinedId));
 
-        //Clicked person's name - name
-        console.log(name);
-        const namer = props.userData.find( (item: any) => item.name );
-        console.log(currentUserName);
-        
-        dispatch(storeActions.combinedId(combinedId));
+        getUserDataNew().then( users => {
+            const getId = users.map( user => {
+                const allIds: string[] = Object.keys(user);
+                //Getting the second id from the combinedId - which is my id
+                const slicedId = res.id.substring( res.id.length - allIds[0].length, res.id.length );
+                return slicedId;
+            } );
+            chatId = getId.toString();
+        } );
+
+        console.log(chatId);
 
         try {
-            const res = await getDoc(doc(db, "chats", combinedId));
 
             if ( !res.exists() ) {
                 setDoc(doc(db, "chats", combinedId), { messages: [] });

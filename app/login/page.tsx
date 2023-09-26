@@ -33,7 +33,7 @@ const Login = () => {
             if ( user ) {
                 // Successful login!
                 console.log('Login success!', user);
-                dispatch(storeActions.currentUserId(user.auth.currentUser.uid));
+                dispatch(storeActions.setCurrentUserId(user.auth.currentUser.uid));
                 setUserIsLogged(true);
             } else {
                 console.error('You are NOT logged in');
