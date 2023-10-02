@@ -6,18 +6,16 @@ import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch, useSelector } from "react-redux";
-import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { setDoc, doc, updateDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { db, auth } from "../../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
-import { getUserDataNew } from "../../app/api/helper/users/userService";
 import { useEffect, useState } from "react";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const dispatch = useDispatch();
-    const [ currentId, setCurrentId] = useState('');
 
     const handleChange = () => { };
 
@@ -25,6 +23,7 @@ const ListingItems = (props: any) => {
 
     useEffect( () => {
         onAuthStateChanged( auth, (user: any) => {
+            console.log(user);
             if ( user ) {
                 // Successful login!
                 // console.log('Login success!', user.uid);
@@ -38,23 +37,56 @@ const ListingItems = (props: any) => {
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
         const res = await getDoc(doc(db, "chats", combinedId));
-        let chatId: string = ''
         dispatch(storeActions.setCombinedId(combinedId));
-
-        getUserDataNew().then( users => {
-            const getId = users.map( user => {
-                const allIds: string[] = Object.keys(user);
-                //Getting the second id from the combinedId - which is my id
-                const slicedId = res.id.substring( res.id.length - allIds[0].length, res.id.length );
-                return slicedId;
-            } );
-            chatId = getId.toString();
+        
+        onAuthStateChanged( auth, (user: any) => {
+            console.log(user);
+            if ( user ) {
+                // Successful login!
+                // console.log('Login success!', user.uid);
+                // setCurrentId(user.uid);
+            } else {
+                console.error('You are NOT logged in');
+            }
         } );
 
-        console.log(chatId);
+        // getUserDataNew().then( users => {
+        //     console.log(users);
+
+        //     for (let i = 0; i < users.length; i++) {
+        //         const element = users[i];
+        //         console.log(element[id]);
+        //     }
+            
+        //     const getId = users.map( user => {
+        //         const allIds: string[] = Object.keys(user);
+        //         //Getting the second id from the combinedId - which is my id
+        //         const slicedId = res.id.substring( res.id.length - allIds[0].length, res.id.length );
+        //         return slicedId;
+        //     } );
+
+        //     // console.log( getId.toString() );
+        //     // console.log(combinedId);
+            
+        //     const getChats = () => {
+        //         const res = onSnapshot(doc(db, "chats", getId.toString() ), (doc: any) => {
+        //             const chatData = doc.data();
+        //             // console.log(chatData);
+        //         });
+                
+        //         //unsub
+        //         return () => {
+        //             res();
+        //         }
+        //     }
+            
+        //     getChats();
+        // } );
+
+        console.log(currentUserId);
+        // console.log(name);
 
         try {
-
             if ( !res.exists() ) {
                 setDoc(doc(db, "chats", combinedId), { messages: [] });
                 setDoc(doc(db, "userChats", combinedId), {});
