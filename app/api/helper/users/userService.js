@@ -15,7 +15,8 @@ export async function getUsers(userType) {
             const mail = insideData.find( userData => userData.mailVal ).mailVal
             const dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
             const selectedUser = insideData.find( userData => userData.regOption ).regOption;
-            const describtion = insideData.find( userData => userData.jobDescribeVal ).jobDescribeVal;
+            // const describtion = insideData.find( userData => userData.jobDescribeVal ).jobDescribeVal;
+            const describtion = 'test';
             const selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
             const selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
             const userImage = insideData.find( userData => userData.userImg ).userImg;
@@ -52,8 +53,6 @@ export async function getUsers(userType) {
 
     return getResponse();
 }
-
-
 
 export async function getUserChat(id) {
     const getResponse = async () => {

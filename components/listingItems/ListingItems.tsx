@@ -23,7 +23,6 @@ const ListingItems = (props: any) => {
 
     useEffect( () => {
         onAuthStateChanged( auth, (user: any) => {
-            console.log(user);
             if ( user ) {
                 // Successful login!
                 // console.log('Login success!', user.uid);
@@ -38,9 +37,10 @@ const ListingItems = (props: any) => {
         const combinedId = currentUserId + id;
         const res = await getDoc(doc(db, "chats", combinedId));
         dispatch(storeActions.setCombinedId(combinedId));
+
+        console.log(id);
         
         onAuthStateChanged( auth, (user: any) => {
-            console.log(user);
             if ( user ) {
                 // Successful login!
                 // console.log('Login success!', user.uid);
@@ -49,39 +49,6 @@ const ListingItems = (props: any) => {
                 console.error('You are NOT logged in');
             }
         } );
-
-        // getUserDataNew().then( users => {
-        //     console.log(users);
-
-        //     for (let i = 0; i < users.length; i++) {
-        //         const element = users[i];
-        //         console.log(element[id]);
-        //     }
-            
-        //     const getId = users.map( user => {
-        //         const allIds: string[] = Object.keys(user);
-        //         //Getting the second id from the combinedId - which is my id
-        //         const slicedId = res.id.substring( res.id.length - allIds[0].length, res.id.length );
-        //         return slicedId;
-        //     } );
-
-        //     // console.log( getId.toString() );
-        //     // console.log(combinedId);
-            
-        //     const getChats = () => {
-        //         const res = onSnapshot(doc(db, "chats", getId.toString() ), (doc: any) => {
-        //             const chatData = doc.data();
-        //             // console.log(chatData);
-        //         });
-                
-        //         //unsub
-        //         return () => {
-        //             res();
-        //         }
-        //     }
-            
-        //     getChats();
-        // } );
 
         console.log(currentUserId);
         // console.log(name);

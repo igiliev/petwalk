@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { getDocs, collection, doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { auth, db } from "../../firebase/config";
 import { useSelector } from "react-redux";
-import { ClickedUser } from "../../public/interfaces/globals";
+import { v1 } from "uuid";
+import { getUserDataNew } from "../../app/api/helper/users/userService";
+import { onAuthStateChanged, getAuth, AuthCredential, } from "firebase/auth";
+import firebase_app from "../../firebase/config";
 
 export interface ChatData {
     id: string;
@@ -28,7 +31,7 @@ const Chat = () => {
     const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
 
     useEffect( () => {
-        const myId = combinedId.slice(0, 15);
+        // const myId = combinedId.slice(0, 15);
         const getChats = () => {
             const res = onSnapshot(doc(db, "userChats", combinedId ), (doc: any) => {
                 const userData = doc.data();
@@ -41,33 +44,41 @@ const Chat = () => {
             }
         }
 
-        const fetchChatNames = async () => {
-            const res = await getDocs(collection(db, 'userChats'));
-            const combineNames: string[] = [];
-            const combinedUsers: ChatData[] = [];
-            res.forEach((doc) => {
-                if ( doc.id.includes(myId) ) {
-                    const data: ClickedUser = doc.data();
-                    const dataToArray = Object.values(doc.data());
-                    const userNames = dataToArray[0].userInfo.displayName;
-                    combineNames.push(userNames);
+        const tst = new AuthCredential();
+        const newTst = getAuth(firebase_app).app;
+        console.log(newTst);
 
-                    for( let key in data ) {
-                        combinedUsers.push({ id: doc.id, data: data[key].userInfo });
-                    }
-                }
-              });
-              setUserChatNames(combineNames);
-              setAllUsersChat(combinedUsers);
+        // console.log(currentUserId);
+        // getUserDataNew().then( item => console.log(item) );
+
+        // const fetchChatNames = async () => {
+        //     const res = await getDocs(collection(db, 'userChats'));
+        //     const combineNames: string[] = [];
+        //     const combinedUsers: ChatData[] = [];
+        //     res.forEach((doc) => {
+        //         if ( doc.id.includes(myId) ) {
+        //             const data: ClickedUser = doc.data();
+        //             const dataToArray = Object.values(doc.data());
+        //             const userNames = dataToArray[0].userInfo.displayName;
+        //             combineNames.push(userNames);
+
+        //             for( let key in data ) {
+        //                 combinedUsers.push({ id: doc.id, data: data[key].userInfo });
+        //             }
+        //         }
+        //       });
+        //       setUserChatNames(combineNames);
+        //       setAllUsersChat(combinedUsers);
               
-        }
-        fetchChatNames();
+        // }
+        // fetchChatNames();
         
         currentUserId && getChats();
     }, [ currentUserId ] );
 	
     const handleEnter = async (event: any) => {
         if ( event.key === 'Enter' ) {
+            
             setChatInput(event.target.value);
             await updateDoc(doc(db, 'chats', combinedId ), {
                 messages: arrayUnion({

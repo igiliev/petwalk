@@ -7,14 +7,14 @@ import { useSelector } from 'react-redux';
 import { storage } from '../../firebase/config';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
-import { getStoreData } from './RegistrationComplete';
+import { GetStoreData } from './RegistrationComplete';
 
 const UploadProfileImg = (props: any) => {
     const [ selectedImg, setSelectedImg ]: any = useState(null);
     const [ uploadingImg, setUploadingImg ] = useState(false);
     const [ userImageUrl, setUserImageUrl ] = useState('');
     const [ petSitter, setPetsitter ] = useState(false);
-    const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
+    const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
     const userImageLisRef = ref( storage, "/profileImages" );
 
     const chooseImage = (event: any) => {
