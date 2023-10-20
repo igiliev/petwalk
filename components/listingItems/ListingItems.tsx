@@ -6,52 +6,25 @@ import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch, useSelector } from "react-redux";
-import { setDoc, doc, updateDoc, getDoc, onSnapshot } from 'firebase/firestore';
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db, auth } from "../../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
     const dispatch = useDispatch();
-
     const handleChange = () => { };
-
     const handleSearch = () => { };
-
-    useEffect( () => {
-        onAuthStateChanged( auth, (user: any) => {
-            if ( user ) {
-                // Successful login!
-                // console.log('Login success!', user.uid);
-                // setCurrentId(user.uid);
-            } else {
-                console.error('You are NOT logged in');
-            }
-        } );
-    }, [] )
-
+    
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
         const res = await getDoc(doc(db, "chats", combinedId));
         dispatch(storeActions.setCombinedId(combinedId));
-
-        console.log(id);
-        
-        onAuthStateChanged( auth, (user: any) => {
-            if ( user ) {
-                // Successful login!
-                // console.log('Login success!', user.uid);
-                // setCurrentId(user.uid);
-            } else {
-                console.error('You are NOT logged in');
-            }
-        } );
-
         console.log(currentUserId);
-        // console.log(name);
+        console.log(id);
 
         try {
             if ( !res.exists() ) {

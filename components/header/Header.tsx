@@ -9,6 +9,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions } from "../../app/redux/store";
 import { useState } from "react";
+import { v4 } from "uuid";
 
 
 const Header = () => {
@@ -25,6 +26,10 @@ const Header = () => {
     const showMenu = () => {
         setHideMenu(state => !state);
         setBurgerClassToggle(state => !state);
+    }
+
+    const testClick = () => {
+        console.log(v4());
     }
     
     return (
@@ -48,7 +53,7 @@ const Header = () => {
                                 </>
                                 :
                                 <>
-                                    <Link href="/register/regOptions" className="bg-slate-400 text-white px-4 py-2 rounded">Намерете работа</Link>
+                                    <Link href="/register/regOptions" onClick={testClick} className="bg-slate-400 text-white px-4 py-2 rounded">Намерете работа</Link>
                                     <Link href="/login" className="nav-link relative">Вход</Link>
                                     <Link href="/register/regOptions" className="bg-red-500 text-white px-4 py-2 rounded">Регистрация</Link>
                                 </>
