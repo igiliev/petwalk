@@ -1,4 +1,6 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
+import { auth } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
@@ -97,7 +99,7 @@ export function updateMessage(id, message) {
     const db = getDatabase();
      update(ref(db, `userChat/${id}`), {
          messages: { me: message, you: 'updated!' }
-     })
+     });
 }
 
 //Getting the data from the /userChat DB
@@ -110,4 +112,14 @@ export async function getSelectedUserChat(id) {
         storeData.push(data);
     });
     return storeData;
+}
+
+//Current user data
+export async function currUserData() {
+    const currUserData = [];
+    await onAuthStateChanged(auth, (user) => {
+        currUserData.push(user);
+    });
+
+    return currUserData;
 }

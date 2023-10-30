@@ -9,8 +9,6 @@ import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
 import logo from '../../public/assets/images/logo.png';
-import { GetStoreData } from '../../components/forms/RegistrationComplete';
-import { useSelector } from 'react-redux';
 
 
 const Login = () => {
@@ -18,7 +16,6 @@ const Login = () => {
     const [ passwordValue, setPasswordValue ] = useState('');
     const [ userIsLogged, setUserIsLogged ] = useState(false);
     const dispatch = useDispatch();
-    const getUserDataState: any = useSelector<GetStoreData>( state => state.dataStore.data );
 
     const handleMailVal = (event: any) => {
         setEmailValue(event.target.value);

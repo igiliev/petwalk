@@ -1,16 +1,13 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, onSnapshot, Timestamp } from "firebase/firestore";
 import { auth, db } from "../../firebase/config";
 import { useSelector } from "react-redux";
-import { v1 } from "uuid";
-import { getUserDataNew } from "../../app/api/helper/users/userService";
-import { onAuthStateChanged, getAuth, AuthCredential, } from "firebase/auth";
-import firebase_app from "../../firebase/config";
-
+import { GetStoreData } from "../forms/RegistrationComplete";
+import { v4 as uuid } from "uuid";
 export interface ChatData {
     id: string;
     data: {
@@ -27,64 +24,23 @@ const Chat = () => {
     const [ userChatNames, setUserChatNames ] = useState(['']);
     const [ allChatUsers, setAllUsersChat ]: any = useState([]);
     const [ selectedUserMessages, setSelectedUserMessages ] = useState([]);
-    const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
-    const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
-
-    useEffect( () => {
-        // const myId = combinedId.slice(0, 15);
-        const getChats = () => {
-            const res = onSnapshot(doc(db, "userChats", combinedId ), (doc: any) => {
-                const userData = doc.data();
-                setUserChat( userData );
-            });
-
-            //unsub
-            return () => {
-                res();
-            }
-        }
-
-        const tst = new AuthCredential();
-        const newTst = getAuth(firebase_app).app;
-        console.log(newTst);
-
-        // console.log(currentUserId);
-        // getUserDataNew().then( item => console.log(item) );
-
-        // const fetchChatNames = async () => {
-        //     const res = await getDocs(collection(db, 'userChats'));
-        //     const combineNames: string[] = [];
-        //     const combinedUsers: ChatData[] = [];
-        //     res.forEach((doc) => {
-        //         if ( doc.id.includes(myId) ) {
-        //             const data: ClickedUser = doc.data();
-        //             const dataToArray = Object.values(doc.data());
-        //             const userNames = dataToArray[0].userInfo.displayName;
-        //             combineNames.push(userNames);
-
-        //             for( let key in data ) {
-        //                 combinedUsers.push({ id: doc.id, data: data[key].userInfo });
-        //             }
-        //         }
-        //       });
-        //       setUserChatNames(combineNames);
-        //       setAllUsersChat(combinedUsers);
-              
-        // }
-        // fetchChatNames();
-        
-        currentUserId && getChats();
-    }, [ currentUserId ] );
+    const currentUserId = useSelector<GetStoreData>( state => state.dataStore.currentUserId );
+    const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
+    // const chatData: any = useSelector<GetStoreData>( state => state.dataStore.chatData );
 	
     const handleEnter = async (event: any) => {
+        // const currentId: string = chatData.user[0].uid;
         if ( event.key === 'Enter' ) {
-            
+
+            // console.log(currentId);
+
             setChatInput(event.target.value);
             await updateDoc(doc(db, 'chats', combinedId ), {
                 messages: arrayUnion({
+                    id: uuid(),
                     text: event.target.value,
-                    id: currentUserId,
-                    userId: selectedUserId,
+                    // senderId: chatData.user[0].uid,
+                    date: Timestamp.now()
                 })
             });
         }

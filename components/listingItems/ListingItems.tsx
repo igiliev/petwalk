@@ -6,47 +6,51 @@ import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch, useSelector } from "react-redux";
-import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db, auth } from "../../firebase/config";
-import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { currUserData } from "../../app/api/helper/users/userService";
 
 const ListingItems = (props: any) => {
     const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
+    const [ userData, setUserData ] = useState({});
     const dispatch = useDispatch();
     const handleChange = () => { };
     const handleSearch = () => { };
     
+    useEffect( () => {
+        currUserData().then( data => setUserData(data) );
+    }, [] );
+
     const startChat = async (id: any, name: string) => {
         const combinedId = currentUserId + id;
-        const res = await getDoc(doc(db, "chats", combinedId));
+        // const res = await getDoc(doc(db, "chats", combinedId));
         dispatch(storeActions.setCombinedId(combinedId));
-        console.log(currentUserId);
-        console.log(id);
+        console.log(userData);
+        console.log(id, userData);
+        dispatch(storeActions.setChatData({uid: id, data: userData }));
 
-        try {
-            if ( !res.exists() ) {
-                setDoc(doc(db, "chats", combinedId), { messages: [] });
-                setDoc(doc(db, "userChats", combinedId), {});
+        // try {
+        //     if ( !res.exists() ) {
+        //         setDoc(doc(db, "chats", combinedId), { messages: [] });
+        //         setDoc(doc(db, "userChats", combinedId), {});
 
-                //add data to userChats
-                await updateDoc(doc(db, "userChats", combinedId), {
-                    [combinedId + ".userInfo"]: {
-                      id,
-                      displayName: name
-                    }
-                  });
+        //         //add data to userChats
+        //         await updateDoc(doc(db, "userChats", combinedId), {
+        //             [combinedId + ".userInfo"]: {
+        //               id,
+        //               displayName: name
+        //             }
+        //           });
 
-                  await updateDoc(doc(db, "userChats", combinedId), {
-                    [combinedId + ".userInfo"]: {
-                      id: currentUserId,
-                      displayName: name,
-                    }
-                  });
-            }
-        } catch(err) {}
+        //           await updateDoc(doc(db, "userChats", combinedId), {
+        //             [combinedId + ".userInfo"]: {
+        //               id: currentUserId,
+        //               displayName: name,
+        //             }
+        //           });
+        //     }
+        // } catch(err) {}
     }
 
 	const mappedUsers: any = props.userData.map( (user: any): any => {
