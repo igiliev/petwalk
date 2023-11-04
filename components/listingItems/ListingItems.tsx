@@ -5,52 +5,41 @@ import Footer from "../footer/Footer";
 import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
 
 const ListingItems = (props: any) => {
-    const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
-    const [ userData, setUserData ] = useState({});
+    const [ userData, setUserData ]: any = useState({});
     const dispatch = useDispatch();
     const handleChange = () => { };
     const handleSearch = () => { };
     
     useEffect( () => {
-        currUserData().then( data => setUserData(data) );
+        currUserData().then( data => setUserData(data[0]) );
     }, [] );
 
-    const startChat = async (id: any, name: string) => {
-        const combinedId = currentUserId + id;
-        // const res = await getDoc(doc(db, "chats", combinedId));
+    const startChat = async (uid: string) => {
+        console.log(userData.uid);
+        console.log(uid);
+        const combinedId: string = uid + userData.uid;
+        const testId = userData.uid > uid
+        ? userData.uid + uid
+        : uid + userData.uid;
+
+        const { proactiveRefresh, auth, stsTokenManager, metadata,  ...slicedUserData } = userData;
+        // const db = getDatabase();
         dispatch(storeActions.setCombinedId(combinedId));
-        console.log(userData);
-        console.log(id, userData);
-        dispatch(storeActions.setChatData({uid: id, data: userData }));
+        dispatch(storeActions.setChatData({uid, data: slicedUserData }));
 
-        // try {
-        //     if ( !res.exists() ) {
-        //         setDoc(doc(db, "chats", combinedId), { messages: [] });
-        //         setDoc(doc(db, "userChats", combinedId), {});
-
-        //         //add data to userChats
-        //         await updateDoc(doc(db, "userChats", combinedId), {
-        //             [combinedId + ".userInfo"]: {
-        //               id,
-        //               displayName: name
-        //             }
-        //           });
-
-        //           await updateDoc(doc(db, "userChats", combinedId), {
-        //             [combinedId + ".userInfo"]: {
-        //               id: currentUserId,
-        //               displayName: name,
-        //             }
-        //           });
-        //     }
-        // } catch(err) {}
+        const chatsRef = collection(db, 'chats');
+        await setDoc(doc( chatsRef, testId ), {
+            test: 'sadas'
+        });
     }
 
 	const mappedUsers: any = props.userData.map( (user: any): any => {
@@ -70,7 +59,7 @@ const ListingItems = (props: any) => {
                         <div className="py-5">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.id, user.name)}>Изпрати съобщение</Link>
+                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.uid)}>Изпрати съобщение</Link>
                     </div>
                 </div>
             </div>

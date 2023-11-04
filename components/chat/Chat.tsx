@@ -4,10 +4,12 @@ import { useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, onSnapshot, Timestamp } from "firebase/firestore";
-import { auth, db } from "../../firebase/config";
+import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { GetStoreData } from "../forms/RegistrationComplete";
 import { v4 as uuid } from "uuid";
+import { useEffect } from "react";
+import { currUserData } from "../../app/api/helper/users/userService";
 export interface ChatData {
     id: string;
     data: {
@@ -18,28 +20,28 @@ export interface ChatData {
 
 const Chat = () => {
     const [ userChat, setUserChat ] = useState([]);
-    const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ chatInput, setChatInput ] = useState('');
+    const [ userData, setUserData ]: any = useState({});
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ userChatNames, setUserChatNames ] = useState(['']);
     const [ allChatUsers, setAllUsersChat ]: any = useState([]);
     const [ selectedUserMessages, setSelectedUserMessages ] = useState([]);
-    const currentUserId = useSelector<GetStoreData>( state => state.dataStore.currentUserId );
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
-    // const chatData: any = useSelector<GetStoreData>( state => state.dataStore.chatData );
+
+    useEffect( () => {
+        currUserData().then( data => setUserData(data[0]) );
+    }, [] );
 	
     const handleEnter = async (event: any) => {
         // const currentId: string = chatData.user[0].uid;
         if ( event.key === 'Enter' ) {
-
-            // console.log(currentId);
-
+            console.log(combinedId);
             setChatInput(event.target.value);
             await updateDoc(doc(db, 'chats', combinedId ), {
                 messages: arrayUnion({
                     id: uuid(),
                     text: event.target.value,
-                    // senderId: chatData.user[0].uid,
+                    senderId: userData.uid,
                     date: Timestamp.now()
                 })
             });
@@ -54,8 +56,6 @@ const Chat = () => {
             if( !user.hasOwnProperty('id') ) return;
             return user.data.displayName === event.target.innerHTML;
         } );
-        console.log(currentUserId);
-        console.log(getSelected);
         
 
         onSnapshot(doc(db, "chats", getSelected.id), (doc) => {

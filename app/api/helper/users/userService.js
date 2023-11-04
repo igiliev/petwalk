@@ -1,6 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
 import { auth } from "../../../../firebase/config";
+import { v4 as uuid } from "uuid";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
@@ -22,6 +23,7 @@ export async function getUsers(userType) {
             const selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
             const selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
             const userImage = insideData.find( userData => userData.userImg ).userImg;
+            const uid = insideData.find( userData => userData.uid ).uid;
 
             //Adding only the users that have selected to be a sitter
             if ( selectedUser === 'sitter' ) {
@@ -34,6 +36,7 @@ export async function getUsers(userType) {
                     selectedHoods,
                     selectedServices,
                     userImage,
+                    uid,
                     id: user
                 });
             } else {
@@ -73,13 +76,10 @@ export async function getUserChat(id) {
 }
 
 //Creating the new /userChat collection in the DB
-export function createUserChat(id, name, currentUserId) {
+export function createUserChat(combinedId) {
     const db = getDatabase();
-    set(ref(db, 'userChat/' + id), {
-        username: name,
-        combinedId: id + currentUserId,
-        date: new Date().toLocaleString(),
-        messages: { [name]: 'me default', [name]: 'you default' }
+    set(ref(db, 'chats/' + combinedId), {
+        test: 'test'
     });
 }
 

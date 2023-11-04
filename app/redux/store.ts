@@ -1,5 +1,4 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
-import { currUserData } from "../api/helper/users/userService";
 
 export interface storeData {
     data: any[];
@@ -11,12 +10,22 @@ export interface storeAction {
     type: string;
 }
 
-const currentUser: any = [];
-currUserData().then( data => currentUser.push(data) );
+export interface UserImpl {
+    apiKey: string;
+    appName: string;
+    createdAt: string;
+    email: string;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    lastLoginAt: string;
+    providerData: any[];
+    stsTokenManager: any;
+    uid: string;
+}
 
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', currName: '', chatData: { chatId: '', user: {} } },
+    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} } },
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -36,14 +45,9 @@ const dataSlice = createSlice({
         setCombinedId(state, action) {
             state.combinedId = action.payload;
         },
-        setCurrName(state, action) {
-            state.currName = action.payload;
-        },
         setChatData( state, action ) {
             state.chatData = {
-                chatId: currentUser.uid > action.payload.uid
-                ? currentUser.uid + action.payload.uid
-                : action.payload.uid + currentUser.uid,
+                chatId: action.payload.uid,
                 user: action.payload.data
             }
         }
