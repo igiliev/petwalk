@@ -6,7 +6,7 @@ import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
-import { GetStoreData } from "../forms/RegistrationComplete";
+import { GetStoreData } from "../../public/interfaces/globals";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";

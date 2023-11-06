@@ -1,7 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update } from "firebase/database";
 import { auth } from "../../../../firebase/config";
-import { v4 as uuid } from "uuid";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
