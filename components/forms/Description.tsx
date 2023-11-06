@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { GetStoreData } from "./RegistrationComplete";
 import { useEffect } from "react";
+import { GetStoreData } from "../../public/interfaces/globals";
 
 const Description = (props: any) => {
     const [ selfDescribeVal, setSelfDescribeVal ] = useState('')
