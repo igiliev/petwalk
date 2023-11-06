@@ -38,3 +38,11 @@ export interface GetStoreData {
         chatData: {} 
     };
 }
+
+export interface ChatInpData {
+    id: string;
+    data: {
+        displayName: string;
+        id: string;
+    } ;
+}

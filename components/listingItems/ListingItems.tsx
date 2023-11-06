@@ -10,8 +10,9 @@ import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { v4 as uuid } from "uuid";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
@@ -24,25 +25,28 @@ const ListingItems = (props: any) => {
     }, [] );
 
     const startChat = async (uid: string) => {
-        console.log(userData.uid);
-        console.log(uid);
-        const combinedId: string = uid + userData.uid;
-        const testId = userData.uid > uid
+        const combinedId = userData.uid > uid
         ? userData.uid + uid
         : uid + userData.uid;
-
         const { proactiveRefresh, auth, stsTokenManager, metadata,  ...slicedUserData } = userData;
-        // const db = getDatabase();
+        const chatDocRef = doc(db, 'chats');
+        const chatDocRefSnap = await getDoc(chatDocRef);
+        const chatsRef = collection(db, 'chats');
         dispatch(storeActions.setCombinedId(combinedId));
         dispatch(storeActions.setChatData({uid, data: slicedUserData }));
 
-        const chatsRef = collection(db, 'chats');
-        await setDoc(doc( chatsRef, testId ), {
-            test: 'sadas'
-        });
+        //Check if the db doesn't exist then create a new chat between the 2 users
+        if(!chatDocRefSnap.exists()) {
+            await setDoc(doc( chatsRef, combinedId ), {
+                id: uuid(),
+                text: '',
+                senderId: userData.uid,
+                date: Timestamp.now()
+            }, { merge: true });
+        }
     }
 
-	const mappedUsers: any = props.userData.map( (user: any): any => {
+	const mappedUsers = props.userData.map( (user: any): any => {
         const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="test inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
         const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
 

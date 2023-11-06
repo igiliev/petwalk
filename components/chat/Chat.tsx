@@ -6,17 +6,10 @@ import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, onSnapshot, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
-import { GetStoreData } from "../../public/interfaces/globals";
+import { GetStoreData, ChatInpData } from "../../public/interfaces/globals";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-export interface ChatData {
-    id: string;
-    data: {
-        displayName: string;
-        id: string;
-    } ;
-}
 
 const Chat = () => {
     const [ userChat, setUserChat ] = useState([]);
@@ -33,11 +26,9 @@ const Chat = () => {
     }, [] );
 	
     const handleEnter = async (event: any) => {
-        // const currentId: string = chatData.user[0].uid;
         if ( event.key === 'Enter' ) {
-            console.log(combinedId);
             setChatInput(event.target.value);
-            await updateDoc(doc(db, 'chats', combinedId ), {
+            await updateDoc(doc( db, 'chats', combinedId ), {
                 messages: arrayUnion({
                     id: uuid(),
                     text: event.target.value,
@@ -51,8 +42,7 @@ const Chat = () => {
     const sendMsgClick = () => { };
 
     const userSelect = ( event: any ) => {
-        
-        const getSelected: ChatData = allChatUsers.find( ( user: any ) => {
+        const getSelected: ChatInpData = allChatUsers.find( ( user: any ) => {
             if( !user.hasOwnProperty('id') ) return;
             return user.data.displayName === event.target.innerHTML;
         } );
