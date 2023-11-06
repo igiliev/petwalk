@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { storage } from '../../firebase/config';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
-import { GetStoreData } from './RegistrationComplete';
+import { GetStoreData } from '../../public/interfaces/globals';
 
 const UploadProfileImg = (props: any) => {
     const [ selectedImg, setSelectedImg ]: any = useState(null);

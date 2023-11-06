@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faCircle, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import './Forms.css';
 import { useSelector } from 'react-redux';
-import { getStoreData } from './RegistrationComplete';
+import { GetStoreData } from '../../public/interfaces/globals';
 
 const ServicesSelect = (props: any) => {
     const [ selected, setSelected ]: any = useState({
@@ -17,7 +17,7 @@ const ServicesSelect = (props: any) => {
         otherAnimal: false
      });
      const [ petSitter, setPetsitter ] = useState(false);
-     const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
+     const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
      
      useEffect( () => {
         setPetsitter(getState.find( (item: any): any => item['regOption'] ).regOption === 'sitter');

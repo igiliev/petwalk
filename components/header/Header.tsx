@@ -4,7 +4,7 @@ import logo from '../../public/assets/images/logo.png';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { GetStoreData } from "../forms/RegistrationComplete";
+import { GetStoreData } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions } from "../../app/redux/store";
