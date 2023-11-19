@@ -30,12 +30,13 @@ export interface ClickedUser {
 
 export interface GetStoreData {
     dataStore: {
-        data: any,
-        step: number, 
-        userLoggedin: boolean, 
-        currentUserId: string, 
-        combinedId: string,
-        chatData: {} 
+        data: any;
+        step: number;
+        userLoggedin: boolean; 
+        currentUserId: string; 
+        combinedId: string;
+        chatData: {};
+        userChatNames: string[];
     };
 }
 

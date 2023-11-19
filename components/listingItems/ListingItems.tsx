@@ -5,45 +5,64 @@ import Footer from "../footer/Footer";
 import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
-import { currUserData } from "../../app/api/helper/users/userService";
-import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
+import { currUserData, getUserChatNames } from "../../app/api/helper/users/userService";
+import { collection, doc, setDoc, Timestamp, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { v4 as uuid } from "uuid";
+import { GetStoreData } from "../../public/interfaces/globals";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
+    const [ userChatNames, setUserChatNames ] = useState(['']);
+    const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const dispatch = useDispatch();
     const handleChange = () => { };
     const handleSearch = () => { };
     
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]) );
+        console.log(userData.uid);
+        // onSnapshot(doc(db, 'chatUsernames', userData.uid), (doc) => {
+        //     console.log(doc.data());
+        // });
     }, [] );
 
-    const startChat = async (uid: string) => {
+    const startChat = async (uid: string, name: string) => {
         const combinedId = userData.uid > uid
         ? userData.uid + uid
         : uid + userData.uid;
         const { proactiveRefresh, auth, stsTokenManager, metadata,  ...slicedUserData } = userData;
-        const chatDocRef = doc(db, 'chats');
-        const chatDocRefSnap = await getDoc(chatDocRef);
+        // const chatDocRef = doc(db, 'chats');
+        // const chatDocRefSnap = await getDoc(chatDocRef);
         const chatsRef = collection(db, 'chats');
+        const chatNamesRef = collection(db, 'chatUsernames');
         dispatch(storeActions.setCombinedId(combinedId));
-        dispatch(storeActions.setChatData({uid, data: slicedUserData }));
+        dispatch(storeActions.setChatData({ uid, data: slicedUserData }));
+        dispatch(storeActions.setUserChatNames(name));
 
-        //Check if the db doesn't exist then create a new chat between the 2 users
-        if(!chatDocRefSnap.exists()) {
-            await setDoc(doc( chatsRef, combinedId ), {
-                id: uuid(),
-                text: '',
-                senderId: userData.uid,
-                date: Timestamp.now()
-            }, { merge: true });
-        }
+        await getUserChatNames(uid).then( res => console.log(res) );
+        
+        console.log(chatNames);
+        await setDoc(doc( chatsRef, combinedId ), {
+            id: uuid(),
+            text: '',
+            senderId: userData.uid,
+            date: Timestamp.now()
+        }, { merge: true });
+        
+        await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/userChatNames.json${uid}`, {
+            method: 'POST',
+            body: JSON.stringify({
+                userNames: [ name ]
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
 
 	const mappedUsers = props.userData.map( (user: any): any => {
@@ -63,7 +82,7 @@ const ListingItems = (props: any) => {
                         <div className="py-5">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.uid)}>Изпрати съобщение</Link>
+                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                     </div>
                 </div>
             </div>

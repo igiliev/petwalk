@@ -1,5 +1,6 @@
+import { async } from "@firebase/util";
 import { onAuthStateChanged } from "firebase/auth";
-import { getDatabase, ref, onValue, set, update } from "firebase/database";
+import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
 import { auth } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
@@ -58,22 +59,6 @@ export async function getUsers(userType) {
     return getResponse();
 }
 
-export async function getUserChat(id) {
-    const getResponse = async () => {
-        const fetchUsers = await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/userChat.json/${id}`);
-        const chatTojson = await fetchUsers.json();
-        const storeUserChat = [];
-
-        for( const id in chatTojson ) {
-            storeUserChat.push({ id, data: chatTojson[id] });
-        }
-
-        return storeUserChat;
-    }
-
-    return getResponse();
-}
-
 //Creating the new /userChat collection in the DB
 export function createUserChat(combinedId) {
     const db = getDatabase();
@@ -82,14 +67,10 @@ export function createUserChat(combinedId) {
     });
 }
 
-export async function getUserDataNew() {
-    const db = getDatabase();
-    const starCountRef = ref(db, 'petSitters');
+export async function getUserData(id) {
     const storeData = [];
-    onValue(starCountRef, (snapshot) => {
-        const data = snapshot.val();
-        storeData.push(data);
-    });
+    const dbRef = ref(getDatabase());
+    await get(child(dbRef, `petSitters/${id}`)).then((snapshot) => storeData.push(snapshot.val()));
     return storeData;
 }
 
@@ -121,4 +102,14 @@ export async function currUserData() {
     });
 
     return currUserData;
+}
+
+export async function getUserChatNames(id) {
+    const data = [];
+    const db = getDatabase();
+    console.log(id);
+    const chatNamesRef = ref(db, 'userChatNames/' + id);
+    await onValue(chatNamesRef, (snapshot) => {
+        data.push(snapshot.val());
+    });
 }

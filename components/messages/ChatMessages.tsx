@@ -10,7 +10,7 @@ const ChatMessages = (props: any) => {
     useEffect( () => {
         const res = onSnapshot(doc(db, "chats", props.combinedId ), (doc: any) => {
             const textData: PassedMessages = doc.data();
-            textData.messages.forEach( data => setPersonalText( prevText => [ ...personalText, data.text ] ));
+            // textData.messages.forEach( data => setPersonalText( prevText => [ ...personalText, data.text ] ));
         });
 
         // console.log(props.selectedUserMsgs);
@@ -31,7 +31,8 @@ const ChatMessages = (props: any) => {
 
             <div className="w-full">
                 <div className="text-center text-white text-xl rounded-lg float-right">
-                    {chatElem}
+                    {/* {chatElem} */}
+                    <p>static for now</p>
                 </div>
             </div>
         </div>

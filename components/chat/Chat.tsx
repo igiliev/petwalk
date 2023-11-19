@@ -9,21 +9,38 @@ import { useSelector } from "react-redux";
 import { GetStoreData, ChatInpData } from "../../public/interfaces/globals";
 import { v4 as uuid } from "uuid";
 import { useEffect } from "react";
-import { currUserData } from "../../app/api/helper/users/userService";
+import { getUserData } from "../../app/api/helper/users/userService";
+import { usePathname } from "next/navigation";
 
 const Chat = () => {
-    const [ userChat, setUserChat ] = useState([]);
     const [ chatInput, setChatInput ] = useState('');
-    const [ userData, setUserData ]: any = useState({});
+    const [ userData, setUserData ]: any = useState(null);
     const [ userChatClicked, setUserChatClicked ] = useState(false);
-    const [ userChatNames, setUserChatNames ] = useState(['']);
     const [ allChatUsers, setAllUsersChat ]: any = useState([]);
     const [ selectedUserMessages, setSelectedUserMessages ] = useState([]);
+    const [ dataFetched, setDataFetched ] = useState(false);
+    // const [ chatNames, setChatNames ]: any = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
+    const path = usePathname();
 
     useEffect( () => {
-        currUserData().then( data => setUserData(data[0]) );
-    }, [] );
+        //Get everything after userChat/ which is the user ID
+        const regex = /(?<=userChat\/).*/gm;
+        const userID: string = regex.exec(path)![0];
+        getUserData(userID).then( res => {
+            //Destructuring the data and passing it to the state
+            const [ innerData ] = res;
+            const { sitterData } = innerData;
+            setDataFetched(true);
+            return setUserData(sitterData);
+            // sitterData.find( (data: any) => {
+                //     if ( data.nameVal !== undefined ) {
+                    //         return setChatNames( (prevName: any) => [ ...prevName, data.nameVal] );
+                    //     }
+                    // });
+                    // setChatNames( (prevName: any) => [ ...prevName, [] ] );
+        });
+    }, [ dataFetched ] );
 	
     const handleEnter = async (event: any) => {
         if ( event.key === 'Enter' ) {
@@ -46,31 +63,43 @@ const Chat = () => {
             if( !user.hasOwnProperty('id') ) return;
             return user.data.displayName === event.target.innerHTML;
         } );
-        
 
         onSnapshot(doc(db, "chats", getSelected.id), (doc) => {
             if( doc.exists() ) setSelectedUserMessages(doc.data().messages);
         });
     }
 
-	const mapNames = Object.entries(userChat).map( (user: any) => {
-        if ( user.length ) {
-            const combinedId: string = user[0];
-            const id: string = user[1].userInfo.id;
-            const name: string = user[1].userInfo.displayName;
+	// const mapNames = userData.length && userData.map( (user: any) => {
+    //     // console.log(userData);
+    //     if ( user.length ) {
+    //         const id: string = user.uid;
+    //         const name: string = user.nameVal;
+    //         console.log(name);
 
-            return <a onClick={ userSelect } key={id} className="cursor-pointer">
-                { userChatNames.map( name => <p key={name} className="hover:underline p-3 text-center">{name}</p> ) }
-            </a> 
-        }
-    });
+    //         return <a onClick={ userSelect } key={id} className="cursor-pointer">
+    //             { <p key={id} className="hover:underline p-3 text-center">{ name }</p> }
+    //         </a> 
+    //     }
+    // });
 
+    // const mapTest = userData.map( (user: any) => {
+    //     console.log(user);
+    // } )
+
+    // if (userData) console.log(userData);
+    // const names = userData && userData.
     return (
         <div className="chat-wrapper m-auto mt-24 border border-black rounded">
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    <div>{ mapNames }</div>
+                    {/* <div> { userData !== '' ? 
+                    <>
+                        { userData.map( (user: any) => {
+                            console.log(user);
+                            return <span key={user.uid}>{user.nameVal}</span>  })
+                        } 
+                    </> : <p>Loading</p> } </div> */}
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5 overflow-auto overflow-y-scroll">
