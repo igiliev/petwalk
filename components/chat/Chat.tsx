@@ -40,7 +40,7 @@ const Chat = () => {
                     // });
                     // setChatNames( (prevName: any) => [ ...prevName, [] ] );
         });
-    }, [ dataFetched ] );
+    }, [ dataFetched, path ] );
 	
     const handleEnter = async (event: any) => {
         if ( event.key === 'Enter' ) {

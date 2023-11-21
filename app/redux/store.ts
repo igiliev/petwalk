@@ -53,9 +53,8 @@ const dataSlice = createSlice({
         },
         setUserChatNames( state, action ) {
             console.log(action.payload);
-            if( action.payload )
+            if( action.payload !== '' )
                 state.userChatNames.push(action.payload);
-                // state.userChatNames = [ ...state.userChatNames, action.payload ];
         }
     }
 });

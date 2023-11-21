@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
 import { auth } from "../../../../firebase/config";
@@ -104,12 +103,12 @@ export async function currUserData() {
     return currUserData;
 }
 
-export async function getUserChatNames(id) {
-    const data = [];
-    const db = getDatabase();
-    console.log(id);
-    const chatNamesRef = ref(db, 'userChatNames/' + id);
-    await onValue(chatNamesRef, (snapshot) => {
-        data.push(snapshot.val());
-    });
-}
+// export async function getUserChatNames(id) {
+//     const data = [];
+//     const db = getDatabase();
+//     console.log(id);
+//     const chatNamesRef = ref(db, 'userChatNames/' + id);
+//     await onValue(chatNamesRef, (snapshot) => {
+//         data.push(snapshot.val());
+//     });
+// }

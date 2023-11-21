@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
-import { currUserData, getUserChatNames } from "../../app/api/helper/users/userService";
+import { currUserData } from "../../app/api/helper/users/userService";
 import { collection, doc, setDoc, Timestamp, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { v4 as uuid } from "uuid";
@@ -18,10 +18,10 @@ import { GetStoreData } from "../../public/interfaces/globals";
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
     const [ userChatNames, setUserChatNames ] = useState(['']);
-    const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const dispatch = useDispatch();
     const handleChange = () => { };
     const handleSearch = () => { };
+    const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]) );
@@ -29,7 +29,7 @@ const ListingItems = (props: any) => {
         // onSnapshot(doc(db, 'chatUsernames', userData.uid), (doc) => {
         //     console.log(doc.data());
         // });
-    }, [] );
+    }, [ userData.uid ] );
 
     const startChat = async (uid: string, name: string) => {
         const combinedId = userData.uid > uid
@@ -40,29 +40,36 @@ const ListingItems = (props: any) => {
         // const chatDocRefSnap = await getDoc(chatDocRef);
         const chatsRef = collection(db, 'chats');
         const chatNamesRef = collection(db, 'chatUsernames');
+        const firestoreChatRef = doc(db, 'chatUsernames', userData.uid);
+        const chatRefSnap = await getDoc( firestoreChatRef );
         dispatch(storeActions.setCombinedId(combinedId));
         dispatch(storeActions.setChatData({ uid, data: slicedUserData }));
         dispatch(storeActions.setUserChatNames(name));
 
-        await getUserChatNames(uid).then( res => console.log(res) );
-        
-        console.log(chatNames);
         await setDoc(doc( chatsRef, combinedId ), {
             id: uuid(),
             text: '',
             senderId: userData.uid,
             date: Timestamp.now()
         }, { merge: true });
-        
-        await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/userChatNames.json${uid}`, {
-            method: 'POST',
-            body: JSON.stringify({
-                userNames: [ name ]
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+
+        if( chatRefSnap.exists() ) {
+            const data = chatRefSnap.data();
+
+            // if( data.names.includes(name) ) {
+            //     return;
+            // } else {
+
+            // }
+            console.log(chatRefSnap.data());
+        } else {
+            console.error('NEMA DATA BATE');
+        }
+
+        await setDoc(doc( chatNamesRef, userData.uid ), {
+            names: chatNames,
+            date: Timestamp.now()
+        }, { merge: true });
     }
 
 	const mappedUsers = props.userData.map( (user: any): any => {
