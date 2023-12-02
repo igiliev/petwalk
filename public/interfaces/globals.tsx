@@ -47,3 +47,23 @@ export interface ChatInpData {
         id: string;
     } ;
 }
+
+export interface CurrentUserImpl {
+    accessToken: string;
+    auth: any;
+    displayName: any;
+    email: string;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    metadata: any;
+    phoneNumber: any;
+    photoURL: any;
+    proactiveRefresh: any;
+    providerData: any[];
+    providerId: string;
+    reloadListener: any;
+    reloadUserInfo: any;
+    stsTokenManager: any;
+    tenantId: any;
+    uid: string;
+}

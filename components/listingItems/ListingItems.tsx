@@ -5,27 +5,26 @@ import Footer from "../footer/Footer";
 import Image from "next/image";
 import './listing-items.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-import { collection, doc, setDoc, Timestamp, getDoc, updateDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { v4 as uuid } from "uuid";
-import { GetStoreData } from "../../public/interfaces/globals";
+import { useRouter } from "next/navigation";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
-    const [ userChatNames, setUserChatNames ] = useState(['']);
     const dispatch = useDispatch();
+    const router = useRouter();
     const handleChange = () => { };
     const handleSearch = () => { };
-    const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
+    // const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]) );
-        console.log(userData.uid);
         // onSnapshot(doc(db, 'chatUsernames', userData.uid), (doc) => {
         //     console.log(doc.data());
         // });
@@ -39,15 +38,13 @@ const ListingItems = (props: any) => {
         // const chatDocRef = doc(db, 'chats');
         // const chatDocRefSnap = await getDoc(chatDocRef);
         const chatsRef = collection(db, 'chats');
-        const chatNamesRef = collection(db, 'chatUsernames');
+        // const chatNamesRef = collection(db, 'chatUsernames');
         const firestoreChatRef = doc(db, 'chatUsernames', userData.uid);
         const chatRefSnap = await getDoc( firestoreChatRef );
         dispatch(storeActions.setCombinedId(combinedId));
         dispatch(storeActions.setChatData({ uid, data: slicedUserData }));
-        dispatch(storeActions.setUserChatNames(name));
 
-        await setDoc(doc( chatsRef, combinedId ), {
-            id: uuid(),
+        await setDoc(doc(db, 'chats', combinedId), {
             text: '',
             senderId: userData.uid,
             date: Timestamp.now()
@@ -55,25 +52,20 @@ const ListingItems = (props: any) => {
 
         if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
-
-            // if( data.names.includes(name) ) {
-            //     return;
-            // } else {
-
-            // }
-            console.log(chatRefSnap.data());
+            // router.push(`/userChat/${userData.uid}`);            
+            //If the selected name is in the /chatUsernames db > redirect to the Chat page
+            if( !data.names.includes(name) ) {
+                dispatch(storeActions.setUserChatNames(name));
+            } else {
+                
+            }
         } else {
             console.error('NEMA DATA BATE');
         }
-
-        await setDoc(doc( chatNamesRef, userData.uid ), {
-            names: chatNames,
-            date: Timestamp.now()
-        }, { merge: true });
     }
 
 	const mappedUsers = props.userData.map( (user: any): any => {
-        const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="test inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
+        const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
         const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
 
         return (
@@ -89,7 +81,7 @@ const ListingItems = (props: any) => {
                         <div className="py-5">Избрани квартали:{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${user.id}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
+                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                     </div>
                 </div>
             </div>
