@@ -15,12 +15,12 @@ import { usePathname } from "next/navigation";
 const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ userData, setUserData ]: any[] = useState();
-    const [ currentUser, setCurrentUser ]: any = useState({});
+    const [ currentUserUID, setCurrentUserUID ]: any = useState();
     const [ userChatClicked, setUserChatClicked ] = useState(false);
     const [ userChatNames, setUserChatNames ]: any = useState([]);
     const [ selectedUserMessages, setSelectedUserMessages ] = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
-    let chatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
+    const chatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const path = usePathname();
     const chatNamesRef = collection(db, 'chatUsernames');
 
@@ -29,24 +29,25 @@ const Chat = () => {
         //Get everything after userChat/ which is the user ID
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = regex.exec(path)![0];
+        setCurrentUserUID(userID);
         console.log(userID);
 
         const chatNamesFunc = async () => {
             const firestoreChatRef = doc(db, 'chatUsernames', userID);
             const chatRefSnap = await getDoc( firestoreChatRef );
             const data = chatRefSnap.data();
+            console.log(data);
             setUserChatNames(data?.names);
         }
         
         chatNamesFunc();
-        console.log(userChatNames);
-        console.log(chatNames);
+        // console.log(userChatNames);
     }, [ path ] );
 	
     const handleEnter = async (event: any) => {
+        // console.log(chatNames);
         const senderUid: string = userData.uid;
         if ( event.key === 'Enter' && event.target.value !== '' ) {
-            console.log(event.target.value);
             setChatInput(event.target.value);
             await updateDoc(doc(db, 'chats', combinedId), {
                 messages: arrayUnion({
@@ -56,8 +57,10 @@ const Chat = () => {
                 })
             });
 
-            await setDoc(doc( chatNamesRef, currentUser.uid ), {
-                names: chatNames,
+            console.log(chatNames);
+
+            await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
+                names: userChatNames,
                 date: Timestamp.now()
             }, { merge: true });
         }

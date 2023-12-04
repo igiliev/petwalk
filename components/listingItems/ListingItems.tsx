@@ -54,12 +54,14 @@ const ListingItems = (props: any) => {
             const data = chatRefSnap.data();
             // router.push(`/userChat/${userData.uid}`);            
             //If the selected name is in the /chatUsernames db > redirect to the Chat page
+            console.log(data.names);
             if( !data.names.includes(name) ) {
                 dispatch(storeActions.setUserChatNames(name));
             } else {
                 
             }
         } else {
+            dispatch(storeActions.setUserChatNames(name));
             console.error('NEMA DATA BATE');
         }
     }
