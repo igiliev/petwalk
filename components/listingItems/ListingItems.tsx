@@ -31,6 +31,7 @@ const ListingItems = (props: any) => {
     }, [ userData.uid ] );
 
     const startChat = async (uid: string, name: string) => {
+        dispatch(storeActions.setUserChatNames(name));
         const combinedId = userData.uid > uid
         ? userData.uid + uid
         : uid + userData.uid;
@@ -50,20 +51,16 @@ const ListingItems = (props: any) => {
             date: Timestamp.now()
         }, { merge: true });
 
-        if( chatRefSnap.exists() ) {
+        // if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
             // router.push(`/userChat/${userData.uid}`);            
             //If the selected name is in the /chatUsernames db > redirect to the Chat page
-            console.log(data.names);
-            if( !data.names.includes(name) ) {
-                dispatch(storeActions.setUserChatNames(name));
-            } else {
-                
-            }
-        } else {
-            dispatch(storeActions.setUserChatNames(name));
-            console.error('NEMA DATA BATE');
-        }
+            // if( !data.names.includes(name) ) {
+            //     dispatch(storeActions.setUserChatNames(name));
+            // }
+        // } else {
+        //     console.error('NEMA DATA BATE');
+        // }
     }
 
 	const mappedUsers = props.userData.map( (user: any): any => {

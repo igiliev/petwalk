@@ -52,11 +52,13 @@ const dataSlice = createSlice({
             }
         },
         setUserChatNames( state, action ) {
-            const dummyState = [];
-            dummyState.push(action.payload);
+            const dummyState = new Set<string>();
+            dummyState.add(action.payload);
+            const setToArr: string[] = Array.from(dummyState);
             //Make sure not to add the same name twice
-            if( action.payload !== '' && !dummyState.includes(action.payload) )
-                state.userChatNames.push(action.payload);
+            if( action.payload !== '' ) {
+                state.userChatNames = setToArr;
+            }
         }
     }
 });

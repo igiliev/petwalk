@@ -36,16 +36,15 @@ const Chat = () => {
             const firestoreChatRef = doc(db, 'chatUsernames', userID);
             const chatRefSnap = await getDoc( firestoreChatRef );
             const data = chatRefSnap.data();
-            console.log(data);
             setUserChatNames(data?.names);
         }
         
+        console.log(chatNames);
         chatNamesFunc();
         // console.log(userChatNames);
-    }, [ path ] );
+    }, [ path, chatNames ] );
 	
     const handleEnter = async (event: any) => {
-        // console.log(chatNames);
         const senderUid: string = userData.uid;
         if ( event.key === 'Enter' && event.target.value !== '' ) {
             setChatInput(event.target.value);
@@ -56,11 +55,9 @@ const Chat = () => {
                     date: Timestamp.now()
                 })
             });
-
-            console.log(chatNames);
-
+            
             await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
-                names: userChatNames,
+                names: chatNames,
                 date: Timestamp.now()
             }, { merge: true });
         }
