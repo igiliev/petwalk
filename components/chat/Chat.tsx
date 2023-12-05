@@ -57,8 +57,7 @@ const Chat = () => {
             });
             
             await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
-                names: chatNames,
-                date: Timestamp.now()
+                names: arrayUnion(chatNames.toString())
             }, { merge: true });
         }
     }
