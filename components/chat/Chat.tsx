@@ -22,7 +22,6 @@ const Chat = () => {
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const chatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const path = usePathname();
-    const chatNamesRef = collection(db, 'chatUsernames');
 
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]) );
@@ -30,7 +29,6 @@ const Chat = () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = regex.exec(path)![0];
         setCurrentUserUID(userID);
-        console.log(userID);
 
         const chatNamesFunc = async () => {
             const firestoreChatRef = doc(db, 'chatUsernames', userID);
@@ -39,7 +37,6 @@ const Chat = () => {
             setUserChatNames(data?.names);
         }
         
-        console.log(chatNames);
         chatNamesFunc();
         // console.log(userChatNames);
     }, [ path, chatNames ] );
@@ -63,18 +60,23 @@ const Chat = () => {
     }
 
     const sendMsgClick = () => { };
-    // const mapedChatNames = userChatNames.map( (name: string) => <p>{name}</p> );
+    const startChat = async () => {
+        const firestoreChatRef = doc(db, 'chats', combinedId);
+        const chatRefSnap = await getDoc( firestoreChatRef );
+        console.log(chatRefSnap.data());
+    }
+    const mapedChatNames = userChatNames && userChatNames.map( (name: string) => <p onClick={startChat} key={uuid()}>{name}</p> );
 
     return (
         <div className="chat-wrapper m-auto mt-24 border border-black rounded">
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    {/* { mapedChatNames } */}
+                    { mapedChatNames }
                 </div>
                 <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
                     <div className="h-full bg-yellow-100 p-5 overflow-auto overflow-y-scroll">
-                        <ChatMessages combinedId={combinedId} messages={chatInput} selectedUserMsgs={selectedUserMessages} />
+                        <ChatMessages messages={chatInput} />
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
                         <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />

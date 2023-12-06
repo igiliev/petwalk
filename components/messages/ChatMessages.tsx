@@ -8,20 +8,20 @@ const ChatMessages = (props: any) => {
     const [ personalText, setPersonalText ] = useState(['']);
 
     useEffect( () => {
-        const res = onSnapshot(doc(db, "chats", props.combinedId ), (doc: any) => {
-            const textData: PassedMessages = doc.data();
-            // textData.messages.forEach( data => setPersonalText( prevText => [ ...personalText, data.text ] ));
-        });
+        // const res = onSnapshot(doc(db, "chats", props.combinedId ), (doc: any) => {
+        //     const textData: PassedMessages = doc.data();
+        //     // textData.messages.forEach( data => setPersonalText( prevText => [ ...personalText, data.text ] ));
+        // });
 
         // console.log(props.selectedUserMsgs);
         //unsub
-        return () => {
-            res();
-        }
+        // return () => {
+        //     res();
+        // }
         
-    }, [ props.selectedUserMsgs ]);
+    }, [ ]);
 
-    const chatElem = props.selectedUserMsgs.map( (item: any) => <p key={item.id + v4()} className="bg-blue-300 my-2 p-3 rounded-xl">{item.text}</p> );
+    // const chatElem = props.selectedUserMsgs.map( (item: any) => <p key={item.id + v4()} className="bg-blue-300 my-2 p-3 rounded-xl">{item.text}</p> );
 
     return (
         <div className="messageContainer">
