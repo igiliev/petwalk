@@ -74,7 +74,7 @@ const Chat = async () => {
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    { chatNamesData?.names.map( (name: string) => <p key={uuid()}>{name}</p> ) }
+                    <>{ chatNamesData?.names.map( (name: string) => <p key={uuid()}>{name}</p> ) }</>
                 </div>
                 <div className={`w-full 'bg-white' relative`}>
                     <div className="h-full bg-yellow-100 p-5 overflow-auto overflow-y-scroll">
