@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, Timestamp, setDoc, getDoc, DocumentData, getFirestore } from "firebase/firestore";
@@ -12,36 +12,46 @@ import { currUserData } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
 import { UserImpl } from "../../app/redux/store";
 
-const fetchchatUsernameseData = async () => {
-    const path = usePathname();
-    //Get everything after userChat/ which is the user ID
-    const regex = /(?<=userChat\/).*/gm;
-    const userID: string = regex.exec(path)![0];
-    const firestoreChatRef = doc(db, 'chatUsernames', userID);
-    const chatRefSnap = await getDoc( firestoreChatRef );
-    const data = await chatRefSnap.data();
-    return data;
+interface ChatMsgsData {
+    text: string;
+    date: Date;
+    senderId: string;
 }
 
-const fetchChatData = async (combinedId: string) => {
-    const firestoreChatRef = doc(db, 'chats', combinedId);
-    const chatRefSnap = await getDoc( firestoreChatRef );
-    const data = await chatRefSnap.data();
-    return data;
-}
-
-const Chat = async () => {
+const Chat = () => {
     // const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const [ chatInput, setChatInput ] = useState('');
-    // const [ userData, setUserData ]: any[] = useState();
+    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ currentUserUID, setCurrentUserUID ]: any = useState();
-    const [ myChatMessages, setMyChatMessages ] = useState('');
-    const [ selectedUserChatMsgs, setSelectedUserChatMsgs ] = useState('');
+    const [ myChatMessages, setMyChatMessages ]: any = useState([]);
+    const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const chatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
-    const chatNamesData = await fetchchatUsernameseData();
-    const chatData = await fetchChatData(combinedId);
-    console.log(chatData);
+    const path = usePathname();
+
+    useEffect( () => {
+        const regex = /(?<=userChat\/).*/gm;
+        const userID: string = regex.exec(path)![0];
+        setCurrentUserUID(userID);
+
+        const fetchUserNames = async () => {
+            const firestoreChatRef = await doc(db, 'chatUsernames', userID);
+            
+            try {
+                const chatRefSnap = await getDoc( firestoreChatRef );
+                if( chatRefSnap.exists() ) {
+                    const { names } = chatRefSnap.data();
+                    setChatUsernames( names );
+                } else {
+                    console.log('data was not fetched');
+                }
+            } catch( error ) {
+                console.log(error);
+            }
+        }
+
+        fetchUserNames();
+    }, [] )
     	
     const handleEnter = async (event: any) => {
         if ( event.key === 'Enter' && event.target.value !== '' ) {
@@ -65,8 +75,24 @@ const Chat = async () => {
     const sendMsgClick = () => { };
     const startChat = async () => {
         const firestoreChatRef = doc(db, 'chats', combinedId);
-        const chatRefSnap = await getDoc( firestoreChatRef );
-        const data: DocumentData | undefined = chatRefSnap.data();
+        try {
+            const chatRefSnap = await getDoc( firestoreChatRef );
+            if( chatRefSnap.exists() ) {
+                const { messages } = chatRefSnap.data();
+                const myChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId === currentUserUID );
+                const userChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId !== currentUserUID );
+                const allMyText: string[] = [];
+                const allUserText: string[] = [];
+                userChatData.forEach( data => allUserText.push(data.text) );
+                myChatData.forEach( data => allMyText.push(data.text) );
+                setMyChatMessages(allMyText);
+                setSelectedUserChatMsgs(allUserText);
+            } else {
+                console.log('chat data was not fetched');
+            }
+        } catch(error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -74,10 +100,14 @@ const Chat = async () => {
             <div className='bg-red-300 p-5'></div>
             <div className="chat-inner flex h-full">
                 <div className="w-36 bg-white h-full border-r border-black">
-                    <>{ chatNamesData?.names.map( (name: string) => <p key={uuid()}>{name}</p> ) }</>
+                <>
+                    { chatUsernames.map( name => (
+                        <p key={uuid()} onClick={startChat}>{ name }</p>
+                    ))}
+                </>
                 </div>
                 <div className={`w-full 'bg-white' relative`}>
-                    <div className="h-full bg-yellow-100 p-5 overflow-auto overflow-y-scroll">
+                    <div className="h-full bg-purple-400 p-5 overflow-auto overflow-y-scroll">
                         <ChatMessages myMsgs={myChatMessages} userMsgs={selectedUserChatMsgs} />
                     </div>
                     <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>

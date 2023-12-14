@@ -4,11 +4,10 @@ import { db } from "../../firebase/config";
 import { PassedMessages } from "../../public/interfaces/globals";
 import { v4 } from 'uuid';
 
-const ChatMessages = ({myMsgs, userMsgs}: { myMsgs: string; userMsgs: string }) => {
+const ChatMessages = ({myMsgs, userMsgs}: any) => {
     const [ personalText, setPersonalText ] = useState(['']);
 
     useEffect( () => {
-        
     }, [ ]);
 
     return (
