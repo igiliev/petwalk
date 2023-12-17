@@ -55,7 +55,7 @@ const Login = () => {
                 <div className="flex flex-col m-auto px-10 py-10 shadow-xl w-100">
                     <h1 className="text-center text-2xl">Успешно вписване</h1>
                     <Link href="/">
-                        <button onClick={handleBackToHome} className="bg-red-400 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
+                        <button onClick={handleBackToHome} className="bg-green-2 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
                     </Link>
                 </div>
                 :
@@ -72,7 +72,7 @@ const Login = () => {
                             <input onChange={handlePassword} type="password" className="border rounded py-2 pl-3" id="phone" />
                         </div>
                         <div className="flex w-full">
-                            <button className={`bg-red-400 p-4 w-full text-white text-xl mt-4 rounded`}>Влез</button>
+                            <button className={`bg-green-2 p-4 w-full text-white text-xl mt-4 rounded`}>Влез</button>
                         </div>
                     </form>
                     <div className='w-full absolute bottom-0 left-0'>

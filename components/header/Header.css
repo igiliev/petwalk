@@ -6,7 +6,7 @@
     height: 2px;
     bottom: 0;
     left: 0;
-    background-color: #ef4444;
+    background-color: #48A9A6;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
 }

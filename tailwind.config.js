@@ -16,6 +16,7 @@ module.exports = {
       },
       fontFamily: {
       //let's add our fonts here
+      sans: ['var(--font-montserrat)']
       },
     },
   },

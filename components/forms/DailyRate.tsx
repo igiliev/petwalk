@@ -44,7 +44,7 @@ const DailyRate = (props: any) => {
             </div>
             <p className="mb-5 text-slate-500">Ако не сте сигурни в тарифата, добавете приблизителна стойност. Винаги можете да я промените по-късно.</p>
             <div className="flex w-full">
-                <button disabled={ nextDisabled } className={`bg-red-400 p-4 w-full text-white text-xl mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
+                <button disabled={ nextDisabled } className={`bg-green-2 p-4 w-full text-white text-xl mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
             </div>
         </form>
     )

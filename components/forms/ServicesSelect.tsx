@@ -20,8 +20,8 @@ const ServicesSelect = (props: any) => {
      const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
      
      useEffect( () => {
-        setPetsitter(getState.find( (item: any): any => item['regOption'] ).regOption === 'sitter');
-    }, [] );
+        setPetsitter(getState.find( (item: any) => item['regOption'] ).regOption === 'sitter');
+    }, [getState] );
 
     // TODO: Fix all the types here
     const handleCheck = (event: any) => {
@@ -85,7 +85,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="walk" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.walk ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.walk ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className="ml-4">Разходка на куче</span>
                         <input type="checkbox" id="walk" name="walk" value="walk" onClick={handleCheck} className="opacity-0" />
@@ -95,7 +95,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="ownerHome" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.ownerHome ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.ownerHome ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className="ml-4">Гледане в дома на собственика</span>
                         <input type="checkbox" id="ownerHome" name="ownerNome" value="ownerHome" onChange={handleCheck} className="opacity-0" />
@@ -105,9 +105,9 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="walkerHome" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.walkerHome ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.walkerHome ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
-                        <span className="ml-4">Гледане в дома на водача</span>
+                        <span className="ml-4">Гледане в дома на гледача</span>
                         <input type="checkbox" id="walkerHome" name="walkerHome" value="walkerHome" onChange={handleCheck} className="opacity-0" />
                     </label>
                 </div>
@@ -115,7 +115,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="visitation" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.visitation ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.visitation ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className='ml-4'>Посещение на място</span>
                         <input type="checkbox" id="visitation" name="visitation" value="visitation" onChange={handleCheck} className="opacity-0" />
@@ -125,7 +125,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5 items-center">
                     <label htmlFor="dayCare" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.dayCare ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.dayCare ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className='ml-4'>Дневна грижа за любимците</span>
                         <input type="checkbox" id="dayCare" name="dayCare" value="dayCare" onChange={handleCheck} className="opacity-0" />
@@ -142,7 +142,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="dog" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.dog ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.dog ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className='ml-4'>Куче</span>
                         <input type="checkbox" id="dog" name="dog" value="dog" onChange={handleCheck} className="opacity-0" />
@@ -152,7 +152,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="cat" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.cat ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.cat ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className='ml-4'>Котка</span>
                         <input type="checkbox" id="cat" name="cat" value="cat" onChange={handleCheck} className="opacity-0" />
@@ -162,7 +162,7 @@ const ServicesSelect = (props: any) => {
                 <div className="mb-5">
                     <label htmlFor="otherAnimal" className='flex text-lg hover:cursor-pointer'>
                         <span>
-                            <FontAwesomeIcon icon={ !selected.otherAnimal ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#EF4444" }}/>
+                            <FontAwesomeIcon icon={ !selected.otherAnimal ? faCircle : faCircleCheck} style={{ fontSize: 30, color: "#48A9A6" }}/>
                         </span>
                         <span className='ml-4'>Други</span>
                         <input type="checkbox" id="otherAnimal" name="otherAnimal" value="otherAnimal" onChange={handleCheck} className="opacity-0" />
@@ -170,7 +170,7 @@ const ServicesSelect = (props: any) => {
                 </div>
 
                 <div className="flex w-full">
-                    <button className={`bg-red-400 p-4 w-full text-white mt-4 rounded`}>Напред</button>
+                    <button className={`bg-green-2 p-4 w-full text-white mt-4 rounded`}>Напред</button>
                 </div>
             </form>
         </div>

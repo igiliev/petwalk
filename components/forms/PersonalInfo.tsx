@@ -45,7 +45,7 @@ const PersonalInfo = (props: any) => {
                 { passValidation && <span className="text-red-500 font-medium mt-2">Паролата трябва да е с минимум 6 символа</span> }
             </div>
             <div className="flex w-full">
-                <button disabled={ nextDisabled } className={`bg-red-400 p-4 w-full text-white mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
+                <button disabled={ nextDisabled } className={`bg-green-2 p-4 w-full text-white mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
             </div>
         </form>
     )

@@ -7,7 +7,6 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: 'Proxima Nova';
 }
 
 html,
@@ -26,4 +25,56 @@ html {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.border-3 {
+  border-width: 3px;
+}
+
+.bg-red-2 {
+  background-color: #FE6D73;;
+}
+
+.bg-green-2 {
+  background-color: #48A9A6;
+}
+
+.bg-gold {
+  background-color: #FFCB77;
+}
+
+.bg-gold-outline {
+  border-color: #D4B483;
+}
+
+.bg-gold-outline:hover {
+  background-color: #FFCB77;
+  color: #000;
+}
+
+.bg-grey-1 {
+  background-color: #FEF9EF;
+}
+
+.bg-grey-2 {
+  background-color: #F0F6FF;
+}
+
+.text-grey-1 {
+  color: #FEF9EF;
+}
+
+.text-gold {
+  color: #FFCB77;
+}
+
+.text-green-2 {
+  color: #48A9A6;
+}
+.text-red-2 {
+  color: #FE6D73;
+}
+
+.border-green-2 {
+  border-color: #48A9A6;
 }

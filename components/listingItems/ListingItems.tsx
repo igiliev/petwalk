@@ -3,7 +3,7 @@
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import Image from "next/image";
-import './listing-items.css';
+import './ListingItems.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch } from "react-redux";
 import Link from "next/link";
@@ -65,37 +65,46 @@ const ListingItems = (props: any) => {
 	const mappedUsers = props.userData.map( (user: any): any => {
         const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
         const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
+        
 
         return (
-            <div className="flex lg:flex-row flex-col items-center w-full border bg-gray-100 my-10 shadow-lg p-5 rounded-md border-l-4 border-l-red-400" key={user.id}>
+            <div className="flex lg:flex-row flex-col items-center w-full border bg-slate-200 my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={user.id}>
                 <div className="p-5">
-                    <Image src={ user.userImage === 'default' ? defaultUserImg : user.userImage } alt="user profile image" width="70" height="40" />
+                    <Image src={ user.userImage === 'default' ? defaultUserImg : user.userImage } alt="user profile image" width="90" height="50" />
                 </div>
-                <div className="pb-3">
-                    <h1 className="text-2xl font-medium">{user.name}</h1>
+                <div className="pb-3 text-grey-2">
+                    <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
                     <div>
                         <span>{user.dailyRate}лв на </span>
                         <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
-                        <div className="py-5">Избрани квартали:{hoodLabels}</div>
+                        <div className="py-5"><span>Избрани квартали:</span>{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
                         <p className="my-3">{user.describtion}</p>
-                        <Link className="text-white font-medium bg-red-400 rounded p-3" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                     </div>
                 </div>
+                {
+                    userLoggedin ?
+                        <div className="msg-btn-wrapper">
+                            <a className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</a>
+                        </div>
+                    :
+                        <div></div>
+                }
             </div>
-        )
+        )        
     } );
  
     return (
-        <div className="pt-44 w-full h-full bg-gray-300">
+        <div className="pt-44 w-full h-full bg-grey-2">
             <Header />
             <div className="flex flex-col list-users-inner lg:flex-row mb-10">
-                <div className="flex flex-col shadow-xl bg-gray-100 p-3">
+                <div className="flex flex-col shadow-xl bg-slate-200 p-3 mb-8">
                     <input onChange={handleChange} className="border rounded py-2 pl-3" type="text" placeholder="Търсете по квартал" />
-                    <button className="hover:bg-gray-300 hover:text-black mt-3 border rounded bg-red-500 text-white py-1 text-lg" type="submit" onClick={handleSearch}>Търсене</button>
+                    <button className="hover:bg-teal-700 mt-3 border rounded bg-green-2 text-white py-1 text-lg" type="submit" onClick={handleSearch}>Търсене</button>
                 </div>
-                <div className="w-full lg:ml-20 p-7 border-1 border-black">
-                    <h1 className="text-center text-3xl mb-5">Налични гледачи в избраните квартали</h1>
+                <div className="w-full lg:ml-20 p-7 pt-0 border-1 border-black">
+                    <h1 className="text-3xl mb-5 font-semibold max-sm:text-center">Налични гледачи в избраните квартали</h1>
+                    <p className="mb-5">Това е демо версия на сайта. За да видите всички гледачи и да може да изпратите съобщение се регистрирайте(напълно безплатно е и става за 1 минута)</p>
                     { mappedUsers }
                 </div>
             </div>

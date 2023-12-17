@@ -78,7 +78,7 @@ const SelectHood = (props: any) => {
     
     return (
         <form>
-            <h1 className="text-xl mb-2">Изберете всичките квартали в които ще работите</h1>
+            <h1 className="text-xl mb-2">Изберете кварталите в които ще работите</h1>
                 <div className="mb-5">
                     <input type="text" placeholder="Търсете квартали" value={inputValue} className="w-full border-2 p-2" onChange={handleHoodDynamicSearch} />
                 </div>
@@ -87,7 +87,7 @@ const SelectHood = (props: any) => {
                 <MultiSelect options={hoodObj} selected={selected} toggleOption={toggleOption} />
              </div>
             <div className="flex w-full">
-                <button onClick={handleSubmit} disabled={ selected.join('').length === 0 } className={`bg-red-400 p-4 w-full text-white text-xl mt-4 rounded ${ selected.join('').length === 0 ? 'disabled' : ''}`}>Завърши регистрация</button>
+                <button onClick={handleSubmit} disabled={ selected.join('').length === 0 } className={`bg-green-2 p-4 w-full text-white text-xl mt-4 rounded ${ selected.join('').length === 0 ? 'disabled' : ''}`}>Завърши регистрация</button>
             </div>
         </form>
     )

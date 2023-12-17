@@ -15,7 +15,7 @@ const MultiSelect = ({ options, selected, toggleOption }: any) => {
                 const isSelected = selected.includes(option.id);
                 return (
                     <li key={option.id} className="relative py-2 ml-5" onClick={() => toggleOption({ id: option.id })}>
-                        { isSelected && <FontAwesomeIcon icon={ faCheck } style={{ position: 'absolute', left: -20, fontSize: 25, color: "#EF4444" }}/> }
+                        { isSelected && <FontAwesomeIcon icon={ faCheck } style={{ position: 'absolute', left: -20, fontSize: 25, color: "#48A9A6" }}/> }
                         <input type="checkbox" checked={isSelected} onChange={handleChange} className="invisible" />
                         <span className="cursor-pointer text-lg">{option.label}</span>
                     </li>

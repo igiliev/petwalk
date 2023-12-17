@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 const ContactInfo = (props: any) => {
-    const [ mailVal, setMailVal ] = useState('')
+    const [ mailVal, setMailVal ] = useState('');
     const [ emailValidation, setEmailValidation ] = useState(false);
     const [ phoneVal, setPhoneVal ] = useState('');
     const [ nextDisabled, setNextDisabled ] = useState(true);
@@ -45,7 +45,7 @@ const ContactInfo = (props: any) => {
                 <input onChange={handlePhoneVal} className="border rounded py-2 pl-3" id="phone" />
             </div>
             <div className="flex w-full">
-                <button disabled={ nextDisabled } className={`bg-red-400 p-4 w-full text-white mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
+                <button disabled={ nextDisabled } className={`bg-green-2 p-4 w-full text-white mt-4 rounded ${nextDisabled ? 'disabled' : ''}`}>Напред</button>
             </div>
         </form>
     )

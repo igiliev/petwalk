@@ -10,3 +10,7 @@
 .msg-btn-wrapper {
     align-self: flex-end;
 }
+
+img {
+    max-width: fit-content;
+}
