@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { v4 as uuid } from "uuid";
 import { useRouter } from "next/navigation";
 
 const ListingItems = (props: any) => {
@@ -51,16 +50,16 @@ const ListingItems = (props: any) => {
             date: Timestamp.now()
         }, { merge: true });
 
-        // if( chatRefSnap.exists() ) {
+        if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
-            // router.push(`/userChat/${userData.uid}`);            
-            //If the selected name is in the /chatUsernames db > redirect to the Chat page
-            // if( !data.names.includes(name) ) {
-            //     dispatch(storeActions.setUserChatNames(name));
-            // }
-        // } else {
-        //     console.error('NEMA DATA BATE');
-        // }
+            router.push(`/userChat/${userData.uid}`);            
+            // If the selected name is in the /chatUsernames db > redirect to the Chat page
+            if( !data.names.includes(name) ) {
+                dispatch(storeActions.setUserChatNames(name));
+            }
+        } else {
+            console.error('NEMA DATA BATE');
+        }
     }
 
 	const mappedUsers = props.userData.map( (user: any): any => {

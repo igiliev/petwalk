@@ -52,6 +52,7 @@ const dataSlice = createSlice({
             }
         },
         setUserChatNames( state, action ) {
+            console.log(action.payload);
             const dummyState = new Set<string>();
             dummyState.add(action.payload);
             const setToArr: string[] = Array.from(dummyState);
