@@ -5,22 +5,23 @@ import Footer from "../footer/Footer";
 import Image from "next/image";
 import './ListingItems.css';
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { GetStoreData } from "../../public/interfaces/globals";
 import { useRouter } from "next/navigation";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
+    const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
+    const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
+    const [filterApplied, setFilterApplied] = useState(false);
+    const [matchedItems, setMatchedItems] = useState([]);
     const dispatch = useDispatch();
-    const router = useRouter();
-    const handleChange = () => { };
-    const handleSearch = () => { };
-    // const chatNames = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]) );
@@ -50,21 +51,24 @@ const ListingItems = (props: any) => {
             date: Timestamp.now()
         }, { merge: true });
 
-        if( chatRefSnap.exists() ) {
-            const data = chatRefSnap.data();
-            router.push(`/userChat/${userData.uid}`);            
-            // If the selected name is in the /chatUsernames db > redirect to the Chat page
-            if( !data.names.includes(name) ) {
-                dispatch(storeActions.setUserChatNames(name));
-            }
-        } else {
-            console.error('NEMA DATA BATE');
-        }
+        // if( chatRefSnap.exists() ) {
+        //     const data = chatRefSnap.data();
+        //     // router.push(`/userChat/${userData.uid}`);   
+        //     // If the selected name is in the /chatUsernames db > redirect to the Chat page
+        //     if( !data.names.includes(name) ) {
+        //         dispatch(storeActions.setUserChatNames(name));
+        //     }
+        // } else {
+        //     console.error('NEMA DATA BATE');
+        // }
     }
 
+    const handleChange = () => { };
+    const handleSearch = () => { };
+
 	const mappedUsers = props.userData.map( (user: any): any => {
-        const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
-        const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
+    const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
+    const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
         
 
         return (
@@ -79,13 +83,13 @@ const ListingItems = (props: any) => {
                         <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
                         <div className="py-5"><span>Избрани квартали:</span>{hoodLabels}</div>
                         <p>Предлагани услуги: { servicesLabels }</p>
-                        <p className="my-3">{user.describtion}</p>
+                        <p className="my-3">{user.describtion}</p> 
                     </div>
                 </div>
                 {
                     userLoggedin ?
                         <div className="msg-btn-wrapper">
-                            <a className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</a>
+                            <Link className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                         </div>
                     :
                         <div></div>

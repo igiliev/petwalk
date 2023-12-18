@@ -18,7 +18,6 @@ const UploadProfileImg = (props: any) => {
     const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
     const [ nextDisabled, setNextDisabled ] = useState(true);
     const userImageLisRef = ref( storage, "/profileImages" );
-    const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
     
     useEffect( () => {
         setPetsitter(getState.find( (item: any): any => item['regOption'] ).regOption === 'sitter');

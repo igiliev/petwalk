@@ -64,8 +64,9 @@ const Chat = () => {
         //Fetching chat data from firestore and storing it in the local state
         try {
             const chatRefSnap = await getDoc( firestoreChatRef );
+            console.log(chatRefSnap.data());
             if( chatRefSnap.exists() ) {
-                updateChatMsgs(chatRefSnap.data());
+                updateChatMsgs(chatRefSnap);
             } else {
                 console.log('chat data was not fetched');
             }
