@@ -10,7 +10,7 @@ import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-import { collection, doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
+import { collection, doc, updateDoc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,23 @@ const ListingItems = (props: any) => {
         //     console.log(doc.data());
         // });
     }, [ userData.uid ] );
+	
+	const handleChange = (event: any) => {
+        let string = event.target.value.toLowerCase()
+        if (string.length > 0) {
+            const filteredArray:any = props.userData.filter((obj: any) =>
+                obj.selectedHoods.some((item: any) => item.label.toLowerCase().includes(string))
+            );
+            filteredArray.length > 0 && setMatchedItems(filteredArray)
+        } else {
+            setMatchedItems([])
+            setFilterApplied(false)
+        }
+    };
+	
+	const handleSearch = () => {
+        setFilterApplied(true)
+    };
 
     const startChat = async (uid: string, name: string) => {
         dispatch(storeActions.setUserChatNames(name));
@@ -62,19 +79,16 @@ const ListingItems = (props: any) => {
         //     console.error('NEMA DATA BATE');
         // }
     }
+    const usersToRender = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData
 
-    const handleChange = () => { };
-    const handleSearch = () => { };
-
-	const mappedUsers = props.userData.map( (user: any): any => {
-    const hoodLabels = user.selectedHoods.map( (hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span> );        
-    const servicesLabels =  user.selectedServices.map( (serviceLabel:any):any => <strong key={user.id + Math.floor( Math.random() * 1000 )}>{`${serviceLabel}, `}</strong> );
-        
+    const mappedUsers: any = usersToRender.map((user: any): any => {
+        const hoodLabels = user.selectedHoods.map((hood: any): any => <span className="test inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span>);
+        const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
 
         return (
             <div className="flex lg:flex-row flex-col items-center w-full border bg-slate-200 my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={user.id}>
                 <div className="p-5">
-                    <Image src={ user.userImage === 'default' ? defaultUserImg : user.userImage } alt="user profile image" width="90" height="50" />
+                    <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" />
                 </div>
                 <div className="pb-3 text-grey-2">
                     <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
@@ -82,8 +96,8 @@ const ListingItems = (props: any) => {
                         <span>{user.dailyRate}лв на </span>
                         <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
                         <div className="py-5"><span>Избрани квартали:</span>{hoodLabels}</div>
-                        <p>Предлагани услуги: { servicesLabels }</p>
-                        <p className="my-3">{user.describtion}</p> 
+                        <p>Предлагани услуги: {servicesLabels}</p>
+                        <p className="py-5"><span>Oписание: </span>{user.describtion}</p>
                     </div>
                 </div>
                 {
@@ -91,13 +105,13 @@ const ListingItems = (props: any) => {
                         <div className="msg-btn-wrapper">
                             <Link className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                         </div>
-                    :
+                        :
                         <div></div>
                 }
             </div>
-        )        
-    } );
- 
+        )
+    });
+
     return (
         <div className="pt-44 w-full h-full bg-grey-2">
             <Header />
@@ -109,7 +123,7 @@ const ListingItems = (props: any) => {
                 <div className="w-full lg:ml-20 p-7 pt-0 border-1 border-black">
                     <h1 className="text-3xl mb-5 font-semibold max-sm:text-center">Налични гледачи в избраните квартали</h1>
                     <p className="mb-5">Това е демо версия на сайта. За да видите всички гледачи и да може да изпратите съобщение се регистрирайте(напълно безплатно е и става за 1 минута)</p>
-                    { mappedUsers }
+                    {mappedUsers}
                 </div>
             </div>
             <Footer />
