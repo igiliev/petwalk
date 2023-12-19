@@ -110,9 +110,9 @@ const Chat = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form className="chat-form" onSubmit={handleSubmit}>
             <div className="chat-wrapper m-auto mt-24">
-                <div className='bg-red-300 p-5'></div>
+                <div className='bg-green-2 p-6'></div>
                 <div className="chat-inner flex h-full">
                     <div className="w-36 bg-white h-full">
                     <>
@@ -122,12 +122,12 @@ const Chat = () => {
                     </>
                     </div>
                     <div className={`w-full 'bg-white' relative`}>
-                        <div className="h-full bg-purple-400 p-5 overflow-auto overflow-y-scroll">
+                        <div className="h-full bg-grey-2 p-5 overflow-auto overflow-y-scroll">
                             <ChatMessages myMsgs={myChatMessages} userMsgs={selectedUserChatMsgs} chatInit={chatInit} />
                         </div>
-                        <div className='flex justify-between items-center w-full'>
+                        <div className='flex bg-white justify-between items-center w-full'>
                             <input onChange={handleEnter} type="text" placeholder='Изпрати съобщение' value={chatInput} className='w-full py-8 px-5 outline-none' />
-                            <button onClick={sendMsgClick} className='border-1 border-black bg-red-300 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
+                            <button onClick={sendMsgClick} className='border-1 border-black bg-green-2 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
                         </div>
                     </div>
                 </div>
