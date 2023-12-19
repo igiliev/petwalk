@@ -10,9 +10,22 @@ export interface storeAction {
     type: string;
 }
 
+export interface UserImpl {
+    apiKey: string;
+    appName: string;
+    createdAt: string;
+    email: string;
+    emailVerified: boolean;
+    isAnonymous: boolean;
+    lastLoginAt: string;
+    providerData: any[];
+    stsTokenManager: any;
+    uid: string;
+}
+
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '' },
+    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [''] },
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -26,11 +39,27 @@ const dataSlice = createSlice({
         setUserLogin(state, action) {
             state.userLoggedin = action.payload;
         },
-        currentUserId(state, action) {
+        setCurrentUserId(state, action) {
             state.currentUserId = action.payload;
         },
-        combinedId(state, action) {
+        setCombinedId(state, action) {
             state.combinedId = action.payload;
+        },
+        setChatData( state, action ) {
+            state.chatData = {
+                chatId: action.payload.uid,
+                user: action.payload.data
+            }
+        },
+        setUserChatNames( state, action ) {
+            console.log(action.payload);
+            const dummyState = new Set<string>();
+            dummyState.add(action.payload);
+            const setToArr: string[] = Array.from(dummyState);
+            //Make sure not to add the same name twice
+            if( action.payload !== '' ) {
+                state.userChatNames = setToArr;
+            }
         }
     }
 });

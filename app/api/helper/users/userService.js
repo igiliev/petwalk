@@ -1,4 +1,6 @@
-import { getDatabase, ref, onValue, set, update } from "firebase/database";
+import { onAuthStateChanged } from "firebase/auth";
+import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
+import { auth } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
@@ -15,10 +17,11 @@ export async function getUsers(userType) {
             const mail = insideData.find( userData => userData.mailVal ).mailVal
             const dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
             const selectedUser = insideData.find( userData => userData.regOption ).regOption;
-            const describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
+            // const describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
             const selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
             const selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
             const userImage = insideData.find( userData => userData.userImg ).userImg;
+            const uid = insideData.find( userData => userData.uid ).uid;
 
             //Adding only the users that have selected to be a sitter
             if ( selectedUser === 'sitter' ) {
@@ -27,10 +30,10 @@ export async function getUsers(userType) {
                     mail,
                     dailyRate,
                     dailyRateOption,
-                    describtion,
                     selectedHoods,
                     selectedServices,
                     userImage,
+                    uid,
                     id: user
                 });
             } else {
@@ -39,7 +42,6 @@ export async function getUsers(userType) {
                     mail,
                     dailyRate,
                     dailyRateOption,
-                    describtion,
                     selectedHoods,
                     selectedServices,
                     userImage,
@@ -53,41 +55,18 @@ export async function getUsers(userType) {
     return getResponse();
 }
 
-export async function getUserChat(id) {
-    const getResponse = async () => {
-        const fetchUsers = await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/userChat.json/${id}`);
-        const chatTojson = await fetchUsers.json();
-        const storeUserChat = [];
-
-        for( const id in chatTojson ) {
-            storeUserChat.push({ id, data: chatTojson[id] });
-        }
-
-        return storeUserChat;
-    }
-
-    return getResponse();
-}
-
 //Creating the new /userChat collection in the DB
-export function createUserChat(id, name, currentUserId) {
+export function createUserChat(combinedId) {
     const db = getDatabase();
-    set(ref(db, 'userChat/' + id), {
-        username: name,
-        combinedId: id + currentUserId,
-        date: new Date().toLocaleString(),
-        messages: { [name]: 'me default', [name]: 'you default' }
+    set(ref(db, 'chats/' + combinedId), {
+        test: 'test'
     });
 }
 
-export async function getUserDataNew() {
-    const db = getDatabase();
-    const starCountRef = ref(db, 'petSitters');
+export async function getUserData(id) {
     const storeData = [];
-    onValue(starCountRef, (snapshot) => {
-        const data = snapshot.val();
-        storeData.push(data);
-    });
+    const dbRef = ref(getDatabase());
+    await get(child(dbRef, `petSitters/${id}`)).then((snapshot) => storeData.push(snapshot.val()));
     return storeData;
 }
 
@@ -96,7 +75,7 @@ export function updateMessage(id, message) {
     const db = getDatabase();
      update(ref(db, `userChat/${id}`), {
          messages: { me: message, you: 'updated!' }
-     })
+     });
 }
 
 //Getting the data from the /userChat DB
@@ -110,3 +89,23 @@ export async function getSelectedUserChat(id) {
     });
     return storeData;
 }
+
+//Current user data
+export async function currUserData() {
+    const currUserData = [];
+    await onAuthStateChanged(auth, (user) => {
+        currUserData.push(user);
+    });
+
+    return currUserData;
+}
+
+// export async function getUserChatNames(id) {
+//     const data = [];
+//     const db = getDatabase();
+//     console.log(id);
+//     const chatNamesRef = ref(db, 'userChatNames/' + id);
+//     await onValue(chatNamesRef, (snapshot) => {
+//         data.push(snapshot.val());
+//     });
+// }

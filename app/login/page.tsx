@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
 import logo from '../../public/assets/images/logo.png';
-import { getUserDataNew, getUsers } from '../api/helper/users/userService';
+
 
 const Login = () => {
     const [ emailValue, setEmailValue ] = useState('');
@@ -26,13 +26,11 @@ const Login = () => {
     }
 
     const monitorState = async () => {
-        getUsers().then( users => console.log(users) );
-
         await onAuthStateChanged( auth, (user: any) => {
             if ( user ) {
                 // Successful login!
                 console.log('Login success!', user);
-                dispatch(storeActions.currentUserId(user.auth.currentUser.uid));
+                dispatch(storeActions.setCurrentUserId(user.auth.currentUser.uid));
                 setUserIsLogged(true);
             } else {
                 console.error('You are NOT logged in');

@@ -3,89 +3,136 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { doc, updateDoc, arrayUnion, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
+import { GetStoreData } from "../../public/interfaces/globals";
+import { v4 as uuid } from "uuid";
+import { currUserData } from "../../app/api/helper/users/userService";
+import { usePathname } from "next/navigation";
+import { UserImpl } from "../../app/redux/store";
+
+interface ChatMsgsData {
+    text: string;
+    date: Date;
+    senderId: string;
+}
 
 const Chat = () => {
-    const [ userChat, setUserChat ] = useState([]);
-    const [ selectedUserId, setSelectedUserId ] = useState('');
     const [ chatInput, setChatInput ] = useState('');
-    const [ userChatClicked, setUserChatClicked ] = useState(false);
-    const [ messages, setMessages ] = useState('');
-    const currentUserId: string = useSelector( (state:any) => state.dataStore.currentUserId );
-    const combinedId: string = useSelector( (state:any) => state.dataStore.combinedId );
+    const [ chatInit, setChatInit ] = useState(true);
+    const [ chatUsernames, setChatUsernames ] = useState([]);
+    const [ currentUserUID, setCurrentUserUID ]: any = useState();
+    const [ myChatMessages, setMyChatMessages ]: any = useState([]);
+    const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
+    const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
+    const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
+    const path = usePathname();
 
     useEffect( () => {
-        const getChats = () => {
-            const res = onSnapshot(doc(db, "userChats", combinedId ), (doc: any) => {
-                setUserChat( doc.data() );
-            });
+        const regex = /(?<=userChat\/).*/gm;
+        const userID: string = regex.exec(path)![0];
+        setCurrentUserUID(userID);
 
-            //unsub
-            return () => {
-                res();
+        const fetchUserNames = async () => {
+            try {
+                if( stateChatNames ) 
+                    setChatUsernames( stateChatNames );
+            } catch(error) {
+                console.error(error);
             }
-        }
-        currentUserId && getChats();
-        console.log(userChat);
-    }, [ currentUserId ] );
-	
+        }   
+
+        fetchUserNames();
+    }, [] )
+    	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
-
-        if ( event.key === 'Enter' ) {
-            await updateDoc(doc(db, 'chats', combinedId ), {
-                messages: arrayUnion({
-                    text: event.target.value,
-                    id: currentUserId,
-                    userId: selectedUserId,
-                })
-            });
-        }
+        // if ( event.key === 'Enter' && event.target.value !== '' ) {
+            // THIS WORKS BUT IS NOT GONNA BE USED YET - SAVING THE USERNAMES IN THE DB
+            // await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
+            //     names: arrayUnion(chatNames.toString())
+            // }, { merge: true });
+        // }
     }
 
     const sendMsgClick = () => { };
 
-	const mapNames = Object.entries(userChat).map( (user: any) => {
-        if ( user.length ) {
-            console.log(user);
-            const combinedId: string = user[0];
-            const id: string = user[1].userInfo.id;
-            const name: string = user[1].userInfo.displayName;
-
-            return <a onClick={ () => userSelect(combinedId, id)} key={id} className="cursor-pointer">
-                <p className="hover:underline p-3 text-center">{ name }</p>
-            </a> 
+    const startChat = async () => {
+        setChatInit(false);
+        const firestoreChatRef = doc(db, 'chats', combinedId);
+        //Fetching chat data from firestore and storing it in the local state
+        try {
+            const chatRefSnap = await getDoc( firestoreChatRef );
+            console.log(chatRefSnap.data());
+            if( chatRefSnap.exists() ) {
+                updateChatMsgs(chatRefSnap);
+            } else {
+                console.log('chat data was not fetched');
+            }
+        } catch(error) {
+            console.error( error );
         }
-    });
+    }
 
-    const userSelect = (combinedId: string, selectedId: string) => {
-        onSnapshot(doc(db, "chats", combinedId), (doc) => {
-            return doc.exists() && setMessages(doc.data().messages);
+    const handleSubmit = async (event: any) => {
+        event.preventDefault();
+        const userData: UserImpl[] = await currUserData();
+        const senderUid: string = userData[0].uid;
+
+        //Adding the typed in chat msg into /chats 
+        await updateDoc(doc(db, 'chats', combinedId), {
+            messages: arrayUnion({
+                text: chatInput,
+                senderId: senderUid,
+                date: Timestamp.now()
+            })
         });
-        setSelectedUserId(selectedId);
+        //Updating the DB on every submitted messsage and showing in the view
+        onSnapshot(doc(db, 'chats', combinedId), (doc) => {
+            updateChatMsgs(doc);
+        });
+
+        setChatInput('');
+    }
+
+    const updateChatMsgs = async (chatData: any) => {
+        //TODO: Optimize this
+        const { messages }: any = chatData.data();
+        const myChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId === currentUserUID );
+        const userChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId !== currentUserUID );
+        const storeMyText: string[] = [];
+        const storeUserText: string[] = [];
+        userChatData.forEach( data => storeUserText.push(data.text) );
+        myChatData.forEach( data => storeMyText.push(data.text) );
+        setMyChatMessages(storeMyText);
+        setSelectedUserChatMsgs(storeUserText);
     }
 
     return (
-        <div className="chat-wrapper m-auto mt-24 border border-black rounded">
-            <div className='bg-red-300 p-5'></div>
-            <div className="chat-inner flex h-full">
-                <div className="w-36 bg-white h-full border-r border-black">
-                    <div>{ mapNames }</div>
-                </div>
-                <div className={`w-full ${userChatClicked ? 'bg-white' : 'bg-gray-200'} relative`}>
-                    <div className="h-full bg-yellow-100 p-5">
-                        <ChatMessages messages={messages} />
+        <form className="chat-form" onSubmit={handleSubmit}>
+            <div className="chat-wrapper m-auto mt-24">
+                <div className='bg-green-2 p-6'></div>
+                <div className="chat-inner flex h-full">
+                    <div className="w-36 bg-white h-full">
+                    <>
+                        { chatUsernames.map( name => (
+                            <p className="text-center my-2 text-xl hover:cursor-pointer" key={uuid()} onClick={startChat}>{ name }</p>
+                        ))}
+                    </>
                     </div>
-                    <div className='flex justify-between items-center bg-white absolute bottom-0 w-full border-1 border-black'>
-                        <input onKeyDown={handleEnter} type="text" placeholder='Изпрати съобщение' className='w-full py-8 px-5 outline-none' />
-                        <button onClick={sendMsgClick} className='border-1 border-black bg-red-300 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
+                    <div className={`w-full 'bg-white' relative`}>
+                        <div className="h-full bg-grey-2 p-5 overflow-auto overflow-y-scroll">
+                            <ChatMessages myMsgs={myChatMessages} userMsgs={selectedUserChatMsgs} chatInit={chatInit} />
+                        </div>
+                        <div className='flex bg-white justify-between items-center w-full'>
+                            <input onChange={handleEnter} type="text" placeholder='Изпрати съобщение' value={chatInput} className='w-full py-8 px-5 outline-none' />
+                            <button onClick={sendMsgClick} className='border-1 border-black bg-green-2 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </form>
     )
 }
 

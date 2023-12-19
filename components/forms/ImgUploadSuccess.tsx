@@ -1,9 +1,9 @@
 'use client';
 import { useSelector } from "react-redux";
-import { getStoreData } from "./RegistrationComplete";
+import { GetStoreData } from "../../public/interfaces/globals";
 
 const ImgUploadSuccess = (props: any) => {
-    const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
+    const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
 
     const handleClick = () => {
         const getOwner: boolean = getState.some( (opt: {regOption: string}) => opt.regOption === 'owner' );
