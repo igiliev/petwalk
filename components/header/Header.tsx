@@ -4,15 +4,17 @@ import logo from '../../public/assets/images/logo-footer.png';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { getStoreData } from "../forms/RegistrationComplete";
+import { GetStoreData } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions } from "../../app/redux/store";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { v4 } from "uuid";
+
 
 const Header = () => {
-    const userLoggedin = useSelector<getStoreData>(state => state.dataStore.userLoggedin);
-    const userData: any = useSelector<getStoreData>(state => state.dataStore.data);
+    const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
+    const userData: any = useSelector<GetStoreData>(state => state.dataStore.data);
     const [ userEmail, setUserEmail ] = useState('');
     const [hideMenu, setHideMenu] = useState(true);
     const [burgerClassToggle, setBurgerClassToggle] = useState(false);
@@ -26,7 +28,7 @@ const Header = () => {
         dispatch(storeActions.setUserLogin(false));
         await signOut(auth);
     }
-
+  
     const showMenu = () => {
         setHideMenu(state => !state);
         setBurgerClassToggle(state => !state);

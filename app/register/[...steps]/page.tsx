@@ -16,7 +16,6 @@ import RegisterOpitons from '../../../components/forms/RegisterOptions';
 import RegistrationComplete from '../../../components/forms/RegistrationComplete';
 import ImgUploadSuccess from '../../../components/forms/ImgUploadSuccess';
 import OwnerCombined from '../../../components/forms/owners/OwnerCombined';
-import Link from 'next/link';
 
 const RegisterSteps = () => {
     const dispatch = useDispatch();
@@ -39,6 +38,7 @@ const RegisterSteps = () => {
     }
 
     const handlePersonalData = (value: any) => {
+        console.log(value);
         // Sending the data to redux store on every separate step
         dispatch(storeActions.storeData(value));
     }

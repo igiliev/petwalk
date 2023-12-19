@@ -8,16 +8,16 @@ import { useSelector } from 'react-redux';
 import { storage } from '../../firebase/config';
 import { ref, uploadBytes, listAll, getDownloadURL } from 'firebase/storage';
 import { v4 } from 'uuid';
-import { getStoreData } from './RegistrationComplete';
+import { GetStoreData } from '../../public/interfaces/globals';
 
 const UploadProfileImg = (props: any) => {
     const [ selectedImg, setSelectedImg ]: any = useState(null);
     const [ uploadingImg, setUploadingImg ] = useState(false);
     const [ userImageUrl, setUserImageUrl ] = useState('');
     const [ petSitter, setPetsitter ] = useState(false);
+    const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
     const [ nextDisabled, setNextDisabled ] = useState(true);
     const userImageLisRef = ref( storage, "/profileImages" );
-    const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
     
     useEffect( () => {
         setPetsitter(getState.find( (item: any): any => item['regOption'] ).regOption === 'sitter');

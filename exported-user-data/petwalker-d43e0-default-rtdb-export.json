@@ -1,0 +1,228 @@
+{
+  "owners": {
+    "-NgO-kDXqAUwq2w8F6iR": {
+      "sitterData": [
+        "clear",
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "pora@mail.com",
+          "nameVal": "adsddsadas",
+          "passVal": "dSdas$12213",
+          "phoneVal": "1231232132"
+        },
+        {
+          "userImg": "default"
+        }
+      ]
+    },
+    "-NgO-tinv9yX-He-oDeG": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "brandnew@mail.com",
+          "nameVal": "ewqewqeqw",
+          "passVal": "Sdasdad$111",
+          "phoneVal": "3312321321"
+        },
+        {
+          "userImg": "https://firebasestorage.googleapis.com/v0/b/petwalker-d43e0.appspot.com/o/profileImages%2Fid-woman.jfif0f93b7c9-b191-4066-960e-84a24334f7ad?alt=media&token=7dd4c7a6-b097-4221-a4b0-09f15996a835"
+        }
+      ]
+    },
+    "-NgP6PnlhqE08pkntkqE": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "plameto77@gmail.com",
+          "nameVal": "Пламена ",
+          "passVal": "A1234567b",
+          "phoneVal": "0882 363069 "
+        },
+        {
+          "userImg": "https://firebasestorage.googleapis.com/v0/b/petwalker-d43e0.appspot.com/o/profileImages%2Finbound7322953438422744923.jpgde715c54-ba04-4b30-99d0-d610a05c18fa?alt=media&token=ef17e7b7-23af-4da5-aa5c-bb66caceaa48"
+        }
+      ]
+    },
+    "-NgPH7TVRmcNGgkrKVqZ": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "melanistoeva10@gmail.com",
+          "nameVal": "",
+          "passVal": "",
+          "phoneVal": "0889994627"
+        },
+        {
+          "userImg": "default"
+        }
+      ]
+    },
+    "-NgS82JzPDgRW8RpmofT": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "alissa14@abv.bg",
+          "nameVal": "Барова",
+          "passVal": "portis88",
+          "phoneVal": "0899693049"
+        },
+        {
+          "userImg": "https://firebasestorage.googleapis.com/v0/b/petwalker-d43e0.appspot.com/o/profileImages%2Finbound7964047718080371494.jpg14aaf385-2023-45b1-b9a2-661553e35da4?alt=media&token=81166ef8-3949-4574-8ee8-9ea11e7621fd"
+        }
+      ]
+    },
+    "-NgSyzPHFvCmt9Dwuxs9": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "alissa14@abv.bg",
+          "nameVal": "Вихра ",
+          "passVal": "portis88",
+          "phoneVal": "0899693049"
+        },
+        {
+          "userImg": "https://firebasestorage.googleapis.com/v0/b/petwalker-d43e0.appspot.com/o/profileImages%2F1692741826957.jpgc105d68c-0a9e-4a39-ae06-bbc632647066?alt=media&token=c38c9c72-c099-4c4c-8b23-54adb136d69d"
+        }
+      ]
+    },
+    "-NgxQRrgagICd3LVNpDu": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "slavova.militsa@yahoo.com",
+          "nameVal": "Милица",
+          "passVal": "MilicA@2210",
+          "phoneVal": "0878773787"
+        },
+        {
+          "userImg": "https://firebasestorage.googleapis.com/v0/b/petwalker-d43e0.appspot.com/o/profileImages%2FB288C554-83E3-439A-BBC4-91F2F99C3BA1.jpeg9360924d-b865-4b42-81b7-7b3d2dedcb54?alt=media&token=060ee66b-85f0-4dbc-9a2a-7299361efb08"
+        },
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "slavova.militsa@yahoo.com",
+          "nameVal": "Милица",
+          "passVal": "MilicA@2210",
+          "phoneVal": "0878773787"
+        },
+        {
+          "userImg": "default"
+        }
+      ]
+    },
+    "-Nh6s41p_scsEoujy-0n": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "regOption": "owner"
+        },
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "kirilmihaylov38396@abv.bg",
+          "nameVal": "Kiril Mihaylov",
+          "passVal": "8383",
+          "phoneVal": "0884357803"
+        },
+        {
+          "userImg": "default"
+        }
+      ]
+    },
+    "-Nh74elDqCNpGtaKw_fs": {
+      "sitterData": [
+        {
+          "regOption": "owner"
+        },
+        {
+          "mailVal": "kirilmihaylov19r86@abv.bg",
+          "nameVal": "Kiril Mihaylov",
+          "passVal": "94883",
+          "phoneVal": "08843593848"
+        },
+        {
+          "userImg": "default"
+        }
+      ]
+    }
+  },
+  "petSitters": {
+    "sitterData": [
+      {
+        "regOption": "sitter"
+      },
+      {
+        "nameVal": "Toster",
+        "passVal": "Sada$111"
+      },
+      {
+        "mailVal": "toster@mail.com",
+        "phoneVal": "213213"
+      },
+      {
+        "labelNames": [
+          {
+            "label": "Гледане в дома на водача",
+            "option": "walkerHome"
+          },
+          {
+            "label": "Посещение на място",
+            "option": "visitation"
+          }
+        ],
+        "selectedNames": [
+          "walkerHome",
+          "visitation"
+        ]
+      },
+      {
+        "rateOption": "day",
+        "rateVal": "61"
+      },
+      {
+        "userImg": "default"
+      },
+      {
+        "jobDescribeVal": "as",
+        "selfDescribeVal": ""
+      },
+      {
+        "selectedHoods": [
+          {
+            "id": "53cbd097-746f-4d8d-9fcb-10e2b10d238d",
+            "label": "В.З.АМЕРИКАНСКИ КОЛЕЖ",
+            "selected": true,
+            "value": "В.З.АМЕРИКАНСКИ_КОЛЕЖ"
+          },
+          {
+            "id": "16cda6f1-5d46-4ad9-8d89-fb91d1e89fe4",
+            "label": "ВИТОША",
+            "selected": true,
+            "value": "ВИТОША"
+          }
+        ]
+      }
+    ]
+  }
+}

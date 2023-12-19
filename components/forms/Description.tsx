@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { getStoreData } from "./RegistrationComplete";
 import { useEffect } from "react";
+import { GetStoreData } from "../../public/interfaces/globals";
 
 const Description = (props: any) => {
     const [ selfDescribeVal, setSelfDescribeVal ] = useState('')
     const [ nextDisabled, setNextDisabled ] = useState(true);
     const [ petSitter, setPetsitter ] = useState(false);
-    const getState: any = useSelector<getStoreData>( state => state.dataStore.data );
-
+    const getState: any = useSelector<GetStoreData>( state => state.dataStore.data );
     useEffect( () => {
        setPetsitter(getState.find( (item: any): any => item['regOption'] ).regOption === 'sitter');
    }, [getState] );
