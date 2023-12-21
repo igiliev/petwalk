@@ -9,8 +9,6 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions } from "../../app/redux/store";
 import { useState, useEffect } from "react";
-import { v4 } from "uuid";
-
 
 const Header = () => {
     const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);

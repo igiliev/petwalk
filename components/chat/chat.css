@@ -4,7 +4,7 @@
 }
 
 .chat-inner {
-    height: 400px;
+    height: 380px;
 }
 
 .chat-form {
@@ -15,6 +15,11 @@
     height: 100%;
     position: absolute;
     width: 100%;
-    overflow: hidden;
     top: 0;
+}
+
+@media (max-width: 1023px) {
+    .chat-inner {
+        height: auto;
+    }
 }
