@@ -174,7 +174,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className='m-auto lg:m-0 w-full max-w-full'>
+            <div className='m-auto lg:m-0 max-w-full'>
               <Image className='my-8 our-advantages-img' src={ladyDog} alt="lady on laptop with a dog next to her" />
             </div>
           </div>
