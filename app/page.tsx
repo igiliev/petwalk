@@ -29,7 +29,7 @@ export default function Home() {
       <Header />
       <main className="mt-20">
         {/* 1 First Section - Banner */}
-        <section className="flex lg:flex-row flex-col justify-evenly items-center py-20 bg-green-2 mb-12 px-5 lg:px-0">
+        <section className="flex lg:flex-row flex-col justify-evenly items-center py-20 bg-green-2 mb-12 px-5 lg:px-0 home-banner">
           <div className='flex flex-col items-center lg:w-6/12'>
             <h1 className="text-3xl lg:text-4xl text-white text-center mb-7">Резервирайте <span className="text-gold font-semibold">доверени гледачи и разхождачи</span> които ще се отнасят към вашия домашен любимец като към семейство</h1>
             <p className="leading-6 text-grey-1 mb-7 text-base">Вече повече от 1 000 души използват PetSit.bg за да се грижат за домашните си любимци по време на дните в офиса или при пътувания</p>
@@ -40,14 +40,14 @@ export default function Home() {
             <Link href="/register/regOptions" className="underline text-lg text-white my-5 font-semibold">Търсите работа като гледач на домашни любимци?</Link>
           </div>
 
-          <div className='flex items-center justify-center'>
-            <Image src={BannerImg} width="550" alt="woman-cuddling-dog" className='rounded-md' />
+          <div className='flex items-center justify-center w-full max-w-full'>
+            <Image src={BannerImg} width='550' alt="woman-cuddling-dog" sizes='(max-width: 600px) 100vw' className='rounded-md home-banner-img-woman' />
           </div>
         </section>
 
         {/* 2 Second Section - Services */}
         <section>
-          <h1 className="text-center text-4xl mb-12">Услуги за всяко куче</h1>
+          <h1 className="text-center text-4xl mb-12 px-2">Услуги за всяко куче</h1>
           <div className="flex mb-10 justify-evenly flex-col lg:flex-row px-5">
             <div className="left-col">
 
@@ -98,12 +98,12 @@ export default function Home() {
         </section>
 
         {/* 3 Third Section - Steps to hire */}
-          <section className='bg-grey-2 pb-12'>
+          <section className='bg-grey-2 pb-12 steps-to-hire'>
             <h2 className="text-center text-4xl mb-2 pt-8">Стъпки за наемане на гледач на домашни любимци</h2>
             <div className="bg-green-2 h-1 w-16 m-auto mb-20 rounded"></div>
             <div className="flex flex-col justify-center lg:flex-row px-5">
               <div className='m-auto'>
-                <Image src={dogWoman} width="500" alt="woman hugging a dog" />
+                <Image src={dogWoman} sizes='(max-width: 600px) 100vw' className='section-img-woman' alt="woman hugging a dog" />
               </div>
               <div className="flex flex-col">
                 <div className='mb-10'>
@@ -145,7 +145,7 @@ export default function Home() {
         </div>
 
         {/* 5 Our advantages */}
-        <section className='mb-12'>
+        <section className='mb-12 our-advantages'>
           <h1 className="text-center text-5xl mb-20">Нашите предимства</h1>
           <div className="flex flex-col justify-evenly lg:flex-row">
             <div className="flex flex-col justify-evenly lg:w-6/12 px-5">
@@ -174,8 +174,8 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className='m-auto lg:m-0'>
-              <Image className='my-8' src={ladyDog} width="550" alt="lady on laptop with a dog next to her" />
+            <div className='m-auto lg:m-0 w-full max-w-full'>
+              <Image className='my-8 our-advantages-img' src={ladyDog} alt="lady on laptop with a dog next to her" />
             </div>
           </div>
         </section>

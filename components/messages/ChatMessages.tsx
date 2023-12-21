@@ -11,7 +11,7 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: any) => {
             {/* Show the initial window when the user first opens the chat */}
             { chatInit ?
                 <div className="initial-window">
-                    <p className="text-2xl text-center">Моля кликнете на едно от имената, за да започнете нов чат</p>
+                    <p className="text-2xl text-center">Моля кликнете на името в ляво, за да започнете нов чат</p>
                 </div>
                 :
                 <div className="interactive-window">

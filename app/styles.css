@@ -9,7 +9,15 @@
     height: 2rem;
 }
 
+.our-advantages .our-advantages-img {
+    max-width: 100%;
+}
+
 @media only screen and (max-width: 600px) {
+    .steps-to-hire .section-img-woman {
+        max-width: 350px;
+    }
+
     .circle-border {
         height: 30px;
         width: 40px;

@@ -111,13 +111,13 @@ const Chat = () => {
 
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
-            <div className="chat-wrapper m-auto mt-24">
+            <div className="chat-wrapper m-auto mt-48">
                 <div className='bg-green-2 p-6'></div>
-                <div className="chat-inner flex h-full">
-                    <div className="w-36 bg-white h-full">
+                <div className="chat-inner flex flex-col sm:flex-row">
+                    <div className="sm:w-36 w-full bg-white">
                     <>
                         { chatUsernames.map( name => (
-                            <p className="text-center my-2 text-xl hover:cursor-pointer" key={uuid()} onClick={startChat}>{ name }</p>
+                            <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
                         ))}
                     </>
                     </div>
@@ -125,11 +125,12 @@ const Chat = () => {
                         <div className="h-full bg-grey-2 p-5 overflow-auto overflow-y-scroll">
                             <ChatMessages myMsgs={myChatMessages} userMsgs={selectedUserChatMsgs} chatInit={chatInit} />
                         </div>
-                        <div className='flex bg-white justify-between items-center w-full'>
-                            <input onChange={handleEnter} type="text" placeholder='Изпрати съобщение' value={chatInput} className='w-full py-8 px-5 outline-none' />
-                            <button onClick={sendMsgClick} className='border-1 border-black bg-green-2 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
-                        </div>
                     </div>
+                </div>
+                
+                <div className='flex bg-white justify-between items-center w-full'>
+                    <input onChange={handleEnter} type="text" placeholder='Изпрати съобщение' value={chatInput} className='w-full py-8 px-5 outline-none sm:pl-32' />
+                    <button onClick={sendMsgClick} className='border-1 border-black bg-green-2 mx-5 h-12 px-3 rounded text-white text-xl hover:bg-red-400'>Изпрати</button>
                 </div>
             </div>
         </form>
