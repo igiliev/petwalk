@@ -23,7 +23,23 @@ import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 import BannerImg from '../public/assets/images/banner-petsitter.jpeg';
 
+import { getMessaging } from "firebase/messaging/sw";
+import { onBackgroundMessage } from "firebase/messaging/sw";
+import { messaging } from '../firebase/config';
+
+
 export default function Home() {
+
+onBackgroundMessage(messaging, (payload) => {
+  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  // Customize notification here
+  const notificationTitle = 'Background Message Title';
+  const notificationOptions = {
+    body: 'Background Message body.',
+    icon: '/firebase-logo.png'
+  };
+});
+
   return (
     <>
       <Header />
@@ -40,7 +56,7 @@ export default function Home() {
             <Link href="/register/regOptions" className="underline text-lg text-white my-5 font-semibold">Търсите работа като гледач на домашни любимци?</Link>
           </div>
 
-          <div className='flex items-center justify-center w-full max-w-full'>
+          <div className='flex items-center justify-center max-w-full'>
             <Image src={BannerImg} width='550' alt="woman-cuddling-dog" sizes='(max-width: 600px) 100vw' className='rounded-md home-banner-img-woman' />
           </div>
         </section>

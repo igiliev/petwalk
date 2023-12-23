@@ -90,6 +90,7 @@ const Chat = () => {
         });
         //Updating the DB on every submitted messsage and showing in the view
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
+            console.log(doc.metadata.hasPendingWrites);
             updateChatMsgs(doc);
         });
 
