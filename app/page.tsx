@@ -25,21 +25,8 @@ import BannerImg from '../public/assets/images/banner-petsitter.jpeg';
 
 import { getMessaging } from "firebase/messaging/sw";
 import { onBackgroundMessage } from "firebase/messaging/sw";
-import { messaging } from '../firebase/config';
-
 
 export default function Home() {
-
-onBackgroundMessage(messaging, (payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  const notificationTitle = 'Background Message Title';
-  const notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
-  };
-});
-
   return (
     <>
       <Header />

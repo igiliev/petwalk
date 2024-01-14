@@ -22,7 +22,7 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
     const [ chatUsernames, setChatUsernames ] = useState([]);
-    const [ currentUserUID, setCurrentUserUID ]: any = useState();
+    const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
@@ -31,13 +31,15 @@ const Chat = () => {
 
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
-        const userID: string = regex.exec(path)![0];
+        const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
 
         const fetchUserNames = async () => {
             try {
-                if( stateChatNames ) 
+                if( stateChatNames ) {
+                    console.log(stateChatNames);
                     setChatUsernames( stateChatNames );
+                } 
             } catch(error) {
                 console.error(error);
             }
@@ -78,21 +80,22 @@ const Chat = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const userData: UserImpl[] = await currUserData();
+        console.log(userData);
         const senderUid: string = userData[0].uid;
 
         //Adding the typed in chat msg into /chats 
-        await updateDoc(doc(db, 'chats', combinedId), {
-            messages: arrayUnion({
-                text: chatInput,
-                senderId: senderUid,
-                date: Timestamp.now()
-            })
-        });
+        // await updateDoc(doc(db, 'chats', combinedId), {
+        //     messages: arrayUnion({
+        //         text: chatInput,
+        //         senderId: senderUid,
+        //         date: Timestamp.now()
+        //     })
+        // });
         //Updating the DB on every submitted messsage and showing in the view
-        onSnapshot(doc(db, 'chats', combinedId), (doc) => {
-            console.log(doc.metadata.hasPendingWrites);
-            updateChatMsgs(doc);
-        });
+        // onSnapshot(doc(db, 'chats', combinedId), (doc) => {
+        //     console.log(doc.metadata.hasPendingWrites);
+        //     updateChatMsgs(doc);
+        // });
 
         setChatInput('');
     }
@@ -108,6 +111,10 @@ const Chat = () => {
         myChatData.forEach( data => storeMyText.push(data.text) );
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);
+    }
+
+    const missedMessage = () => {
+
     }
 
     return (

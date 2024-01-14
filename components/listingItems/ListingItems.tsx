@@ -47,6 +47,8 @@ const ListingItems = (props: any) => {
         setFilterApplied(true)
     };
 
+    226
+
     const startChat = async (uid: string, name: string) => {
         dispatch(storeActions.setUserChatNames(name));
         const combinedId = userData.uid > uid
@@ -70,7 +72,7 @@ const ListingItems = (props: any) => {
 
         // if( chatRefSnap.exists() ) {
         //     const data = chatRefSnap.data();
-        //     // router.push(`/userChat/${userData.uid}`);   
+        //     // router.push(`/userChat/${userData.uid}`);
         //     // If the selected name is in the /chatUsernames db > redirect to the Chat page
         //     if( !data.names.includes(name) ) {
         //         dispatch(storeActions.setUserChatNames(name));
