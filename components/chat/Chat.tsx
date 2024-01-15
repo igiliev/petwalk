@@ -21,7 +21,7 @@ interface ChatMsgsData {
 const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
-    const [ chatUsernames, setChatUsernames ] = useState(['']);
+    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
@@ -51,10 +51,11 @@ const Chat = () => {
             const { uid } = userData[0];
             const userNamesRef = doc(db, 'chatUsernames', uid);
             const userNamesData = await getDoc(userNamesRef);
+            console.log(chatUsernames);
 
             try {
                 //If we have user names from db and there are no user name in local state
-                if ( userNamesData.exists() && !chatUsernames.length ) {
+                if ( userNamesData.exists() && chatUsernames.length === 0 ) {
                     const namesData: any = userNamesData.data();
                     namesData.names.map( (name: any) => setChatUsernames(name) );
                     console.log(chatUsernames)
