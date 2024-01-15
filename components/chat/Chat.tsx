@@ -21,7 +21,7 @@ interface ChatMsgsData {
 const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
-    const [ chatUsernames, setChatUsernames ] = useState([]);
+    const [ chatUsernames, setChatUsernames ] = useState(['']);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
@@ -34,18 +34,38 @@ const Chat = () => {
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
 
-        const fetchUserNames = async () => {
+        //Feching all the chats user names from local state
+        const fetchStateUserNames = async () => {
             try {
                 if( stateChatNames ) {
-                    console.log(stateChatNames);
                     setChatUsernames( stateChatNames );
                 } 
             } catch(error) {
                 console.error(error);
             }
-        }   
+        } 
 
-        fetchUserNames();
+        //Fetching all the chat user names from firestore /chatUsernames
+        const fetchDBUserNames = async () => {
+            const userData: UserImpl[] = await currUserData();
+            const { uid } = userData[0];
+            const userNamesRef = doc(db, 'chatUsernames', uid);
+            const userNamesData = await getDoc(userNamesRef);
+
+            try {
+                //If we have user names from db and there are no user name in local state
+                if ( userNamesData.exists() && !chatUsernames.length ) {
+                    const namesData: any = userNamesData.data();
+                    namesData.names.map( (name: any) => setChatUsernames(name) );
+                    console.log(chatUsernames)
+                } 
+            } catch(error) {
+                console.error(error);
+            }
+        }  
+
+        fetchStateUserNames();
+        fetchDBUserNames()
     }, [] )
     	
     const handleEnter = async (event: any) => {
