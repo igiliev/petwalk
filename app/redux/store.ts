@@ -25,7 +25,7 @@ export interface UserImpl {
 
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [''] },
+    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [] },
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -52,11 +52,10 @@ const dataSlice = createSlice({
             }
         },
         setUserChatNames( state, action ) {
-            console.log(action.payload);
             const dummyState = new Set<string>();
-            dummyState.add(action.payload);
-            const setToArr: string[] = Array.from(dummyState);
-            //Make sure not to add the same name twice
+            dummyState.add( action.payload );
+            //Creating an array from a Set so there are no dublicates
+            const setToArr: any = Array.from(dummyState);
             if( action.payload !== '' ) {
                 state.userChatNames = setToArr;
             }
