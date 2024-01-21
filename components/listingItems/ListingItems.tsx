@@ -13,7 +13,6 @@ import { currUserData } from "../../app/api/helper/users/userService";
 import { collection, doc, updateDoc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { GetStoreData } from "../../public/interfaces/globals";
-import { useRouter } from "next/navigation";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
@@ -28,7 +27,6 @@ const ListingItems = (props: any) => {
         // onSnapshot(doc(db, 'chatUsernames', userData.uid), (doc) => {
         //     console.log(doc.data());
         // });
-    // }, [ userData.uid ] );
     }, [ ] );
 	
 	const handleChange = (event: any) => {
