@@ -46,7 +46,10 @@ const ListingItems = (props: any) => {
         setFilterApplied(true)
     };
 
+    226
+
     const startChat = async (uid: string, name: string) => {
+        console.log(currentUserId);
         dispatch(storeActions.setUserChatNames(name));
         const combinedId = userData.uid > uid
         ? userData.uid + uid
@@ -67,16 +70,16 @@ const ListingItems = (props: any) => {
             date: Timestamp.now()
         }, { merge: true });
 
-        // if( chatRefSnap.exists() ) {
-        //     const data = chatRefSnap.data();
-        //     // router.push(`/userChat/${userData.uid}`);   
-        //     // If the selected name is in the /chatUsernames db > redirect to the Chat page
-        //     if( !data.names.includes(name) ) {
-        //         dispatch(storeActions.setUserChatNames(name));
-        //     }
-        // } else {
-        //     console.error('NEMA DATA BATE');
-        // }
+        if( chatRefSnap.exists() ) {
+            const data = chatRefSnap.data();
+            // router.push(`/userChat/${userData.uid}`);
+            // If the selected name is in the /chatUsernames db > redirect to the Chat page
+            if( !data.names.includes(name) ) {
+                dispatch(storeActions.setUserChatNames(name));
+            }
+        } else {
+            console.error('NEMA DATA BATE');
+        }
     }
     const usersToRender = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData
 

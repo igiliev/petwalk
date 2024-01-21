@@ -22,7 +22,7 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
     const [ chatUsernames, setChatUsernames ] = useState([]);
-    const [ currentUserUID, setCurrentUserUID ]: any = useState();
+    const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
@@ -31,19 +31,40 @@ const Chat = () => {
 
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
-        const userID: string = regex.exec(path)![0];
+        const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
 
-        const fetchUserNames = async () => {
+        //Feching all the chats user names from local state
+        const fetchStateUserNames = async () => {
             try {
-                if( stateChatNames ) 
+                if( stateChatNames ) {
                     setChatUsernames( stateChatNames );
+                } 
             } catch(error) {
                 console.error(error);
             }
-        }   
+        } 
 
-        fetchUserNames();
+        //Fetching all the chat user names from firestore /chatUsernames
+        const fetchDBUserNames = async () => {
+            const userData: UserImpl[] = await currUserData();
+            const { uid } = userData[0];
+
+            try {
+                const userNamesRef = doc(db, 'chatUsernames', uid);
+                const userNamesData = await getDoc(userNamesRef);
+                //If we have user names from db and there are no user name in local state
+                if ( userNamesData.exists() && chatUsernames.length === 0 ) {
+                    const namesData: any = userNamesData.data();
+                    setChatUsernames(namesData.names);
+                } 
+            } catch(error) {
+                console.error(error);
+            }
+        }
+
+        fetchStateUserNames();
+        fetchDBUserNames()
     }, [] )
     	
     const handleEnter = async (event: any) => {
@@ -78,6 +99,7 @@ const Chat = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const userData: UserImpl[] = await currUserData();
+        console.log(userData);
         const senderUid: string = userData[0].uid;
 
         //Adding the typed in chat msg into /chats 
@@ -90,6 +112,7 @@ const Chat = () => {
         });
         //Updating the DB on every submitted messsage and showing in the view
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
+            console.log(doc.metadata.hasPendingWrites);
             updateChatMsgs(doc);
         });
 
@@ -109,6 +132,10 @@ const Chat = () => {
         setSelectedUserChatMsgs(storeUserText);
     }
 
+    const missedMessage = () => {
+
+    }
+
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
             <div className="chat-wrapper m-auto mt-48">
@@ -116,9 +143,9 @@ const Chat = () => {
                 <div className="chat-inner flex flex-col sm:flex-row">
                     <div className="sm:w-36 w-full bg-white">
                     <>
-                        { chatUsernames.map( name => (
-                            <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
-                        ))}
+                        {  !chatUsernames.length ? 'Loading' : chatUsernames.map( name => (
+                             <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
+                         ))}
                     </>
                     </div>
                     <div className={`w-full 'bg-white' relative`}>
