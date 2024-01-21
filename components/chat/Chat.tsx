@@ -49,21 +49,19 @@ const Chat = () => {
         const fetchDBUserNames = async () => {
             const userData: UserImpl[] = await currUserData();
             const { uid } = userData[0];
-            const userNamesRef = doc(db, 'chatUsernames', uid);
-            const userNamesData = await getDoc(userNamesRef);
-            console.log(chatUsernames);
 
             try {
+                const userNamesRef = doc(db, 'chatUsernames', uid);
+                const userNamesData = await getDoc(userNamesRef);
                 //If we have user names from db and there are no user name in local state
                 if ( userNamesData.exists() && chatUsernames.length === 0 ) {
                     const namesData: any = userNamesData.data();
-                    namesData.names.map( (name: any) => setChatUsernames(name) );
-                    console.log(chatUsernames)
+                    setChatUsernames(namesData.names);
                 } 
             } catch(error) {
                 console.error(error);
             }
-        }  
+        }
 
         fetchStateUserNames();
         fetchDBUserNames()
@@ -105,18 +103,18 @@ const Chat = () => {
         const senderUid: string = userData[0].uid;
 
         //Adding the typed in chat msg into /chats 
-        // await updateDoc(doc(db, 'chats', combinedId), {
-        //     messages: arrayUnion({
-        //         text: chatInput,
-        //         senderId: senderUid,
-        //         date: Timestamp.now()
-        //     })
-        // });
+        await updateDoc(doc(db, 'chats', combinedId), {
+            messages: arrayUnion({
+                text: chatInput,
+                senderId: senderUid,
+                date: Timestamp.now()
+            })
+        });
         //Updating the DB on every submitted messsage and showing in the view
-        // onSnapshot(doc(db, 'chats', combinedId), (doc) => {
-        //     console.log(doc.metadata.hasPendingWrites);
-        //     updateChatMsgs(doc);
-        // });
+        onSnapshot(doc(db, 'chats', combinedId), (doc) => {
+            console.log(doc.metadata.hasPendingWrites);
+            updateChatMsgs(doc);
+        });
 
         setChatInput('');
     }
@@ -145,9 +143,9 @@ const Chat = () => {
                 <div className="chat-inner flex flex-col sm:flex-row">
                     <div className="sm:w-36 w-full bg-white">
                     <>
-                        { chatUsernames.map( name => (
-                            <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
-                        ))}
+                        {  !chatUsernames.length ? 'Loading' : chatUsernames.map( name => (
+                             <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
+                         ))}
                     </>
                     </div>
                     <div className={`w-full 'bg-white' relative`}>
