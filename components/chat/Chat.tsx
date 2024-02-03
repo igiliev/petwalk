@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { v4 as uuid } from "uuid";
-import { currUserData } from "../../app/api/helper/users/userService";
+import { currUserData, getUsers } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
 import { UserImpl } from "../../app/redux/store";
 
@@ -33,6 +33,7 @@ const Chat = () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
+        getUsers('owners').then( res => console.log(res) );
 
         //Feching all the chats user names from local state
         const fetchStateUserNames = async () => {
@@ -41,7 +42,7 @@ const Chat = () => {
                     setChatUsernames( stateChatNames );
                 } 
             } catch(error) {
-                console.error(error);
+                console.error('fetchStateUserNames: ', error);
             }
         } 
 
@@ -49,6 +50,7 @@ const Chat = () => {
         const fetchDBUserNames = async () => {
             const userData: UserImpl[] = await currUserData();
             const { uid } = userData[0];
+            checkForMissedMsgs(uid);
 
             try {
                 const userNamesRef = doc(db, 'chatUsernames', uid);
@@ -59,12 +61,34 @@ const Chat = () => {
                     setChatUsernames(namesData.names);
                 } 
             } catch(error) {
-                console.error(error);
+                console.error('fetchDBUserNames: ', error);
+            }
+        }
+
+        const checkForMissedMsgs = async (myId: string) => {
+            try {
+                //try with collection
+                const citiesColl = collection(db, "chats");
+                const q = query(citiesColl, where("senderId", "==",  "R5jk6H5BOGeOGx9OFYNzEi0Qqsf2"));
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach( (doc) => (
+                    console.log(doc.id, '=>', doc.data())
+                ) );
+                //
+                const chatsRef = doc(db, 'chats', myId);
+                const chatsSnap = await getDoc(chatsRef);
+
+                if ( chatsSnap.exists() ) {
+                    console.log(chatsSnap.data());
+                }
+
+            } catch(error) {
+                console.log('checkForMissedMsgs: ', error);
             }
         }
 
         fetchStateUserNames();
-        fetchDBUserNames()
+        fetchDBUserNames();
     }, [] )
     	
     const handleEnter = async (event: any) => {
