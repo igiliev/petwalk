@@ -33,7 +33,7 @@ const Chat = () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
-        getUsers('owners').then( res => console.log(res) );
+        getUsers('sitter').then( res => console.log(res) );
 
         //Feching all the chats user names from local state
         const fetchStateUserNames = async () => {
