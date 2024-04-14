@@ -1,4 +1,4 @@
-import logo from '../../public/assets/images/logo-footer.png';
+import logo from '../../public/assets/images/mainLogo.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import './Footer.css';

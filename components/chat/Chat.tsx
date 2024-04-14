@@ -69,7 +69,7 @@ const Chat = () => {
             try {
                 //try with collection
                 const citiesColl = collection(db, "chats");
-                const q = query(citiesColl, where("senderId", "==",  "R5jk6H5BOGeOGx9OFYNzEi0Qqsf2"));
+                const q = query(citiesColl, where("senderId", "==",  myId));
                 const querySnapshot = await getDocs(q);
                 querySnapshot.forEach( (doc) => (
                     console.log(doc.id, '=>', doc.data())
