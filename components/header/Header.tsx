@@ -1,6 +1,6 @@
 'use client';
 import Link from "next/link";
-import logo from '../../public/assets/images/logo-footer.png';
+import logo from '../../public/assets/images/mainLogo.webp';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";

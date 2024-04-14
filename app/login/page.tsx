@@ -10,7 +10,6 @@ import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
 import logo from '../../public/assets/images/logo.png';
 
-
 const Login = () => {
     const [ emailValue, setEmailValue ] = useState('');
     const [ passwordValue, setPasswordValue ] = useState('');
