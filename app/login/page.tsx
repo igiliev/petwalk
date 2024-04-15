@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { storeActions } from '../redux/store';
-import logo from '../../public/assets/images/logo.png';
+import logo from '../../public/assets/images/logoNoTxt.png';
 
 const Login = () => {
     const [ emailValue, setEmailValue ] = useState('');
@@ -52,15 +52,20 @@ const Login = () => {
             {
                 userIsLogged ?
                 <div className="flex flex-col m-auto px-10 py-10 shadow-xl w-100">
-                    <h1 className="text-center text-2xl">Успешно вписване</h1>
                     <Link href="/">
                         <button onClick={handleBackToHome} className="bg-green-2 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
                     </Link>
+                    <h1 className="text-center text-2xl">Успешно вписване</h1>
                 </div>
                 :
                 <div className='flex flex-col m-auto w-100'>
                     <form className="px-10 py-10 shadow-xl" onSubmit={handleSubmit}>
-                        <h1 className="text-2xl text-center mb-5">Добре дошли обратно в Petwalk.com</h1>
+                        <div className='flex justify-center'>
+                            <Link href="/">
+                                <Image src={logo} height="160" width="110" alt="site logo" />
+                            </Link>
+                        </div>
+                        <h1 className="text-2xl text-center mb-5">Добре дошли обратно в Petsit.bg</h1>
                         <div className="flex flex-col mb-5">
                             <label htmlFor="email">Имейл</label>
                             <input onChange={handleMailVal} className="border rounded py-2 pl-3" id="email" />
@@ -74,11 +79,11 @@ const Login = () => {
                             <button className={`bg-green-2 p-4 w-full text-white text-xl mt-4 rounded`}>Влез</button>
                         </div>
                     </form>
-                    <div className='w-full absolute bottom-0 left-0'>
+                    {/* <div className='w-full absolute bottom-0 left-0'>
                         <Link href="/">
-                            <Image src={logo} height="220" width="160" alt="site logo" />
+                            <Image src={logo} height="160" width="110" alt="site logo" />
                         </Link>
-                    </div>
+                    </div> */}
                 </div>
             }
         </div>
