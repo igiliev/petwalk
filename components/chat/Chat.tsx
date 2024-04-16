@@ -89,7 +89,7 @@ const Chat = () => {
 
         fetchStateUserNames();
         fetchDBUserNames();
-    }, [] )
+    }, [chatUsernames.length, path, stateChatNames] )
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -109,7 +109,7 @@ const Chat = () => {
         //Fetching chat data from firestore and storing it in the local state
         try {
             const chatRefSnap = await getDoc( firestoreChatRef );
-            console.log(chatRefSnap.data());
+            // console.log(chatRefSnap.data());
             if( chatRefSnap.exists() ) {
                 updateChatMsgs(chatRefSnap);
             } else {
@@ -123,8 +123,8 @@ const Chat = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const userData: UserImpl[] = await currUserData();
-        console.log(userData);
         const senderUid: string = userData[0].uid;
+        console.log(userData);
 
         //Adding the typed in chat msg into /chats 
         await updateDoc(doc(db, 'chats', combinedId), {
@@ -146,7 +146,7 @@ const Chat = () => {
     const updateChatMsgs = async (chatData: any) => {
         //TODO: Optimize this
         const { messages }: any = chatData.data();
-        const myChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId === currentUserUID );
+        const myChatData: Array<ChatMsgsData> = messages && messages.filter( (msg: ChatMsgsData) => msg.senderId === currentUserUID );
         const userChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId !== currentUserUID );
         const storeMyText: string[] = [];
         const storeUserText: string[] = [];
