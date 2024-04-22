@@ -46,10 +46,7 @@ const ListingItems = (props: any) => {
         setFilterApplied(true)
     };
 
-    226
-
     const startChat = async (uid: string, name: string) => {
-        console.log(currentUserId);
         dispatch(storeActions.setUserChatNames(name));
         const combinedId = userData.uid > uid
         ? userData.uid + uid
@@ -63,15 +60,17 @@ const ListingItems = (props: any) => {
         const chatRefSnap = await getDoc( firestoreChatRef );
         dispatch(storeActions.setCombinedId(combinedId));
         dispatch(storeActions.setChatData({ uid, data: slicedUserData }));
-
+        
         await setDoc(doc(db, 'chats', combinedId), {
             text: '',
             senderId: userData.uid,
             date: Timestamp.now()
         }, { merge: true });
-
+        
+        console.log(chatRefSnap.data());
         if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
+            console.log(data);
             // router.push(`/userChat/${userData.uid}`);
             // If the selected name is in the /chatUsernames db > redirect to the Chat page
             if( !data.names.includes(name) ) {

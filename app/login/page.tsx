@@ -52,6 +52,9 @@ const Login = () => {
             {
                 userIsLogged ?
                 <div className="flex flex-col m-auto px-10 py-10 shadow-xl w-100">
+                    <div className='flex justify-center mb-3'>
+                        <Image src={logo} height="160" width="110" alt="site logo" />
+                    </div>
                     <h1 className="text-center text-2xl mb-3">Успешно вписване</h1>
                     <Link href="/">
                         <button onClick={handleBackToHome} className="bg-green-2 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
@@ -60,7 +63,7 @@ const Login = () => {
                 :
                 <div className='flex flex-col m-auto w-100'>
                     <form className="px-10 py-10 shadow-xl" onSubmit={handleSubmit}>
-                        <div className='flex justify-center'>
+                        <div className='flex justify-center mb-3'>
                             <Link href="/">
                                 <Image src={logo} height="160" width="110" alt="site logo" />
                             </Link>
