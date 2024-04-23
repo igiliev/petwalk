@@ -143,12 +143,12 @@ const Chat = () => {
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
             updateChatMsgs(doc);
         });
-
+        console.log(chatUsernames);
         setChatInput('');
-        //Updating the /chatUsernames with the new user
-        await setDoc(doc(db, 'chatUsernames', combinedId ), {
-            names: arrayUnion(chatUsernames.toString())
-        }, { merge: true });
+        //Setting the /chatUsernames with the new user
+        await updateDoc(doc(db, 'chatUsernames', combinedId ), {
+            names: arrayUnion( chatUsernames.toString() )
+        },);
     };
 
     const updateChatMsgs = async (chatData: any) => {
