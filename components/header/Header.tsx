@@ -1,4 +1,5 @@
 'use client';
+
 import Link from "next/link";
 import logo from '../../public/assets/images/mainLogo.webp';
 import Image from "next/image";
@@ -7,8 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
-import { storeActions } from "../../app/redux/store";
+import { storeActions, UserImpl } from "../../app/redux/store";
 import { useState, useEffect } from "react";
+import { currUserData, getUserData, getUsers } from "../../app/api/helper/users/userService";
 
 const Header = () => {
     const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
@@ -16,10 +18,18 @@ const Header = () => {
     const [ userEmail, setUserEmail ] = useState('');
     const [hideMenu, setHideMenu] = useState(true);
     const [burgerClassToggle, setBurgerClassToggle] = useState(false);
+    const [ currentUserUid, setCurrentUserUid ] = useState('');
+    const [ currentSitter, setCurrentSitter ] = useState({});
     const dispatch = useDispatch();
     
     useEffect(() => {
-        if( userData[0] ) setUserEmail(userData[0].email)
+        if( userData[0] ) setUserEmail(userData[0].email);
+        currUserData().then( (userImplData: UserImpl[])  => setCurrentUserUid( userImplData[0].uid ));
+        getUsers('sitters').then( sitters => {
+            const getMe = sitters.filter( (sitter: any) => sitter.uid === currentUserUid );
+            if( getMe.length ) console.log(getMe);
+        } );
+        // getUserData(currentUserUid).then( res => console.log(res) );
     }, []);
 
     const handleLogout = async () => {
@@ -40,8 +50,8 @@ const Header = () => {
                 </div>
                 <div className={`${hideMenu ? 'hidden' : 'flex'} absolute h-[calc(100vh-80px)] bg-primary-gray top-[80px] w-full flex-col items-start lg:justify-evenly lg:whitespace-nowrap md:relative md:h-auto md:flex md:top-[0px] md:bg-white md:flex-row max-md:px-8 max-md:font-semibold md:items-center`}>
                     <div className="flex items-start text-xl md:text-lg lg:text-xl flex-col md:flex-row md:justify-between md:[&>*]:mx-4">
-                        {/* Temporary removal 
-                        <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Станете Гледач</Link> */}
+                        
+                        <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Станете Гледач</Link>
                         <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link>
                         <Link href="/help" className="nav-link pb-1 relative max-md:mb-5">Помощ</Link>
                     </div>

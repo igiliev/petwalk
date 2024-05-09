@@ -14,7 +14,7 @@ export async function getUsers(userType) {
             const insideData = usersTojson[user].sitterData;
             const name = insideData.find( userData => userData.nameVal ).nameVal;
             const dailyRateOption = insideData.find( userData => userData.rateOption ).rateOption;
-            const mail = insideData.find( userData => userData.mailVal ).mailVal
+            const mail = insideData.find( userData => userData.mailVal ).mailVal;
             const dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
             const selectedUser = insideData.find( userData => userData.regOption ).regOption;
             // const describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
@@ -34,7 +34,8 @@ export async function getUsers(userType) {
                     selectedServices,
                     userImage,
                     uid,
-                    id: user
+                    id: user,
+                    selectedUser
                 });
             } else {
                 storeOwners.push({

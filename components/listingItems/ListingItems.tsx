@@ -30,7 +30,7 @@ const ListingItems = (props: any) => {
     }, [ ] );
 	
 	const handleChange = (event: any) => {
-        let string = event.target.value.toLowerCase()
+        let string = event.target.value.toLowerCase();
         if (string.length > 0) {
             const filteredArray:any = props.userData.filter((obj: any) =>
                 obj.selectedHoods.some((item: any) => item.label.toLowerCase().includes(string))
