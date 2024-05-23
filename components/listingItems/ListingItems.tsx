@@ -35,15 +35,15 @@ const ListingItems = (props: any) => {
             const filteredArray:any = props.userData.filter((obj: any) =>
                 obj.selectedHoods.some((item: any) => item.label.toLowerCase().includes(string))
             );
-            filteredArray.length > 0 && setMatchedItems(filteredArray)
+            filteredArray.length > 0 && setMatchedItems(filteredArray);
         } else {
-            setMatchedItems([])
-            setFilterApplied(false)
+            setMatchedItems([]);
+            setFilterApplied(false);
         }
     };
 	
 	const handleSearch = () => {
-        setFilterApplied(true)
+        setFilterApplied(true);
     };
 
     const startChat = async (uid: string, name: string) => {

@@ -5,7 +5,7 @@ import logo from '../../public/assets/images/mainLogo.webp';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { GetStoreData } from "../../public/interfaces/globals";
+import { GetStoreData, SitterProps } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { storeActions, UserImpl } from "../../app/redux/store";
@@ -19,15 +19,17 @@ const Header = () => {
     const [hideMenu, setHideMenu] = useState(true);
     const [burgerClassToggle, setBurgerClassToggle] = useState(false);
     const [ currentUserUid, setCurrentUserUid ] = useState('');
-    const [ currentSitter, setCurrentSitter ] = useState({});
+    const [ currentSitter, setCurrentSitter ] = useState('');
     const dispatch = useDispatch();
     
     useEffect(() => {
         if( userData[0] ) setUserEmail(userData[0].email);
-        currUserData().then( (userImplData: UserImpl[])  => setCurrentUserUid( userImplData[0].uid ));
+        if( userLoggedin ) currUserData().then( (userImplData: UserImpl[])  => setCurrentUserUid( userImplData[0].uid ));
+        console.log(currentUserUid);
+
         getUsers('sitters').then( sitters => {
-            const getMe = sitters.filter( (sitter: any) => sitter.uid === currentUserUid );
-            if( getMe.length ) console.log(getMe);
+            const sitterData: any = sitters.filter( (sitter: any) => sitter.uid === currentUserUid );
+            if(sitterData.length) setCurrentSitter(sitterData[0].selectedUser);
         } );
         // getUserData(currentUserUid).then( res => console.log(res) );
     }, []);
@@ -44,15 +46,18 @@ const Header = () => {
     
     return (
         <header className="shadow-md fixed bg-white z-50 top-0 text-center w-full grid">
-            <nav className="flex items-center md:flex-row w-full justify-between py-5 justify-self-center">
+            <nav className="flex items-center md:flex-row w-full justify-between py-3 justify-self-center">
                 <div className="w-[140px] max-md:pl-5 md:ml-20">
                     <Link href="/"><Image src={logo} alt="pesitter logo" height="80" width="110" /></Link>
                 </div>
                 <div className={`${hideMenu ? 'hidden' : 'flex'} absolute h-[calc(100vh-80px)] bg-primary-gray top-[80px] w-full flex-col items-start lg:justify-evenly lg:whitespace-nowrap md:relative md:h-auto md:flex md:top-[0px] md:bg-white md:flex-row max-md:px-8 max-md:font-semibold md:items-center`}>
                     <div className="flex items-start text-xl md:text-lg lg:text-xl flex-col md:flex-row md:justify-between md:[&>*]:mx-4">
+                        {
+                            // Show header link based on user type - sitter/owner
+                            currentSitter === 'owner' ? <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link> 
+                            : <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Собственици</Link>
+                        }
                         
-                        <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Станете Гледач</Link>
-                        <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link>
                         <Link href="/help" className="nav-link pb-1 relative max-md:mb-5">Помощ</Link>
                     </div>
                     <div className="flex items-start flex-col md:flex-row text-xl md:text-base lg:text-xl md:[&>*]:mx-4 md:items-center max-md:relative max-md:w-full">

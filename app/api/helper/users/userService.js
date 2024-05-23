@@ -3,6 +3,7 @@ import { getDatabase, ref, onValue, set, update, child, get } from "firebase/dat
 import { auth } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
+    console.log(userType);
     const getResponse = async () => {
         const fetchUsers = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json');
         const usersTojson = await fetchUsers.json();

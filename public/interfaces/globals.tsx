@@ -67,3 +67,16 @@ export interface CurrentUserImpl {
     tenantId: any;
     uid: string;
 }
+
+export interface SitterProps {
+    dailyRate: string; 
+    dailyRateOption: string;
+    id: string;
+    mail: string;
+    name: string;
+    selectedHoods: any[];
+    selectedServices: string[];
+    selectedUser: 'sitter' | 'owner';
+    uid: string;
+    userImage: any;
+}
