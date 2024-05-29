@@ -4,7 +4,8 @@ import signUp from '../../firebase/auth/signup';
 import { storeActions } from "../../app/redux/store";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { getAuth, updateProfile } from "firebase/auth";
-import firebase_app from "../../firebase/config";
+import firebase_app, { db } from "../../firebase/config";
+import { doc, setDoc } from "firebase/firestore";
 
 const RegistrationComplete = () => {
     let userData: any = useSelector<GetStoreData>( state => state.dataStore.data );
@@ -18,7 +19,7 @@ const RegistrationComplete = () => {
        const { result, error } = await signUp( userEmail, userPassword );
        const auth: any = getAuth(firebase_app);
        updateProfile(auth.currentUser, { displayName: userName }).then(() => {
-        //Profile updated    
+        //Profile updated
     }).catch((error) => console.log(error));
 
        if( userData.length > 7 ) dispatch(storeActions.storeData('clear'));
@@ -38,6 +39,12 @@ const RegistrationComplete = () => {
                     'Content-Type': 'application/json'
                 }
             });
+            
+            console.log(userData);
+            // await setDoc(doc( db, "userData", "sadas"), {
+            //     uid: result?.user.uid,
+
+            // })
         }
    }
 
@@ -45,9 +52,9 @@ const RegistrationComplete = () => {
         <div className="flex flex-col justify-center items-center">
             <h1 className="text-2xl mb-5">Готови сте!</h1>
             <p className="text-lg">Сега може да разгледате гледачи и да им изпратите вашата обява за работа!</p>
-            <Link href="/findSitters">
+            {/* <Link href="/findSitters"> */}
                 <button onClick={handleClick} className="bg-green-2 p-4 w-full text-white text-xl mt-4 rounded">Разгледайте разхождачите</button>
-            </Link>
+            {/* </Link> */}
         </div>
     )
 }
