@@ -27,7 +27,7 @@ const Login = () => {
     const monitorState = async () => {
         await onAuthStateChanged( auth, (user: any) => {
             if ( user ) {
-                // Successful login!
+                // Successful login! Sending uid to state and user loged in boolean
                 console.log('Login success!', user);
                 dispatch(storeActions.setCurrentUserId(user.auth.currentUser.uid));
                 setUserIsLogged(true);

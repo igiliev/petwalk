@@ -5,34 +5,40 @@ import logo from '../../public/assets/images/mainLogo.webp';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { GetStoreData, SitterProps } from "../../public/interfaces/globals";
+import { FirestoreUserData, GetStoreData } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
-import { auth } from "../../firebase/config";
-import { storeActions, UserImpl } from "../../app/redux/store";
+import { auth, db } from "../../firebase/config";
+import { doc, getDoc } from "firebase/firestore";
+import { storeActions } from "../../app/redux/store";
 import { useState, useEffect } from "react";
-import { currUserData, getUserData, getUsers } from "../../app/api/helper/users/userService";
 
 const Header = () => {
     const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
     const userData: any = useSelector<GetStoreData>(state => state.dataStore.data);
-    const [ userEmail, setUserEmail ] = useState('');
-    const [hideMenu, setHideMenu] = useState(true);
-    const [burgerClassToggle, setBurgerClassToggle] = useState(false);
-    const [ currentUserUid, setCurrentUserUid ] = useState('');
-    const [ currentSitter, setCurrentSitter ] = useState('');
+    const currentUserUid: any = useSelector<GetStoreData>( state => state.dataStore.currentUserId );
+    const [ hideMenu, setHideMenu ] = useState(true);
+    const [ burgerClassToggle, setBurgerClassToggle ] = useState(false);
+    const [ firestoreUserData, setFirestoreUserData ]: any = useState({});
     const dispatch = useDispatch();
     
     useEffect(() => {
-        if( userData[0] ) setUserEmail(userData[0].email);
-        if( userLoggedin ) currUserData().then( (userImplData: UserImpl[])  => setCurrentUserUid( userImplData[0].uid ));
-        console.log(currentUserUid);
-
-        getUsers('sitters').then( sitters => {
-            const sitterData: any = sitters.filter( (sitter: any) => sitter.uid === currentUserUid );
-            if(sitterData.length) setCurrentSitter(sitterData[0].selectedUser);
-        } );
-        // getUserData(currentUserUid).then( res => console.log(res) );
+        if( userLoggedin ) fetchUserFirestoreData();
     }, []);
+
+    const fetchUserFirestoreData = async ()  => {
+        try {
+            const docRef = doc(db, 'userData', currentUserUid);
+            const docSnap = await getDoc(docRef);
+
+            if( docSnap.exists() ) {
+                console.log('dataIsHere', docSnap.data());
+                setFirestoreUserData(docSnap.data());
+                console.log(firestoreUserData);
+            }
+        } catch(e) {
+            console.log('Something with fetching the firestore DB is wrong', e);
+        }
+    }
 
     const handleLogout = async () => {
         dispatch(storeActions.setUserLogin(false));
@@ -54,7 +60,7 @@ const Header = () => {
                     <div className="flex items-start text-xl md:text-lg lg:text-xl flex-col md:flex-row md:justify-between md:[&>*]:mx-4">
                         {
                             // Show header link based on user type - sitter/owner
-                            currentSitter === 'owner' ? <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link> 
+                            firestoreUserData.userType === 'owner' ? <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link>
                             : <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Собственици</Link>
                         }
                         
@@ -67,7 +73,7 @@ const Header = () => {
                                     {/* <Link href="/userChat" className="nav-link relative">Профил</Link> */}
                                     <Link href='/userChat' className="nav-link relative max-md:mb-5">Съобщения</Link>
                                     <button className="nav-link relative max-md:mb-5" onClick={handleLogout}>Изход</button>
-                                    <p className="bg-green-2 text-white px-4 py-2 rounded hover:bg-gold hover:bg-teal-700 max-md:absolute max-md:-bottom-20 max-md:w-full md:hidden">Добре дошъл: {userEmail}</p>
+                                    <p className="bg-green-2 text-white px-4 py-2 rounded hover:bg-gold hover:bg-teal-700 max-md:absolute max-md:-bottom-20 max-md:w-full md:hidden">Добре дошъл: {firestoreUserData.name}</p>
                                 </>
                                 :
                                 <>

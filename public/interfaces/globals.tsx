@@ -80,3 +80,9 @@ export interface SitterProps {
     uid: string;
     userImage: any;
 }
+
+export interface FirestoreUserData {
+    name: string;
+    uid: string;
+    userType: string;
+}
