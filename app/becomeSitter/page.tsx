@@ -8,7 +8,12 @@ const BecomeSitter = (props: any) => {
     const [ storeUsers, setStoreUsers ]: any[] = useState([]);
 
     useEffect( () => {
-        getUsers('owners').then( res => setStoreUsers(res) );
+        getUsers('owners').then( res => {
+            if(res.length)
+                console.log(res);
+
+            setStoreUsers(res) 
+        });
     }, [] );
 
     return (

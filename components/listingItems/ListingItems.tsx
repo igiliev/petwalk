@@ -23,7 +23,10 @@ const ListingItems = (props: any) => {
     const dispatch = useDispatch();
     
     useEffect( () => {
-        currUserData().then( data => setUserData(data[0]) );
+        currUserData().then( data => {
+            // console.log(data);
+            return setUserData(data[0]);
+        });
         // onSnapshot(doc(db, 'chatUsernames', userData.uid), (doc) => {
         //     console.log(doc.data());
         // });
@@ -67,10 +70,8 @@ const ListingItems = (props: any) => {
             date: Timestamp.now()
         }, { merge: true });
         
-        console.log(chatRefSnap.data());
         if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
-            console.log(data);
             // router.push(`/userChat/${userData.uid}`);
             // If the selected name is in the /chatUsernames db > redirect to the Chat page
             if( !data.names.includes(name) ) {
@@ -80,9 +81,10 @@ const ListingItems = (props: any) => {
             console.error('NEMA DATA BATE');
         }
     }
-    const usersToRender = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData
+    const usersToRender = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
 
     const mappedUsers: any = usersToRender.map((user: any): any => {
+        console.log(user);
         const hoodLabels = user.selectedHoods.map((hood: any): any => <span className="test inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span>);
         const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
 
@@ -107,7 +109,7 @@ const ListingItems = (props: any) => {
                             <Link className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
                         </div>
                         :
-                        <div></div>
+                        <></>
                 }
             </div>
         )

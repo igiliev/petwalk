@@ -4,27 +4,38 @@ import { auth } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
-        const fetchUsers = await fetch('https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/petSitters.json');
+        const fetchUsers = await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/${userType === 'owners' ? 'owners.json' : 'petSitters.json' }`);
         const usersTojson = await fetchUsers.json();
         const storeSitters = [];
         const storeOwners = [];
         
         // TODO: Do this in a better way, no boilerplate
         for ( const user in usersTojson ) {
+            let selectedUser, name, dailyRateOption, mail, dailyRate, selectedHoods, selectedServices, userImage, uid;
+            // Getting the inner object where the data is actually stored
             const insideData = usersTojson[user].sitterData;
-            const name = insideData.find( userData => userData.nameVal ).nameVal;
-            const dailyRateOption = insideData.find( userData => userData.rateOption ).rateOption;
-            const mail = insideData.find( userData => userData.mailVal ).mailVal;
-            const dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
-            const selectedUser = insideData.find( userData => userData.regOption ).regOption;
-            // const describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
-            const selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
-            const selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
-            const userImage = insideData.find( userData => userData.userImg ).userImg;
-            const uid = insideData.find( userData => userData.uid ).uid;
+            // Storing only owners specific values so I don't get the undefined error
+            if ( userType === 'owners' ) {
+                selectedUser = insideData.find( userData => userData.regOption ).regOption;
+                name = insideData.find( userData => userData.nameVal ).nameVal;
+                mail = insideData.find( userData => userData.mailVal ).mailVal;
+                userImage = insideData.find( userData => userData.userImg ).userImg;
+            } else {
+                // Storing all other values for sitters
+                selectedUser = insideData.find( userData => userData.regOption ).regOption;
+                name = insideData.find( userData => userData.nameVal ).nameVal;
+                dailyRateOption = insideData.find( userData => userData.rateOption ).rateOption;
+                mail = insideData.find( userData => userData.mailVal ).mailVal;
+                dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
+                selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
+                selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
+                userImage = insideData.find( userData => userData.userImg ).userImg;
+                uid = insideData.find( userData => userData.uid ).uid;
+                 //  describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
+            }
 
             //Adding only the users that have selected to be a sitter
-            if ( selectedUser === 'sitter' ) {
+            if ( userType === 'sitters' ) {
                 storeSitters.push({
                     name,
                     mail,
