@@ -23,9 +23,6 @@ import Header from '../components/header/Header';
 import Footer from '../components/footer/Footer';
 import BannerImg from '../public/assets/images/banner-petsitter.jpeg';
 
-import { getMessaging } from "firebase/messaging/sw";
-import { onBackgroundMessage } from "firebase/messaging/sw";
-
 export default function Home() {
   return (
     <>

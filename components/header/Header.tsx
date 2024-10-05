@@ -28,12 +28,11 @@ const Header = () => {
     const fetchUserFirestoreData = async ()  => {
         try {
             const docRef = doc(db, 'userData', currentUserUid);
+            console.log(currentUserUid);
             const docSnap = await getDoc(docRef);
 
             if( docSnap.exists() ) {
-                console.log('dataIsHere', docSnap.data());
                 setFirestoreUserData(docSnap.data());
-                console.log(firestoreUserData);
             }
         } catch(e) {
             console.log('Something with fetching the firestore DB is wrong', e);
@@ -60,8 +59,8 @@ const Header = () => {
                     <div className="flex items-start text-xl md:text-lg lg:text-xl flex-col md:flex-row md:justify-between md:[&>*]:mx-4">
                         {
                             // Show header link based on user type - sitter/owner
-                            firestoreUserData.userType === 'owner' ? <Link href="/findSitters" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Намерете Гледач</Link>
-                            : <Link href="/becomeSitter" className="nav-link pb-1 relative group max-sm:mb-3">Собственици</Link>
+                            firestoreUserData.userType === 'sitter' ? <Link href="/listOwners" className="nav-link pb-1 relative max-md:mb-5 max-md:pt-5">Собственици</Link>
+                            : <Link href="/listSitters" className="nav-link pb-1 relative group max-sm:mb-3">Намерете Гледач</Link>
                         }
                         
                         <Link href="/help" className="nav-link pb-1 relative max-md:mb-5">Помощ</Link>

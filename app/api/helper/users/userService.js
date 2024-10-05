@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
-import { auth } from "../../../../firebase/config";
+import { auth, db } from "../../../../firebase/config";
 
 export async function getUsers(userType) {
     const getResponse = async () => {
@@ -52,10 +52,6 @@ export async function getUsers(userType) {
                 storeOwners.push({
                     name,
                     mail,
-                    dailyRate,
-                    dailyRateOption,
-                    selectedHoods,
-                    selectedServices,
                     userImage,
                     id: user
                 })
@@ -111,13 +107,3 @@ export async function currUserData() {
 
     return currUserData;
 }
-
-// export async function getUserChatNames(id) {
-//     const data = [];
-//     const db = getDatabase();
-//     console.log(id);
-//     const chatNamesRef = ref(db, 'userChatNames/' + id);
-//     await onValue(chatNamesRef, (snapshot) => {
-//         data.push(snapshot.val());
-//     });
-// }

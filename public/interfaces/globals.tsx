@@ -71,6 +71,7 @@ export interface CurrentUserImpl {
 export interface SitterProps {
     dailyRate: string; 
     dailyRateOption: string;
+    describtion: string;
     id: string;
     mail: string;
     name: string;
