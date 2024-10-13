@@ -13,6 +13,8 @@ import { currUserData } from "../../app/api/helper/users/userService";
 import { collection, doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { GetStoreData, SitterProps } from "../../public/interfaces/globals";
+import UsersList from "../UsersList/UsersList";
+import { start } from "repl";
 // Find a way to use this interface in the fetchFirestoreUserData
 
 interface OwnerDataProps {
@@ -29,18 +31,24 @@ const ListingItems = (props: any) => {
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
     const [filterApplied, setFilterApplied] = useState(false);
     const [matchedItems, setMatchedItems] = useState([]);
+    const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
     const dispatch = useDispatch();
     
 
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]));
-        onSnapshot(doc(db, 'userData', currentUserId), (doc) => {
-            if( !doc.exists() ) return;
-            
-            const { userType } = doc.data();
-            setIsSitter( userType === 'sitter' );
-        });
-    }, [ props.userData, currentUserId ] );
+        try {
+            onSnapshot(doc(db, 'userData', currentUserId), (doc) => {
+                if( !doc.exists() ) return;
+                
+                const { userType } = doc.data();
+                console.log(userType);
+                setIsSitter( userType === 'sitter' );
+            });
+        } catch{
+            console.error('currentUserId in ListingItems is undefined');
+        }
+    }, [ currentUserId ] );
 	
 	const handleChange = (event: any) => {
         let string = event.target.value.toLowerCase();
@@ -67,7 +75,7 @@ const ListingItems = (props: any) => {
         const { proactiveRefresh, auth, stsTokenManager, metadata,  ...slicedUserData } = userData;
         // const chatDocRef = doc(db, 'chats');
         // const chatDocRefSnap = await getDoc(chatDocRef);
-        const chatsRef = collection(db, 'chats');
+        // const chatsRef = collection(db, 'chats');
         // const chatNamesRef = collection(db, 'chatUsernames');
         const firestoreChatRef = doc(db, 'chatUsernames', userData.uid);
         const chatRefSnap = await getDoc( firestoreChatRef );
@@ -92,53 +100,6 @@ const ListingItems = (props: any) => {
         }
     }
 
-    const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
-
-    const mappedUsers = renderUsers.map((user: SitterProps, index: number): any => {
-        console.log(props.userData);
-        if( !isSitter ) {
-            const hoodLabels = user.selectedHoods.map((hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span>);
-            const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
-            const sitterElements = <div>
-                <span>{user.dailyRate}лв на </span>
-                <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
-                <div className="py-5"><span>Избрани квартали:</span>{hoodLabels}</div>
-                <p>Предлагани услуги: {servicesLabels}</p>
-                <p className="py-5"><span>Oписание: </span>{user.describtion}</p>
-            </div>
-
-            return (
-                <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={user.id}>
-                    <div className="p-5">
-                        <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="h-24 sm:h-20" />
-                    </div>
-                    <div className="pb-3 text-grey-2">
-                        <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
-                        { !isSitter ? sitterElements : <>No elements</> }
-                    </div>
-                    {
-                        userLoggedin ?
-                            <div className="msg-btn-wrapper">
-                                <Link className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
-                            </div>
-                            :
-                            <></>
-                    }
-                </div>
-            )
-        } else {
-            return (
-                <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
-                    <div className="p-5">
-                        <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="h-24 sm:h-20" />
-                    </div>
-                    <div className="pb-3 text-grey-2">
-                        <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
-                    </div>
-                </div>
-            )
-        }});
-
     return (
         <div className="pt-44 w-full h-full bg-grey-2">
             <Header />
@@ -150,7 +111,7 @@ const ListingItems = (props: any) => {
                 <div className="w-full lg:ml-20 p-7 pt-0 border-1 border-black">
                     <h1 className="text-3xl mb-5 font-semibold max-sm:text-center">Налични { isSitter ? 'собственици' : 'гледачи' } в избраните квартали</h1>
                     <p className="mb-5">Това е демо версия на сайта. За да видите всички гледачи и да може да изпратите съобщение се регистрирайте(напълно безплатно е и става за 1 минута)</p>
-                    { mappedUsers }
+                    { <UsersList users={renderUsers} startChat={startChat} userData={userData} /> }
                 </div>
             </div>
             <Footer />

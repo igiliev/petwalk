@@ -35,7 +35,7 @@ export default function Home() {
             <p className="leading-6 text-grey-1 mb-7 text-base">Вече повече от 1 000 души използват PetSit.bg за да се грижат за домашните си любимци по време на дните в офиса или при пътувания</p>
             <div className='lg:my-5 max-sm:flex max-sm:flex-col text-center'>
               <Link href="/register/regOptions" className="sm:mr-5 bg-gold max-sm:mb-3 text-white p-5 rounded hover:bg-white hover:text-black">Намерете гледач</Link>
-              <Link href="/findSitters" className="bg-transparent text-white border-3 bg-gold-outline p-4 rounded">Разгледайте гледачите</Link>
+              <Link href="/listSitters" className="bg-transparent text-white border-3 bg-gold-outline p-4 rounded">Разгледайте гледачите</Link>
             </div>
             <Link href="/register/regOptions" className="underline text-lg text-white my-5 font-semibold">Търсите работа като гледач на домашни любимци?</Link>
           </div>

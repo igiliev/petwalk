@@ -8,7 +8,7 @@ import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { v4 as uuid } from "uuid";
-import { currUserData, getUsers } from "../../app/api/helper/users/userService";
+import { currUserData } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
 import { UserImpl } from "../../app/redux/store";
 
@@ -27,6 +27,7 @@ const Chat = () => {
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
+    const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const path = usePathname();
 
     useEffect( () => {
@@ -36,6 +37,7 @@ const Chat = () => {
 
         //Feching all the chats user names from local state
         const fetchStateUserNames = async () => {
+            console.log(stateChatNames);
             try {
                 if( stateChatNames ) {
                     setChatUsernames( stateChatNames );
@@ -43,7 +45,7 @@ const Chat = () => {
             } catch(error) {
                 console.error('fetchStateUserNames: ', error);
             }
-        } 
+        }
 
         //Fetching all the chat user names from firestore /chatUsernames
         const fetchDBUserNames = async () => {
@@ -56,6 +58,7 @@ const Chat = () => {
             }
 
             checkForMissedMsgs(uid);
+
             try {
                 const userNamesRef = doc(db, 'chatUsernames', uid);
                 const userNamesData = await getDoc(userNamesRef);
@@ -73,8 +76,9 @@ const Chat = () => {
             try {
                 //try with collection
                 const citiesColl = collection(db, "chats");
-                const q = query(citiesColl, where("senderId", "==",  myId));
-                const querySnapshot = await getDocs(q);
+                // const q = query(citiesColl, where("senderId", "==",  myId));
+                const f = query(collection(db, 'chats'), where("idField", ">=", myId));
+                const querySnapshot = await getDocs(f);
                 //TODO: remove this log after everything works
                 querySnapshot.forEach( (doc) => (
                     console.log(doc.id, '=>', doc.data())
@@ -98,12 +102,14 @@ const Chat = () => {
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
-        // if ( event.key === 'Enter' && event.target.value !== '' ) {
-        //     // THIS WORKS BUT IS NOT GONNA BE USED YET - SAVING THE USERNAMES IN THE DB
-        //     await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
-        //         names: arrayUnion(chatUsernames.toString())
-        //     }, { merge: true });
-        // }
+    //     console.log(event.key);
+    //     // Can change this to a submit event
+    //     if ( event.key === 'Enter' && event.target.value !== '' ) {
+    //         // THIS WORKS BUT IS NOT GONNA BE USED YET - SAVING THE USERNAMES IN THE DB
+    //         await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
+    //             names: arrayUnion(chatUsernames.toString())
+    //         }, { merge: true });
+    //     }
     }
 
     const sendMsgClick = () => { };
@@ -143,12 +149,16 @@ const Chat = () => {
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
             updateChatMsgs(doc);
         });
-        console.log(chatUsernames);
+        const selectedUserId = combinedId.replace(senderUid, '');
         setChatInput('');
         //Setting the /chatUsernames with the new user
-        await updateDoc(doc(db, 'chatUsernames', combinedId ), {
-            names: arrayUnion( chatUsernames.toString() )
-        },);
+        // await updateDoc(doc(db, 'chatUsernames', selectedUserId ), {
+        //     names: arrayUnion( chatUsernames.toString() )
+        // });
+
+        await setDoc(doc(db, 'chatUsernames', selectedUserId ), {
+            names: arrayUnion(chatData.user.displayName)
+        }, { merge: true });
     };
 
     const updateChatMsgs = async (chatData: any) => {
@@ -163,10 +173,6 @@ const Chat = () => {
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);
     };
-
-    const missedMessage = () => {
-
-    }
 
     return (
         <form className="chat-form" onSubmit={handleSubmit}>

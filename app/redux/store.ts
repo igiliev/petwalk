@@ -52,12 +52,12 @@ const dataSlice = createSlice({
             }
         },
         setUserChatNames( state, action ) {
-            const dummyState = new Set<string>();
-            dummyState.add( action.payload );
+            const namesSet = new Set<string>();
+            namesSet.add( action.payload );
             //Creating an array from a Set so there are no dublicates
-            const setToArr: any = Array.from(dummyState);
+            const namesArr: any = Array.from(namesSet);
             if( action.payload !== '' ) {
-                state.userChatNames = setToArr;
+                state.userChatNames = namesArr;
             }
         }
     }

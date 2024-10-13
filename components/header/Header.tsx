@@ -28,7 +28,6 @@ const Header = () => {
     const fetchUserFirestoreData = async ()  => {
         try {
             const docRef = doc(db, 'userData', currentUserUid);
-            console.log(currentUserUid);
             const docSnap = await getDoc(docRef);
 
             if( docSnap.exists() ) {
