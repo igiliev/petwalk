@@ -2,19 +2,15 @@
 
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import Image from "next/image";
 import './ListingItems.css';
-import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useDispatch, useSelector } from "react-redux";
-import Link from "next/link";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-import { collection, doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { GetStoreData, SitterProps } from "../../public/interfaces/globals";
+import { GetStoreData } from "../../public/interfaces/globals";
 import UsersList from "../UsersList/UsersList";
-import { start } from "repl";
 // Find a way to use this interface in the fetchFirestoreUserData
 
 interface OwnerDataProps {
