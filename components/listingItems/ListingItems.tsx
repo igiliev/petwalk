@@ -24,7 +24,6 @@ const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
     const [ isSitter, setIsSitter ] = useState(false);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
-    const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
     const [filterApplied, setFilterApplied] = useState(false);
     const [matchedItems, setMatchedItems] = useState([]);
     const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
@@ -92,7 +91,7 @@ const ListingItems = (props: any) => {
                 dispatch(storeActions.setUserChatNames(name));
             }
         } else {
-            console.error('NEMA DATA BATE');
+            console.error('No data from chat db');
         }
     }
 

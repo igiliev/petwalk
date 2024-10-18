@@ -102,14 +102,6 @@ const Chat = () => {
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
-    //     console.log(event.key);
-    //     // Can change this to a submit event
-    //     if ( event.key === 'Enter' && event.target.value !== '' ) {
-    //         // THIS WORKS BUT IS NOT GONNA BE USED YET - SAVING THE USERNAMES IN THE DB
-    //         await setDoc(doc(db, 'chatUsernames', currentUserUID ), {
-    //             names: arrayUnion(chatUsernames.toString())
-    //         }, { merge: true });
-    //     }
     }
 
     const sendMsgClick = () => { };
@@ -136,6 +128,9 @@ const Chat = () => {
         event.preventDefault();
         const userData: UserImpl[] = await currUserData();
         const senderUid: string = userData[0].uid;
+        const userNamesData: { ownerName: string; sitterNames: string[] } = { ownerName: userData[0].displayName, sitterNames: [stateChatNames[0]] };
+        const selectedUserId: string = combinedId.replace(senderUid, '');
+        console.log(userNamesData);
 
         //Adding the typed in chat msg into /chats 
         await updateDoc(doc(db, 'chats', combinedId), {
@@ -145,31 +140,38 @@ const Chat = () => {
                 date: Timestamp.now()
             })
         });
+
         //Updating the DB on every submitted messsage and showing in the view
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
             updateChatMsgs(doc);
         });
-        const selectedUserId = combinedId.replace(senderUid, '');
+
         setChatInput('');
         //Setting the /chatUsernames with the new user
         // await updateDoc(doc(db, 'chatUsernames', selectedUserId ), {
         //     names: arrayUnion( chatUsernames.toString() )
         // });
 
-        await setDoc(doc(db, 'chatUsernames', selectedUserId ), {
-            names: arrayUnion(chatData.user.displayName)
+        await setDoc(doc(db, 'chatUsernames', combinedId ), {
+            names: arrayUnion(userNamesData)
         }, { merge: true });
     };
 
     const updateChatMsgs = async (chatData: any) => {
-        //TODO: Optimize this
         const { messages }: any = chatData.data();
-        const myChatData: Array<ChatMsgsData> = messages && messages.filter( (msg: ChatMsgsData) => msg.senderId === currentUserUID );
-        const userChatData: Array<ChatMsgsData> = messages.filter( (msg: ChatMsgsData) => msg.senderId !== currentUserUID );
         const storeMyText: string[] = [];
         const storeUserText: string[] = [];
-        userChatData.forEach( data => storeUserText.push(data.text) );
-        myChatData.forEach( data => storeMyText.push(data.text) );
+    
+        if (messages) {
+            messages.forEach((msg: ChatMsgsData) => {
+                if (msg.senderId === currentUserUID) {
+                    storeMyText.push(msg.text);
+                } else {
+                    storeUserText.push(msg.text);
+                }
+            });
+        }
+    
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);
     };
