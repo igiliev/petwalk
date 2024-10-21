@@ -37,7 +37,6 @@ const Chat = () => {
 
         //Feching all the chats user names from local state
         const fetchStateUserNames = async () => {
-            console.log(stateChatNames);
             try {
                 if( stateChatNames ) {
                     setChatUsernames( stateChatNames );
@@ -130,7 +129,6 @@ const Chat = () => {
         const senderUid: string = userData[0].uid;
         const userNamesData: { ownerName: string; sitterNames: string[] } = { ownerName: userData[0].displayName, sitterNames: [stateChatNames[0]] };
         const selectedUserId: string = combinedId.replace(senderUid, '');
-        console.log(userNamesData);
 
         //Adding the typed in chat msg into /chats 
         await updateDoc(doc(db, 'chats', combinedId), {
@@ -153,8 +151,20 @@ const Chat = () => {
         // });
 
         await setDoc(doc(db, 'chatUsernames', combinedId ), {
-            names: arrayUnion(userNamesData)
+            ownerName: userData[0].displayName, sitterName: stateChatNames[0], combinedId
         }, { merge: true });
+        
+        const namesQuery = query(collection(db, 'chatUsernames'));
+        const querySnapshot = await getDocs(namesQuery);
+        console.log(querySnapshot);
+
+        //TODO: remove this log after everything works
+
+        querySnapshot.forEach( (doc) => {
+            if( doc.id.includes(senderUid) ) {
+                console.log(doc.id);
+            }
+        } );
     };
 
     const updateChatMsgs = async (chatData: any) => {
