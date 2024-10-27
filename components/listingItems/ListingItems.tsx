@@ -32,6 +32,7 @@ const ListingItems = (props: any) => {
 
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]));
+        // TODO: This fetch is being used on multiple places make sure it's sing source of truth
         try {
             onSnapshot(doc(db, 'userData', currentUserId), (doc) => {
                 if( !doc.exists() ) return;

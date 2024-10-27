@@ -18,13 +18,23 @@ interface ChatMsgsData {
     senderId: string;
 }
 
+interface Usernames {
+    sitterName: string;
+    ownerName: string;
+    combinedId: string;
+}
+
 const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
+    const [ isSitter, setIsSitter ] = useState(false);
     const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
+    const [ currOwnerChatnames, setCurrOwnerChatnames ]: any = useState([]);
+    const [ currSitterChatnames, setCurrSitterChatnames ]: any = useState([]);
+
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
@@ -34,6 +44,18 @@ const Chat = () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
+
+        try {
+            onSnapshot(doc(db, 'userData', currentUserUID), (doc) => {
+                if( !doc.exists() ) return;
+                
+                const { userType } = doc.data();
+                console.log(userType);
+                setIsSitter( userType === 'sitter' );
+            });
+        } catch{
+            console.error('currentUserId in ListingItems is undefined');
+        }
 
         //Feching all the chats user names from local state
         const fetchStateUserNames = async () => {
@@ -127,7 +149,6 @@ const Chat = () => {
         event.preventDefault();
         const userData: UserImpl[] = await currUserData();
         const senderUid: string = userData[0].uid;
-        const userNamesData: { ownerName: string; sitterNames: string[] } = { ownerName: userData[0].displayName, sitterNames: [stateChatNames[0]] };
         const selectedUserId: string = combinedId.replace(senderUid, '');
 
         //Adding the typed in chat msg into /chats 
@@ -156,15 +177,32 @@ const Chat = () => {
         
         const namesQuery = query(collection(db, 'chatUsernames'));
         const querySnapshot = await getDocs(namesQuery);
-        console.log(querySnapshot);
 
         //TODO: remove this log after everything works
 
         querySnapshot.forEach( (doc) => {
             if( doc.id.includes(senderUid) ) {
-                console.log(doc.id);
+                const nameData = doc.data();
+                // console.log(nameData);
+                if(isSitter) {
+                    setCurrSitterChatnames((prevName: any) => {
+                        // console.log(prevName);
+                        if(!prevName.includes(nameData.sitterName)) 
+                            return [...prevName, nameData.ownerName];
+    
+                        return prevName;
+                    } );
+                }
+                setCurrOwnerChatnames((prevName: any) => {
+                    // console.log(prevName);
+                    if(!prevName.includes(nameData.sitterName)) 
+                        return [...prevName, nameData.sitterName];
+
+                    return prevName;
+                } );
             }
         } );
+        console.log(currOwnerChatnames);
     };
 
     const updateChatMsgs = async (chatData: any) => {
