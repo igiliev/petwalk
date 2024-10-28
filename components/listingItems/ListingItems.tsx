@@ -9,16 +9,7 @@ import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { GetStoreData } from "../../public/interfaces/globals";
 import UsersList from "../UsersList/UsersList";
-// Find a way to use this interface in the fetchFirestoreUserData
-
-interface OwnerDataProps {
-    id: string;
-    mail: string;
-    name: string;
-    userImage: string;
-}
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
@@ -69,10 +60,6 @@ const ListingItems = (props: any) => {
         ? userData.uid + uid
         : uid + userData.uid;
         const { proactiveRefresh, auth, stsTokenManager, metadata,  ...slicedUserData } = userData;
-        // const chatDocRef = doc(db, 'chats');
-        // const chatDocRefSnap = await getDoc(chatDocRef);
-        // const chatsRef = collection(db, 'chats');
-        // const chatNamesRef = collection(db, 'chatUsernames');
         const firestoreChatRef = doc(db, 'chatUsernames', userData.uid);
         const chatRefSnap = await getDoc( firestoreChatRef );
         dispatch(storeActions.setCombinedId(combinedId));
