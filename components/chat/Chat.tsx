@@ -34,15 +34,18 @@ const Chat = () => {
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const [ currOwnerChatnames, setCurrOwnerChatnames ] = useState([]);
     const [ currSitterChatnames, setCurrSitterChatnames ] = useState([]);
+    const [ allMessagesPage, setAllMessagesPage ] = useState(false);
 
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const path = usePathname();
+    const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
 
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
+        path.includes('/messages') && setAllMessagesPage(true); 
         setCurrentUserUID(userID);
 
         try {
@@ -113,38 +116,43 @@ const Chat = () => {
             }
         }
 
-        // const getChatNames = async () => {
-        //     try {
-        //         const namesQuery = query(collection(db, 'chatUsernames'));
-        //         const querySnapshot = await getDocs(namesQuery);
+        const getChatNames = async () => {
+            try {
+                const namesQuery = query(collection(db, 'chatUsernames'));
+                const querySnapshot = await getDocs(namesQuery);
+                const senderUid = combinedId.replace(currentUserId, '');
         
-        //         querySnapshot.forEach( (doc) => {
-        //             if( doc.id.includes(senderUid) ) {
-        //                 const nameData = doc.data();
-        //                 if(isSitter) {
-        //                     setCurrSitterChatnames((prevName: any) => {
-        //                         if(!prevName.includes(nameData.sitterName)) 
-        //                             return [...prevName, nameData.ownerName];
-            
-        //                         return prevName;
-        //                     } );
-        //                 }
-        //                 setCurrOwnerChatnames((prevName: any) => {
-        //                     if(!prevName.includes(nameData.sitterName)) 
-        //                         return [...prevName, nameData.sitterName];
+                querySnapshot.forEach( (doc) => {
+                    if( doc.id.includes(senderUid) ) {
+                        const nameData = doc.data();
+                        if(isSitter) {
+                            setCurrSitterChatnames((prevName: any) => {
+                                if(!prevName.includes(nameData.sitterName)) 
+                                    return [...prevName, nameData.names];
+                                
+                                return prevName;
+                            } );
+                        }
+                        setCurrOwnerChatnames((prevName: any) => {
+                            // console.log(prevName);
+                            if(!prevName.includes(nameData.sitterName)) 
+                                return [...prevName, nameData.names];
         
-        //                     return prevName;
-        //                 } );
-        //             }
-        //         } );
-        //     } catch(error) {
-        //         console.log(' Something wrong with the chatNames fetching ',error);
-        //     }
-        // }
+                            return prevName;
+                        } );
+                    }
+                } );
+            } catch(error) {
+                console.log(' Something wrong with the chatNames fetching ',error);
+            }
+        }
 
         fetchStateUserNames();
         fetchDBUserNames();
+        getChatNames();
         console.log(stateChatNames);
+        console.log(currSitterChatnames);
+        console.log(currOwnerChatnames);
     }, [] );
     	
     const handleEnter = async (event: any) => {

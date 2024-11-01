@@ -69,7 +69,7 @@ const Header = () => {
                             userLoggedin ?
                                 <>
                                     {/* <Link href="/userChat" className="nav-link relative">Профил</Link> */}
-                                    <Link href='/userChat' className="nav-link relative max-md:mb-5">Съобщения</Link>
+                                    <Link href='/userChat/messages' className="nav-link relative max-md:mb-5">Съобщения</Link>
                                     <button className="nav-link relative max-md:mb-5" onClick={handleLogout}>Изход</button>
                                     <p className="bg-green-2 text-white px-4 py-2 rounded hover:bg-gold hover:bg-teal-700 max-md:absolute max-md:-bottom-20 max-md:w-full md:hidden">Добре дошъл: {firestoreUserData.name}</p>
                                 </>
