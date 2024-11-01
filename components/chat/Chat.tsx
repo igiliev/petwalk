@@ -11,6 +11,7 @@ import { v4 as uuid } from "uuid";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
 import { UserImpl } from "../../app/redux/store";
+import ChatNames from "./ChatNames";
 
 interface ChatMsgsData {
     text: string;
@@ -125,8 +126,10 @@ const Chat = () => {
                 querySnapshot.forEach( (doc) => {
                     if( doc.id.includes(senderUid) ) {
                         const nameData = doc.data();
+                        console.log(nameData);
                         if(isSitter) {
                             setCurrSitterChatnames((prevName: any) => {
+                                console.log(prevName);
                                 if(!prevName.includes(nameData.sitterName)) 
                                     return [...prevName, nameData.names];
                                 
@@ -134,7 +137,8 @@ const Chat = () => {
                             } );
                         }
                         setCurrOwnerChatnames((prevName: any) => {
-                            // console.log(prevName);
+                            console.log(prevName);
+                            // console.log(nameData);
                             if(!prevName.includes(nameData.sitterName)) 
                                 return [...prevName, nameData.names];
         
@@ -150,9 +154,8 @@ const Chat = () => {
         fetchStateUserNames();
         fetchDBUserNames();
         getChatNames();
-        console.log(stateChatNames);
-        console.log(currSitterChatnames);
-        console.log(currOwnerChatnames);
+        // console.log(stateChatNames);
+        // console.log(currSitterChatnames);
     }, [] );
     	
     const handleEnter = async (event: any) => {
@@ -220,18 +223,15 @@ const Chat = () => {
         setSelectedUserChatMsgs(storeUserText);
     };
 
+    console.log(currOwnerChatnames);
+
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
             <div className="chat-wrapper m-auto mt-48">
                 <div className='bg-green-2 p-6'></div>
                 <div className="chat-inner flex flex-col sm:flex-row">
                     <div className="sm:w-36 w-full bg-white">
-                    <>
-                        {/* Side menu with user names */}
-                        {  !stateChatNames.length ? 'Loading' : stateChatNames.map( (name: string) => (
-                             <p className="text-center py-2 text-xl hover:cursor-pointer hover:bg-slate-700 hover:text-white" key={uuid()} onClick={startChat}>{ name }</p>
-                         ))}
-                    </>
+                        <ChatNames names={chatUsernames} messagesPage={allMessagesPage} />
                     </div>
                     <div className={`w-full 'bg-white' relative`}>
                         <div className="h-full bg-grey-2 p-5 overflow-auto overflow-y-scroll">
