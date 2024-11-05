@@ -121,29 +121,43 @@ const Chat = () => {
             try {
                 const namesQuery = query(collection(db, 'chatUsernames'));
                 const querySnapshot = await getDocs(namesQuery);
-                const senderUid = combinedId.replace(currentUserId, '');
-        
+
                 querySnapshot.forEach( (doc) => {
+                    const senderUid = doc.id.replace(currentUserId, '');
+                    // console.log('myID: ', currentUserId);
+                    // console.log('all IDS: ', doc.id);
+
                     if( doc.id.includes(senderUid) ) {
                         const nameData = doc.data();
-                        console.log(nameData);
-                        if(isSitter) {
-                            setCurrSitterChatnames((prevName: any) => {
-                                console.log(prevName);
-                                if(!prevName.includes(nameData.sitterName)) 
-                                    return [...prevName, nameData.names];
+                        console.log('2', chatUsernames);
+                        console.log(isSitter);
+                        if(isSitter && allMessagesPage) {
+                            setChatUsernames((prevName: any): any => {
+                                return [...prevName, nameData.ownerName];
+                            });
+                            // setCurrSitterChatnames((prevName: any) => {
+                                //     console.log(prevName);
+                                //     if(!prevName.includes(nameData.sitterName)) 
+                                //         return [...prevName, nameData.names];
                                 
-                                return prevName;
-                            } );
+                                //     return prevName;
+                                // } );
                         }
-                        setCurrOwnerChatnames((prevName: any) => {
-                            console.log(prevName);
-                            // console.log(nameData);
-                            if(!prevName.includes(nameData.sitterName)) 
-                                return [...prevName, nameData.names];
+                        else if(!isSitter && allMessagesPage) {
+                            setChatUsernames((prevName: any): any => {
+                                return [...prevName, nameData.sitterName];
+                            });
+                        }
+                        // console.log(doc.id);
+                        // console.log('senderId: ', senderUid);
+
+                        // setCurrOwnerChatnames((prevName: any) => {
+                        //     console.log(prevName);
+                        //     if(!prevName.includes(nameData.sitterName)) 
+                        //         return [...prevName, nameData.names];
         
-                            return prevName;
-                        } );
+                        //     return prevName;
+                        // } );
                     }
                 } );
             } catch(error) {
@@ -154,9 +168,7 @@ const Chat = () => {
         fetchStateUserNames();
         fetchDBUserNames();
         getChatNames();
-        // console.log(stateChatNames);
-        // console.log(currSitterChatnames);
-    }, [] );
+    } );
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -223,7 +235,7 @@ const Chat = () => {
         setSelectedUserChatMsgs(storeUserText);
     };
 
-    console.log(currOwnerChatnames);
+    // console.log(currOwnerChatnames);
 
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
