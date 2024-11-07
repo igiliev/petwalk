@@ -29,12 +29,12 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
     const [ isSitter, setIsSitter ] = useState(false);
-    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const [ currOwnerChatnames, setCurrOwnerChatnames ] = useState([]);
     const [ currSitterChatnames, setCurrSitterChatnames ] = useState([]);
+    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState(false);
 
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
@@ -46,8 +46,10 @@ const Chat = () => {
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
-        path.includes('/messages') && setAllMessagesPage(true); 
+        path.includes('/messages') && setAllMessagesPage(true);
         setCurrentUserUID(userID);
+        //Feching all the chats user names from local state
+        setChatUsernames( stateChatNames );
 
         try {
             onSnapshot(doc(db, 'userData', currentUserUID), (doc) => {
@@ -59,17 +61,6 @@ const Chat = () => {
             });
         } catch {
             console.error('currentUserId in ListingItems is undefined');
-        }
-
-        //Feching all the chats user names from local state
-        const fetchStateUserNames = async () => {
-            try {
-                if( stateChatNames ) {
-                    setChatUsernames( stateChatNames );
-                } 
-            } catch(error) {
-                console.error('fetchStateUserNames: ', error);
-            }
         }
 
         //Fetching all the chat user names from firestore /chatUsernames
@@ -84,6 +75,7 @@ const Chat = () => {
 
             checkForMissedMsgs(uid);
 
+            //Getting the names from the chatUsernames firestore DB
             try {
                 const userNamesRef = doc(db, 'chatUsernames', uid);
                 const userNamesData = await getDoc(userNamesRef);
@@ -124,40 +116,31 @@ const Chat = () => {
 
                 querySnapshot.forEach( (doc) => {
                     const senderUid = doc.id.replace(currentUserId, '');
-                    // console.log('myID: ', currentUserId);
-                    // console.log('all IDS: ', doc.id);
+
+                    // console.log('doc.id: ', doc.id);
+                    // console.log('senderUid', senderUid);
 
                     if( doc.id.includes(senderUid) ) {
                         const nameData = doc.data();
-                        console.log('2', chatUsernames);
-                        console.log(isSitter);
-                        if(isSitter && allMessagesPage) {
+                        // console.log('nameData', nameData);
+                        // console.log('allMessagesPage', allMessagesPage);
+                        if(allMessagesPage) {
+                            console.log('are we even in here?');
+                            console.log(senderUid);
                             setChatUsernames((prevName: any): any => {
-                                return [...prevName, nameData.ownerName];
+                                console.log(prevName);
+                                return [...prevName, nameData.sitterName]
                             });
-                            // setCurrSitterChatnames((prevName: any) => {
-                                //     console.log(prevName);
-                                //     if(!prevName.includes(nameData.sitterName)) 
-                                //         return [...prevName, nameData.names];
-                                
-                                //     return prevName;
-                                // } );
+                            // setChatUsernames((prevName: any): any => {
+                            //     return [...prevName, isSitter ? nameData.ownerName : nameData.sitterName];
+                            // });
                         }
-                        else if(!isSitter && allMessagesPage) {
-                            setChatUsernames((prevName: any): any => {
-                                return [...prevName, nameData.sitterName];
-                            });
-                        }
-                        // console.log(doc.id);
-                        // console.log('senderId: ', senderUid);
 
-                        // setCurrOwnerChatnames((prevName: any) => {
-                        //     console.log(prevName);
-                        //     if(!prevName.includes(nameData.sitterName)) 
-                        //         return [...prevName, nameData.names];
-        
-                        //     return prevName;
-                        // } );
+                        // else if(!isSitter && allMessagesPage) {
+                        //     setChatUsernames((prevName: any): any => {
+                        //         return [...prevName, nameData.sitterName];
+                        //     });
+                        // }
                     }
                 } );
             } catch(error) {
@@ -165,10 +148,9 @@ const Chat = () => {
             }
         }
 
-        fetchStateUserNames();
         fetchDBUserNames();
         getChatNames();
-    } );
+    }, [path] );
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -235,7 +217,7 @@ const Chat = () => {
         setSelectedUserChatMsgs(storeUserText);
     };
 
-    // console.log(currOwnerChatnames);
+    console.log(chatUsernames);
 
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
