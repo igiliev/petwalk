@@ -28,10 +28,12 @@ const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
     const [ isSitter, setIsSitter ] = useState(false);
-    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
+    const [ currOwnerChatnames, setCurrOwnerChatnames ] = useState([]);
+    const [ currSitterChatnames, setCurrSitterChatnames ] = useState([]);
+    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState(false);
 
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
@@ -43,8 +45,10 @@ const Chat = () => {
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
         const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
-        path.includes('/messages') && setAllMessagesPage(true); 
+        path.includes('/messages') && setAllMessagesPage(true);
         setCurrentUserUID(userID);
+        //Feching all the chats user names from local state
+        setChatUsernames( stateChatNames );
 
         // try {
         //     onSnapshot(doc(db, 'userData', currentUserUID), (doc) => {
@@ -58,17 +62,6 @@ const Chat = () => {
         //     console.error('currentUserId in ListingItems is undefined');
         // }
 
-        //Feching all the chats user names from local state
-        const fetchStateUserNames = async () => {
-            try {
-                if( stateChatNames ) {
-                    setChatUsernames( stateChatNames );
-                } 
-            } catch(error) {
-                console.error('fetchStateUserNames: ', error);
-            }
-        }
-
         //Fetching all the chat user names from firestore /chatUsernames
         const fetchDBUserNames = async () => {
             const userData: UserImpl[] = await currUserData();
@@ -81,6 +74,7 @@ const Chat = () => {
 
             checkForMissedMsgs(uid);
 
+            //Getting the names from the chatUsernames firestore DB
             try {
                 const userNamesRef = doc(db, 'chatUsernames', uid);
                 const userNamesData = await getDoc(userNamesRef);
@@ -115,9 +109,8 @@ const Chat = () => {
         }
 
 
-        fetchStateUserNames();
         fetchDBUserNames();
-    }, [path, currentUserUID, stateChatNames] );
+    }, [path] );
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -183,7 +176,6 @@ const Chat = () => {
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);
     };
-
 
     return (
         <form className="chat-form" onSubmit={handleSubmit}>
