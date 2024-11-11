@@ -30,6 +30,7 @@ const ListingItems = (props: any) => {
                 
                 const { userType } = doc.data();
                 console.log(userType);
+                dispatch(storeActions.setUserType(userType === 'sitter'));
                 setIsSitter( userType === 'sitter' );
             });
         } catch{

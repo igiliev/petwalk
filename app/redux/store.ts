@@ -26,7 +26,7 @@ export interface UserImpl {
 
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [] },
+    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [], isSitter: false },
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -60,6 +60,9 @@ const dataSlice = createSlice({
             if( action.payload !== '' ) {
                 state.userChatNames = namesArr;
             }
+        },
+        setUserType(state, action) {
+            state.isSitter = action.payload;
         }
     }
 });
