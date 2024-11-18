@@ -56,7 +56,7 @@ const Login = () => {
                         <Image src={logo} height="160" width="110" alt="site logo" />
                     </div>
                     <h1 className="text-center text-2xl mb-3">Успешно вписване</h1>
-                    <Link href="/">
+                    <Link href="/logedIn">
                         <button onClick={handleBackToHome} className="bg-green-2 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
                     </Link>
                 </div>

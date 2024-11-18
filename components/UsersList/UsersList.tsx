@@ -2,11 +2,9 @@ import Image from "next/image";
 import defaultUserImg from '../../public/assets/images/icons/dog-walking.webp';
 import { useSelector } from "react-redux";
 import Link from "next/link";
-import { useState } from "react";
 import { GetStoreData } from "../../public/interfaces/globals";
-import { useEffect } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { useContext } from "react";
+import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
 export interface UsersListProps {
     users: User[];
@@ -19,28 +17,16 @@ export interface User {
 }
 
 const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element => {
-    const [ isSitter, setIsSitter ] = useState(false);
-    const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
-
-    useEffect( () => {
-        try {
-            onSnapshot(doc(db, 'userData', currentUserId), (doc) => {
-                if( !doc.exists() ) return;
-                
-                const { userType } = doc.data();
-                console.log(userType);
-                setIsSitter( userType === 'sitter' );
-            });
-        } catch{
-            console.error('currentUserId in ListingItems is undefined');
-        } 
-    }, [currentUserId] );
-
+    const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
+    const getContext = useContext(GlobalDataContext);
+
+    console.log(getContext);
 
     return (
         <div>
             { !isSitter ?  users.map( (user: any, index: number) => {
+                console.log(user);
                 const hoodLabels = user.selectedHoods.map((hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span>);
                 const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
                 const sitterElements = <div>

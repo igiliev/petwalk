@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, collection, query, where, getDocs, setDoc } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
@@ -27,12 +27,9 @@ interface Usernames {
 const Chat = () => {
     const [ chatInput, setChatInput ] = useState('');
     const [ chatInit, setChatInit ] = useState(true);
-    const [ isSitter, setIsSitter ] = useState(false);
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
-    const [ currOwnerChatnames, setCurrOwnerChatnames ] = useState([]);
-    const [ currSitterChatnames, setCurrSitterChatnames ] = useState([]);
     const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState(false);
 
@@ -49,18 +46,6 @@ const Chat = () => {
         setCurrentUserUID(userID);
         //Feching all the chats user names from local state
         setChatUsernames( stateChatNames );
-
-        // try {
-        //     onSnapshot(doc(db, 'userData', currentUserUID), (doc) => {
-        //         if( !doc.exists() ) return;
-                
-        //         const { userType } = doc.data();
-        //         console.log(userType);
-        //         setIsSitter( userType === 'sitter' );
-        //     });
-        // } catch {
-        //     console.error('currentUserId in ListingItems is undefined');
-        // }
 
         //Fetching all the chat user names from firestore /chatUsernames
         const fetchDBUserNames = async () => {

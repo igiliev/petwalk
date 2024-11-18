@@ -13,10 +13,9 @@ import UsersList from "../UsersList/UsersList";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
-    const [ isSitter, setIsSitter ] = useState(false);
-    const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
     const [filterApplied, setFilterApplied] = useState(false);
     const [matchedItems, setMatchedItems] = useState([]);
+    const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
     const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
     const dispatch = useDispatch();
     
@@ -24,19 +23,7 @@ const ListingItems = (props: any) => {
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]));
         // TODO: This fetch is being used on multiple places make sure it's sing source of truth
-        try {
-            onSnapshot(doc(db, 'userData', currentUserId), (doc) => {
-                if( !doc.exists() ) return;
-                
-                const { userType } = doc.data();
-                console.log(userType);
-                dispatch(storeActions.setUserType(userType === 'sitter'));
-                setIsSitter( userType === 'sitter' );
-            });
-        } catch{
-            console.error('currentUserId in ListingItems is undefined');
-        }
-    }, [ currentUserId ] );
+    }, [ ] );
 	
 	const handleChange = (event: any) => {
         let string = event.target.value.toLowerCase();
