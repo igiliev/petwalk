@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import './chat.css';
+import { useCallback, useEffect, useState } from "react";
+import './Chat.css';
 import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
@@ -30,11 +30,9 @@ const Chat = () => {
     const [ currentUserUID, setCurrentUserUID ] = useState('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
-    const [ chatUsernames, setChatUsernames ] = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState(false);
 
     const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
-    const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
     const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const path = usePathname();
     // const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
@@ -45,33 +43,6 @@ const Chat = () => {
         path.includes('/messages') && setAllMessagesPage(true);
         setCurrentUserUID(userID);
         //Feching all the chats user names from local state
-        setChatUsernames( stateChatNames );
-
-        //Fetching all the chat user names from firestore /chatUsernames
-        const fetchDBUserNames = async () => {
-            const userData: UserImpl[] = await currUserData();
-            const innerData: UserImpl = userData[0];
-            let uid = '';
-
-            if ( innerData ) {
-                uid = innerData.uid;
-            }
-
-            checkForMissedMsgs(uid);
-
-            //Getting the names from the chatUsernames firestore DB
-            try {
-                const userNamesRef = doc(db, 'chatUsernames', uid);
-                const userNamesData = await getDoc(userNamesRef);
-                //If we have user names from db and there are no user name in local state
-                if ( userNamesData.exists() && stateChatNames.length === 0 ) {
-                    const namesData: any = userNamesData.data();
-                    setChatUsernames(namesData.names);
-                } 
-            } catch(error) {
-                console.error('fetchDBUserNames: ', error);
-            }
-        }
 
         const checkForMissedMsgs = async (myId: string) => {
             try {
@@ -93,8 +64,6 @@ const Chat = () => {
             }
         }
 
-
-        fetchDBUserNames();
     }, [path] );
     	
     const handleEnter = async (event: any) => {
@@ -104,7 +73,8 @@ const Chat = () => {
     const sendMsgClick = () => { };
 
     //Triggered when one of the user chat names is clicked
-    const startChat = async () => {
+    const startChat = useCallback( async () => {
+        console.log('startChat - Chat.tsx');
         setChatInit(false);
         const firestoreChatRef = doc(db, 'chats', combinedId);
         //Fetching chat data from firestore and storing it in the local state
@@ -119,7 +89,8 @@ const Chat = () => {
         } catch(error) {
             console.error( error );
         }
-    };
+    }, [combinedId] );
+    // };
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
@@ -168,7 +139,7 @@ const Chat = () => {
                 <div className='bg-green-2 p-6'></div>
                 <div className="chat-inner flex flex-col sm:flex-row">
                     <div className="sm:w-36 w-full bg-white">
-                        <ChatNames messagesPage={allMessagesPage}/>
+                        <ChatNames startChat={startChat} messagesPage={allMessagesPage}/>
                     </div>
                     <div className={`w-full 'bg-white' relative`}>
                         <div className="h-full bg-grey-2 p-5 overflow-auto overflow-y-scroll">

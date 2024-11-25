@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { collection, query, getDocs, getDoc, onSnapshot, doc } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
+import { GetStoreData } from "../../public/interfaces/globals";
+import "./Chat.css";
 
 interface ChatNameProps {
     names?: string[];
     messagesPage: boolean;
+    startChat: () => any;
 }
 
-const ChatNames = ({ messagesPage }: ChatNameProps) => {
+const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
     const [ chatUsernames, setChatUsernames ] = useState([]);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
     const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
+    const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
 
     useEffect(() => {
 
@@ -33,15 +37,16 @@ const ChatNames = ({ messagesPage }: ChatNameProps) => {
                 console.log(' Something wrong with the chatNames fetching ',error);
             }
         }
-        // getUserData();
         getChatNames();
-        console.log(isSitter);
     }, [ isSitter, currentUserId ]);
 
     return ( 
-        <div>
+        <div className="chatUsernameWrapper">
             {
-                chatUsernames.map( (name: string, index: number) => <p key={index}>{name}</p> )
+                messagesPage ?
+                chatUsernames.map( (name: string, index: number) => <p onClick={startChat} key={index} className="chatUsername">{name}</p> )
+                : 
+                <p onClick={startChat} className="chatUsername">{stateChatNames.toString()}</p>
             }
         </div>
     )

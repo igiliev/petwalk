@@ -21,13 +21,12 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
     const getContext = useContext(GlobalDataContext);
 
-    console.log(getContext);
+    // console.log(getContext);
 
     return (
         <div>
             { !isSitter ?  users.map( (user: any, index: number) => {
-                console.log(user);
-                const hoodLabels = user.selectedHoods.map((hood: any): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={hood.id}>{`${hood.label},`}</span>);
+                const hoodLabels = user.selectedHoods.map((hood: any, index: number): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={index}>{`${hood.label},`}</span>);
                 const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
                 const sitterElements = <div>
                     <span>{user.dailyRate}лв на </span>
@@ -38,7 +37,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                 </div>
 
                     return (
-                        <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={user.id}>
+                        <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">
                                 <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="h-24 sm:h-20" />
                             </div>
