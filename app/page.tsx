@@ -20,7 +20,7 @@ import man from '../public/assets/images/white-male1.png';
 import man2 from '../public/assets/images/man-2.png';
 import woman from '../public/assets/images/woman.png';
 import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
+import Footer from '../components/Footer/Footer';
 import BannerImg from '../public/assets/images/banner-petsitter.jpeg';
 
 export default function Home() {

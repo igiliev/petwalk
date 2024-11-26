@@ -1,7 +1,7 @@
 'use client';
 
 import Header from "../header/Header";
-import Footer from "../footer/Footer";
+import Footer from "../Footer/Footer";
 import './ListingItems.css';
 import { useDispatch, useSelector } from "react-redux";
 import { storeActions } from "../../app/redux/store";

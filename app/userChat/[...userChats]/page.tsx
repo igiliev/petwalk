@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import Chat from "../../../components/chat/Chat";
+import Chat from "../../../components/Chat/Chat";
 import Header from "../../../components/header/Header";
 import { storeActions } from "../../redux/store";
 
