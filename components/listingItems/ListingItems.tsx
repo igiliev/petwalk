@@ -1,7 +1,7 @@
 'use client';
 
 import Header from "../header/Header";
-import Footer from "../Footer/Footer";
+import Footer from "../footer/Footer";
 import './ListingItems.css';
 import { useDispatch, useSelector } from "react-redux";
 import { storeActions } from "../../app/redux/store";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import UsersList from "../UsersList/UsersList";
+import UsersList from "../usersList/UsersList";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});

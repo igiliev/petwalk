@@ -1,5 +1,5 @@
 import Header from "../../components/header/Header";
-import Footer from "../../components/Footer/Footer";
+import Footer from "../../components/footer/Footer";
 
 const Help = () => {
   {/* suggestion: since the text is quite a lot, we can make a small subnav with 2 buttons - client/user which

@@ -1,5 +1,5 @@
 import Header from '../../components/header/Header';
-import Chat from '../../components/Chat/Chat';
+import Chat from '../../components/chat/Chat';
 import { GlobalDataProvider } from '../context/GlobalDataProvider';
 
 const UserChat = () => {
