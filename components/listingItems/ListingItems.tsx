@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { storeActions } from "../../app/redux/store";
 import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
-import { doc, setDoc, Timestamp, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import UsersList from "../usersList/UsersList";
 

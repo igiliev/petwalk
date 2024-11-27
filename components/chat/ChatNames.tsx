@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { GetStoreData } from "../../public/interfaces/globals";
-import "./Chat.css";
+import "./chat.css";
 
 interface ChatNameProps {
     names?: string[];
