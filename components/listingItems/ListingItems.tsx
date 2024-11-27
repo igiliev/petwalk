@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import UsersList from "../usersList/UsersList";
+import UsersList from "../UsersList/UsersList";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
