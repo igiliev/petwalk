@@ -5,7 +5,7 @@ import logo from '../../public/assets/images/mainLogo.webp';
 import Image from "next/image";
 import './Header.css';
 import { useDispatch, useSelector } from "react-redux";
-import { FirestoreUserData, GetStoreData } from "../../public/interfaces/globals";
+import { GetStoreData } from "../../public/interfaces/globals";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/config";
 import { doc, getDoc } from "firebase/firestore";
@@ -14,7 +14,6 @@ import { useState, useEffect } from "react";
 
 const Header = () => {
     const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
-    const userData: any = useSelector<GetStoreData>(state => state.dataStore.data);
     const currentUserUid: any = useSelector<GetStoreData>( state => state.dataStore.currentUserId );
     const [ hideMenu, setHideMenu ] = useState(true);
     const [ burgerClassToggle, setBurgerClassToggle ] = useState(false);
@@ -40,6 +39,7 @@ const Header = () => {
 
     const handleLogout = async () => {
         dispatch(storeActions.setUserLogin(false));
+        dispatch(storeActions.resetState());
         await signOut(auth);
     }
   
@@ -70,7 +70,7 @@ const Header = () => {
                                 <>
                                     {/* <Link href="/userChat" className="nav-link relative">Профил</Link> */}
                                     <Link href='/userChat/messages' className="nav-link relative max-md:mb-5">Съобщения</Link>
-                                    <button className="nav-link relative max-md:mb-5" onClick={handleLogout}>Изход</button>
+                                    <Link href={'/'} className="nav-link relative max-md:mb-5" onClick={handleLogout}>Изход</Link>
                                     <p className="bg-green-2 text-white px-4 py-2 rounded hover:bg-gold hover:bg-teal-700 max-md:absolute max-md:-bottom-20 max-md:w-full md:hidden">Добре дошъл: {firestoreUserData.name}</p>
                                 </>
                                 :

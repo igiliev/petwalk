@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useSelector } from "react-redux";
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
@@ -39,6 +39,7 @@ const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
         }
         getChatNames();
     }, [ isSitter, currentUserId ]);
+    console.log(isSitter);
 
     return ( 
         <div className="chatUsernameWrapper">

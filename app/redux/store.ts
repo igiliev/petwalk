@@ -24,9 +24,21 @@ export interface UserImpl {
     uid: string;
 }
 
+const initialState = { 
+    data: [],
+    step: 0,
+    userLoggedin: false,
+    currentUserId: '',
+    combinedId: '',
+    chatData: { chatId: '', user: {} },
+    userChatNames: [],
+    userType: false,
+    resetState: () => {}
+}
+
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [], userType: false },
+    initialState,
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -63,7 +75,8 @@ const dataSlice = createSlice({
         },
         setUserType(state, action) {
             state.userType = action.payload;
-        }
+        },
+        resetState: () => initialState
     }
 });
 

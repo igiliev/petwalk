@@ -3,38 +3,39 @@
 import { createContext, useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { storeActions } from "../redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
+import { GetStoreData } from "../../public/interfaces/globals";
 
 interface ContextProps {
     children: any;
 }
 
-export const GlobalDataContext = createContext(null);
+interface UserDataProps {
+    uid: string;
+    userType: string;
+    name: string;
+}
+
+export const GlobalDataContext = createContext<UserDataProps | undefined>(undefined);
 
 export const GlobalDataProvider = ({children}: ContextProps) => {
-    const [ globalData, setGlobalData ] = useState(null);
-    const dispatch = useDispatch();
+    const [ data, setData ] = useState(undefined);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
+    const userLoggedin = useSelector<GetStoreData>(state => state.dataStore.userLoggedin);
 
     useEffect( () => {
         const getUserData = async () => {
-            console.log(currentUserId);
             const userDataRef = doc(db, "userData", currentUserId);
             const userDataSnap = await getDoc(userDataRef);
             const data: any = userDataSnap.data();
-            setGlobalData(data);
-
-            if(userDataSnap.exists()) {
-                dispatch(storeActions.setUserType( data?.userType === 'sitter' ));
-            }
+            setData(data);
         }
 
-        getUserData();
-    }, [currentUserId, dispatch] );
+        if( userLoggedin) getUserData();
+    }, [currentUserId, userLoggedin] );
 
     return(
-        <GlobalDataContext.Provider value={globalData}>
+        <GlobalDataContext.Provider value={data}>
             {children}
         </GlobalDataContext.Provider>
     )

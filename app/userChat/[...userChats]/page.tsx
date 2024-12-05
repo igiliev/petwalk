@@ -9,7 +9,6 @@ import Header from "../../../components/header/Header";
 import { storeActions } from "../../redux/store";
 
 const UserChats = () => {
-
     const dispatch = useDispatch();
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
 

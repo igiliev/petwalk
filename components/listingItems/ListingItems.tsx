@@ -19,7 +19,6 @@ const ListingItems = (props: any) => {
     const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
     const dispatch = useDispatch();
     
-
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]));
         // TODO: This fetch is being used on multiple places make sure it's sing source of truth

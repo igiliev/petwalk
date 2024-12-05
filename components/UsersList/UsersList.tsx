@@ -17,11 +17,9 @@ export interface User {
 }
 
 const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element => {
-    const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
-    const getContext = useContext(GlobalDataContext);
-
-    // console.log(getContext);
+    const data = useContext(GlobalDataContext);
+    const isSitter: boolean = data?.userType === 'sitter';
 
     return (
         <div>
@@ -45,7 +43,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                                 <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
                                 { !isSitter ? sitterElements : <>No elements</> }
                             </div>
-                            {
+                            { 
                                 userLoggedin ?
                                     <div className="msg-btn-wrapper">
                                         <Link className="bg-green-2 p-3 rounded-md text-white whitespace-nowrap" href={`/userChat/${userData.uid}`} onClick={()=>startChat(user.uid, user.name)}>Изпрати съобщение</Link>
@@ -55,7 +53,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                             }
                         </div>
                     )
-                }) 
+                })
                 : users.map((user: any, index: number) => {
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
