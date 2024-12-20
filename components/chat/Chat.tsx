@@ -1,27 +1,22 @@
 'use client';
 
-import { useCallback, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
-import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, collection, query, where, getDocs } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
 import { UserImpl } from "../../app/redux/store";
-import ChatNames from "./ChatNames";
+import ChatNames, { UserName } from "./ChatNames";
+import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
 interface ChatMsgsData {
     text: string;
     date: Date;
     senderId: string;
-}
-
-interface Usernames {
-    sitterName: string;
-    ownerName: string;
-    combinedId: string;
 }
 
 const Chat = () => {
@@ -31,40 +26,23 @@ const Chat = () => {
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState(false);
+    const [ selectedUser, setSelectedUser ]: any = useState();
 
-    const combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
+    let combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
     const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const path = usePathname();
-    // const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
+    const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
+    const data = useContext(GlobalDataContext);
+    const isSitter: boolean = data?.userType === 'sitter';
 
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
-        const userID: string = path !== '/userChat' ? regex.exec(path)![0] : '';
         path.includes('/messages') && setAllMessagesPage(true);
+        const userID: string = path !== '/userChat' && !allMessagesPage ? regex.exec(path)![0] : '';
         setCurrentUserUID(userID);
         //Feching all the chats user names from local state
 
-        const checkForMissedMsgs = async (myId: string) => {
-            try {
-                const f = query(collection(db, 'chats'), where("idField", ">=", myId));
-                const querySnapshot = await getDocs(f);
-                //TODO: remove this log after everything works
-                querySnapshot.forEach( (doc) => (
-                    console.log(doc.id, '=>', doc.data())
-                ) );
-                const chatsRef = doc(db, 'chats', myId);
-                const chatsSnap = await getDoc(chatsRef);
-
-                if ( chatsSnap.exists() ) {
-                    console.log(chatsSnap.data());
-                }
-
-            } catch(error) {
-                console.log('checkForMissedMsgs: ', error);
-            }
-        }
-
-    }, [path] );
+    },[path, allMessagesPage] );
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -73,9 +51,12 @@ const Chat = () => {
     const sendMsgClick = () => { };
 
     //Triggered when one of the user chat names is clicked
-    const startChat = useCallback( async () => {
-        console.log('startChat - Chat.tsx');
+    const startChat = async (user?: UserName) => {
         setChatInit(false);
+        console.log(user);
+        if(user?.name.length) setSelectedUser(user);
+        //if we are in the /messages page get the id from the ChatNames comp
+        if(allMessagesPage) combinedId = user?.id;
         const firestoreChatRef = doc(db, 'chats', combinedId);
         //Fetching chat data from firestore and storing it in the local state
         try {
@@ -89,29 +70,38 @@ const Chat = () => {
         } catch(error) {
             console.error( error );
         }
-    }, [combinedId] );
-    // };
+    };
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
+        setChatInput('');
         const userData: UserImpl[] = await currUserData();
         const senderUid: string = userData[0].uid;
-
+        console.log(combinedId);
+        console.log(userData);
         //Adding the typed in chat msg into /chats 
         await updateDoc(doc(db, 'chats', combinedId), {
             messages: arrayUnion({
                 text: chatInput,
                 senderId: senderUid,
-                date: Timestamp.now()
+                date: Timestamp.now(),
+                isRead: !isSitter && true
             })
         });
+
+        // Owner creates chatUsername when sending a message
+        if(!isSitter) {
+            await setDoc(doc(db, 'chatUsernames', combinedId), {
+                combinedId,
+                ownerName: userData[0].displayName,
+                sitterName: selectedUser.name
+            });
+        }
 
         //Updating the DB on every submitted messsage and showing in the view
         onSnapshot(doc(db, 'chats', combinedId), (doc) => {
             updateChatMsgs(doc);
         });
-
-        setChatInput('');
     };
 
     const updateChatMsgs = async (chatData: any) => {

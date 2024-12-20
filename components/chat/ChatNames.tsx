@@ -1,24 +1,30 @@
 import { useEffect, useState, useContext } from "react";
+import "./chat.css";
 import { useSelector } from "react-redux";
 import { collection, query, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import { GetStoreData } from "../../public/interfaces/globals";
-import "./chat.css";
+import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
 interface ChatNameProps {
     names?: string[];
     messagesPage: boolean;
-    startChat: () => any;
+    startChat: (user: UserName) => any;
+}
+
+export interface UserName {
+    name: string;
+    id: String;
 }
 
 const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
-    const [ chatUsernames, setChatUsernames ] = useState([]);
+    const [ chatUsernames, setChatUsernames ] = useState<[UserName]>([{name: '', id: ''}]);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
-    const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
     const stateChatNames: any = useSelector<GetStoreData>( state => state.dataStore.userChatNames );
+    const data = useContext(GlobalDataContext);
+    const isSitter: boolean = data?.userType === 'sitter';
 
     useEffect(() => {
-
         //Get the chatNames and assign them to chatUsernames based on user type sitter/owner
         const getChatNames = async () => {
             try {
@@ -28,8 +34,9 @@ const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
                 querySnapshot.forEach( (doc) => {
                     if( doc.id.includes(currentUserId) ) {
                         const nameData = doc.data();
+                        console.log(nameData);
                         setChatUsernames((prevName: any): any => {
-                            return [...prevName, isSitter ? nameData.ownerName : nameData.sitterName];
+                            return [ ...prevName, isSitter ? { name: nameData.ownerName, id: nameData.combinedId } : { name: nameData.sitterName, id: nameData.combinedId }];
                         });
                     }
                 } );
@@ -39,15 +46,17 @@ const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
         }
         getChatNames();
     }, [ isSitter, currentUserId ]);
-    console.log(isSitter);
+
+    // console.log(chatUsernames);
+    // console.log(messagesPage);
 
     return ( 
         <div className="chatUsernameWrapper">
             {
                 messagesPage ?
-                chatUsernames.map( (name: string, index: number) => <p onClick={startChat} key={index} className="chatUsername">{name}</p> )
+                chatUsernames.map( (user: UserName, index: number) => <p onClick={() => startChat(user)} key={index} className="chatUsername">{user.name}</p> )
                 : 
-                <p onClick={startChat} className="chatUsername">{stateChatNames.toString()}</p>
+                <p onClick={() => startChat({name: stateChatNames.toString(), id:''})} className="chatUsername">{stateChatNames.toString()}</p>
             }
         </div>
     )

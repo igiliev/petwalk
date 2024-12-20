@@ -3,25 +3,27 @@
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import './ListingItems.css';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { storeActions } from "../../app/redux/store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import UsersList from "../UsersList/UsersList";
+import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
 const ListingItems = (props: any) => {
     const [ userData, setUserData ]: any = useState({});
     const [filterApplied, setFilterApplied] = useState(false);
     const [matchedItems, setMatchedItems] = useState([]);
-    const isSitter: boolean = useSelector((state: any) => state.dataStore.userType);
+    const data = useContext(GlobalDataContext);
+    const isSitter: boolean = data?.userType === 'sitter';
     const renderUsers = filterApplied && matchedItems.length > 0 ? matchedItems : props.userData;
     const dispatch = useDispatch();
     
     useEffect( () => {
         currUserData().then( data => setUserData(data[0]));
-        // TODO: This fetch is being used on multiple places make sure it's sing source of truth
+        // TODO: This fetch is being used on multiple places make sure it's single source of truth
     }, [ ] );
 	
 	const handleChange = (event: any) => {
