@@ -39,7 +39,6 @@ const RegisterSteps = () => {
     }
 
     const handlePersonalData = (value: any) => {
-        console.log(value);
         // Sending the data to redux store on every separate step
         dispatch(storeActions.storeData(value));
     }

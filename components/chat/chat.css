@@ -23,3 +23,18 @@
         height: auto;
     }
 }
+
+.chatUsernameWrapper {
+    text-align: center;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.chatUsername {
+    cursor: pointer;
+    margin: 15px 0;
+}
+
+.chatUsername:hover {
+    color: #48A9A6;
+}

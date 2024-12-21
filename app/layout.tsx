@@ -4,6 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { Providers } from './redux/providers';
 import localFont from '@next/font/local';
 import Script from 'next/script';
+import { GlobalDataProvider } from './context/GlobalDataProvider';
 
 export const metadata = {
   title: 'Petsit',
@@ -70,7 +71,9 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>
-          {children}
+          <GlobalDataProvider>
+                {children}
+          </GlobalDataProvider>
         </Providers>
       </body>
     </html>

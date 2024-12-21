@@ -13,7 +13,7 @@ const Footer = () => {
             <div className="flex footer-links">                
                 <div className='flex flex-col'>
                     <h3 className='text-2xl font-semibold mb-2'>Услуги</h3> 
-                    <Link href="/findSitters">Намерете гледач</Link>
+                    <Link href="/listSitters">Намерете гледач</Link>
                 </div>
 
                 <div className='flex flex-col'>

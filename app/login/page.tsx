@@ -27,9 +27,10 @@ const Login = () => {
     const monitorState = async () => {
         await onAuthStateChanged( auth, (user: any) => {
             if ( user ) {
-                // Successful login!
+                // Successful login! Sending uid to state and user loged in boolean
                 console.log('Login success!', user);
                 dispatch(storeActions.setCurrentUserId(user.auth.currentUser.uid));
+                dispatch(storeActions.setUserLogin(true));
                 setUserIsLogged(true);
             } else {
                 console.error('You are NOT logged in');
@@ -52,15 +53,18 @@ const Login = () => {
             {
                 userIsLogged ?
                 <div className="flex flex-col m-auto px-10 py-10 shadow-xl w-100">
-                    <Link href="/">
+                    <div className='flex justify-center mb-3'>
+                        <Image src={logo} height="160" width="110" alt="site logo" />
+                    </div>
+                    <h1 className="text-center text-2xl mb-3">Успешно вписване</h1>
+                    <Link href="/logedIn">
                         <button onClick={handleBackToHome} className="bg-green-2 p-2 w-full text-white text-lg mt-4 rounded">Обратно към начална страница</button>
                     </Link>
-                    <h1 className="text-center text-2xl">Успешно вписване</h1>
                 </div>
                 :
                 <div className='flex flex-col m-auto w-100'>
                     <form className="px-10 py-10 shadow-xl" onSubmit={handleSubmit}>
-                        <div className='flex justify-center'>
+                        <div className='flex justify-center mb-3'>
                             <Link href="/">
                                 <Image src={logo} height="160" width="110" alt="site logo" />
                             </Link>
@@ -79,11 +83,6 @@ const Login = () => {
                             <button className={`bg-green-2 p-4 w-full text-white text-xl mt-4 rounded`}>Влез</button>
                         </div>
                     </form>
-                    {/* <div className='w-full absolute bottom-0 left-0'>
-                        <Link href="/">
-                            <Image src={logo} height="160" width="110" alt="site logo" />
-                        </Link>
-                    </div> */}
                 </div>
             }
         </div>

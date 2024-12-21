@@ -37,6 +37,7 @@ export interface GetStoreData {
         combinedId: string;
         chatData: {};
         userChatNames: string[];
+        resetState: any;
     };
 }
 
@@ -66,4 +67,24 @@ export interface CurrentUserImpl {
     stsTokenManager: any;
     tenantId: any;
     uid: string;
+}
+
+export interface SitterProps {
+    dailyRate: string; 
+    dailyRateOption: string;
+    describtion: string;
+    id: string;
+    mail: string;
+    name: string;
+    selectedHoods: any[];
+    selectedServices: string[];
+    selectedUser: 'sitter' | 'owner';
+    uid: string;
+    userImage: any;
+}
+
+export interface FirestoreUserData {
+    name: string;
+    uid: string;
+    userType: string;
 }

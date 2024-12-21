@@ -14,6 +14,7 @@ export interface UserImpl {
     apiKey: string;
     appName: string;
     createdAt: string;
+    displayName: string;
     email: string;
     emailVerified: boolean;
     isAnonymous: boolean;
@@ -23,9 +24,21 @@ export interface UserImpl {
     uid: string;
 }
 
+const initialState = { 
+    data: [],
+    step: 0,
+    userLoggedin: false,
+    currentUserId: '',
+    combinedId: '',
+    chatData: { chatId: '', user: {} },
+    userChatNames: [],
+    userType: false,
+    resetState: () => {}
+}
+
 const dataSlice = createSlice({
     name: 'dataStore',
-    initialState: { data: [], step: 0, userLoggedin: false, currentUserId: '', combinedId: '', chatData: { chatId: '', user: {} }, userChatNames: [] },
+    initialState,
     reducers: {
         storeData(state: storeData , action: storeAction) {
             //Clear the state if we get 'clear' string
@@ -52,14 +65,18 @@ const dataSlice = createSlice({
             }
         },
         setUserChatNames( state, action ) {
-            const dummyState = new Set<string>();
-            dummyState.add( action.payload );
+            const namesSet = new Set<string>();
+            namesSet.add( action.payload );
             //Creating an array from a Set so there are no dublicates
-            const setToArr: any = Array.from(dummyState);
+            const namesArr: any = Array.from(namesSet);
             if( action.payload !== '' ) {
-                state.userChatNames = setToArr;
+                state.userChatNames = namesArr;
             }
-        }
+        },
+        setUserType(state, action) {
+            state.userType = action.payload;
+        },
+        resetState: () => initialState
     }
 });
 

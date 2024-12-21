@@ -8,15 +8,13 @@ const BecomeSitter = (props: any) => {
     const [ storeUsers, setStoreUsers ]: any[] = useState([]);
 
     useEffect( () => {
-        getUsers('owners').then( res => setStoreUsers(res) );
+        console.log('show owners');
+        getUsers('owners').then( res => {
+            return setStoreUsers(res);
+        });
     }, [] );
 
-    return (
-        <div>
-            <h1>Become a sitter baby</h1>
-            <ListingItems userData={storeUsers} />
-        </div>
-    )
+    return <ListingItems userData={storeUsers} />
 }
 
 export default BecomeSitter;
