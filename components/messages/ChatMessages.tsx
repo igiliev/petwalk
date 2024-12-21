@@ -17,9 +17,11 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: any) => {
                     </div>
                     {/* My messages */}
                     <div className="w-full">
-                        <div className="bg-blue-500 w-auto text-left text-xl text-white p-3 rounded-lg float-right">
-                            { myMsgs.map( (msg: string) => <p key={Math.random().toString(36).slice(2)}>{msg}</p> )}
-                        </div>
+                        { myMsgs.length > 0 &&
+                            <div className="bg-blue-500 w-auto text-left text-xl text-white p-3 rounded-lg float-right">
+                                { myMsgs.map( (msg: string) => <p key={Math.random().toString(36).slice(2)}>{msg}</p> )}
+                            </div>
+                        }
                     </div>
                 </div>
             }

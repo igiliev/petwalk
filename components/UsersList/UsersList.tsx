@@ -27,17 +27,17 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                 const hoodLabels = user.selectedHoods.map((hood: any, index: number): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={index}>{`${hood.label},`}</span>);
                 const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
                 const sitterElements = <div>
-                    <span>{user.dailyRate}лв на </span>
+                    <span><strong className="mr-1">{user.dailyRate}</strong>лв на </span>
                     <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
                     <div className="py-5"><span>Избрани квартали:</span>{hoodLabels}</div>
                     <p>Предлагани услуги: {servicesLabels}</p>
-                    <p className="py-5"><span>Oписание: </span>{user.describtion}</p>
+                    { user.describtion && <p className="py-5"><span>Oписание: </span>{user.describtion}</p>}
                 </div>
 
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">
-                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="h-24 sm:h-20" />
+                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="" />
                             </div>
                             <div className="pb-3 text-grey-2">
                                 <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
@@ -58,7 +58,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">
-                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="h-24 sm:h-20" />
+                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="" />
                             </div>
                             <div className="pb-3 text-grey-2">
                                 <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
