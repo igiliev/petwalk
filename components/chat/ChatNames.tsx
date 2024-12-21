@@ -34,7 +34,6 @@ const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
                 querySnapshot.forEach( (doc) => {
                     if( doc.id.includes(currentUserId) ) {
                         const nameData = doc.data();
-                        console.log(nameData);
                         setChatUsernames((prevName: any): any => {
                             return [ ...prevName, isSitter ? { name: nameData.ownerName, id: nameData.combinedId } : { name: nameData.sitterName, id: nameData.combinedId }];
                         });
@@ -46,9 +45,6 @@ const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {
         }
         getChatNames();
     }, [ isSitter, currentUserId ]);
-
-    // console.log(chatUsernames);
-    // console.log(messagesPage);
 
     return ( 
         <div className="chatUsernameWrapper">

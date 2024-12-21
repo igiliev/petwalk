@@ -53,7 +53,6 @@ const Chat = () => {
     //Triggered when one of the user chat names is clicked
     const startChat = async (user?: UserName) => {
         setChatInit(false);
-        console.log(user);
         if(user?.name.length) setSelectedUser(user);
         //if we are in the /messages page get the id from the ChatNames comp
         if(allMessagesPage) combinedId = user?.id;
@@ -61,7 +60,6 @@ const Chat = () => {
         //Fetching chat data from firestore and storing it in the local state
         try {
             const chatRefSnap = await getDoc( firestoreChatRef );
-            // console.log(chatRefSnap.data());
             if( chatRefSnap.exists() ) {
                 updateChatMsgs(chatRefSnap);
             } else {
@@ -77,8 +75,6 @@ const Chat = () => {
         setChatInput('');
         const userData: UserImpl[] = await currUserData();
         const senderUid: string = userData[0].uid;
-        console.log(combinedId);
-        console.log(userData);
         //Adding the typed in chat msg into /chats 
         await updateDoc(doc(db, 'chats', combinedId), {
             messages: arrayUnion({

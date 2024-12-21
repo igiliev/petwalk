@@ -10,7 +10,6 @@ const BecomeSitter = (props: any) => {
     useEffect( () => {
         console.log('show owners');
         getUsers('owners').then( res => {
-            // console.log(res);
             return setStoreUsers(res);
         });
     }, [] );

@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
-import { auth, db } from "../../../../firebase/config";
+import { auth } from "../../../../firebase/config";
 
 // TODO: Change this whole file with a context provider
 export async function getUsers(userType) {
