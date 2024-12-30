@@ -33,7 +33,6 @@ const initialState = {
     chatData: { chatId: '', user: {} },
     userChatNames: [],
     userType: false,
-    resetState: () => {}
 }
 
 const dataSlice = createSlice({
@@ -75,8 +74,7 @@ const dataSlice = createSlice({
         },
         setUserType(state, action) {
             state.userType = action.payload;
-        },
-        resetState: () => initialState
+        }
     }
 });
 

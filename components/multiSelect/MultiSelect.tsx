@@ -1,8 +1,15 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { HoodOption } from "../forms/SelectHood";
 
-const MultiSelect = ({ options, selected, toggleOption }: any) => {
+interface MultiSelectProps {
+    selected: string[];
+    options: HoodOption[];
+    toggleOption: (id: never | { id: string }) => void;
+}
 
+
+const MultiSelect = ({ options, selected, toggleOption }: MultiSelectProps) => {
     // Adding this because of browser error
     const handleChange = () => {  }
     
@@ -11,7 +18,7 @@ const MultiSelect = ({ options, selected, toggleOption }: any) => {
         <div className="c-multi-select-dropdown__selected">
         </div>
         <ul className="c-multi-select-dropdown__options">
-            { options.map( (option: { id: any, value: any, label: any }) => {
+            { options.map( (option: HoodOption) => {
                 const isSelected = selected.includes(option.id);
                 return (
                     <li key={option.id} className="relative py-2 ml-5" onClick={() => toggleOption({ id: option.id })}>

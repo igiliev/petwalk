@@ -20,12 +20,13 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
     const data = useContext(GlobalDataContext);
     const isSitter: boolean = data?.userType === 'sitter';
-
+    
     return (
         <div>
             { !isSitter ?  users.map( (user: any, index: number) => {
                 const hoodLabels = user.selectedHoods.map((hood: any, index: number): any => <span className="inline-block lowercase first-letter:uppercase font-semibold" key={index}>{`${hood.label},`}</span>);
                 const servicesLabels = user.selectedServices.map((serviceLabel: any): any => <strong key={user.id + Math.floor(Math.random() * 1000)}>{`${serviceLabel}, `}</strong>);
+                const defaultImg = user.userImage === 'default';
                 const sitterElements = <div>
                     <span><strong className="mr-1">{user.dailyRate}</strong>лв на </span>
                     <span>{user.dailyRateOption === 'day' ? 'ден' : 'час'}</span>
@@ -37,7 +38,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">
-                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="" />
+                                <Image src={defaultImg ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className={defaultImg ? '' : `hover:shadow-xl`} />
                             </div>
                             <div className="pb-3 text-grey-2">
                                 <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>
@@ -58,7 +59,7 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">
-                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="" />
+                                <Image src={user.userImage === 'default' ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className="hover:shadow-md" />
                             </div>
                             <div className="pb-3 text-grey-2">
                                 <h1 className="text-2xl font-semibold text-green-2">{user.name}</h1>

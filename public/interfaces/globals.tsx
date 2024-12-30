@@ -37,7 +37,6 @@ export interface GetStoreData {
         combinedId: string;
         chatData: {};
         userChatNames: string[];
-        resetState: any;
     };
 }
 

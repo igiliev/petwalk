@@ -6,20 +6,20 @@ import { hoods } from "../../public/consts/globals";
 import { v4 } from 'uuid';
 import './Forms.css';
 
-// TODO: Find a better way to filter clicked items instead of using the selected boolean (make this a state)
-const sortedHoods = hoods.sort( ( a, b )  => a.localeCompare( b ) );
-export interface HoodData {
+export interface HoodOption {
     label: string;
     value: string;
     id: string;
     selected: boolean;
 }
 
+const sortedHoods = hoods.sort( ( a, b )  => a.localeCompare( b ) );
+
 const SelectHood = (props: any) => {
-    const [ selected, setSelected ] = useState([]);
-    const [ inputValue, setInputValue ] = useState('');
-    const [ hoodObj, setHoodObj ]:any[] = useState( []);
-    const [ filterData, setFilterData ]: any[] = useState([]);
+    const [ selected, setSelected ] = useState<string[]>([]);
+    const [ inputValue, setInputValue ] = useState<string>('');
+    const [ hoodObj, setHoodObj ] = useState<HoodOption[]>([]);
+    const [ filterData, setFilterData ] = useState<HoodOption[]>([]);
 
     useEffect( () => {
         // TODO: Add data to DB and fetch from there
@@ -33,17 +33,16 @@ const SelectHood = (props: any) => {
         } );
 
         setHoodObj(mappedData);
+        console.log(mappedData);
         setFilterData(mappedData);
     }, [] );
 
     // TODO: Fix this type
-    const toggleOption = ({ id }: { id: never }) => {
-        setSelected(prevSelected => {
-            // if it's in, remove
-            const newArray = [...prevSelected];
+    const toggleOption = ({ id }: any) => {
+        setSelected((prevSelected: any) => {
+            const newArray: any = [...prevSelected];
             if (newArray.includes(id)) {
-                return newArray.filter(item => item !== id);
-                // else, add
+                return newArray.filter((item: any) => item !== id);
             } else {
                 newArray.push(id);
                 return newArray;
@@ -69,7 +68,7 @@ const SelectHood = (props: any) => {
     
     const handleSubmit = (event: any) => {
         event.preventDefault();
-        const selectedOptions: HoodData[] | any = filterData.filter( (option: HoodData) => option.selected === true );
+        const selectedOptions: HoodOption[] | any = filterData.filter( (option: HoodOption) => option.selected === true );
         props.handleData({
             selectedHoods: selectedOptions
         });
