@@ -8,6 +8,19 @@ interface ChatMessagesProps {
 
 const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
 
+    // Helper function to sort messages by date proximity
+    const sortMessagesByDateProximity = (messages: Array<{ text: string; date: Timestamp }>) => {
+        const todayMillis = new Date().getTime();
+        return messages.slice().sort((a, b) => {
+            const diffA = Math.abs(a.date.toMillis() - todayMillis);
+            const diffB = Math.abs(b.date.toMillis() - todayMillis);
+            return diffA + diffB;
+        });
+    };
+
+    const myMsgsSorted = sortMessagesByDateProximity(myMsgs);
+    const userMsgsSorted = sortMessagesByDateProximity(userMsgs);
+
     return (
         <div className="messageContainer">
             {/* Show the initial window when the user first opens the chat */}
@@ -20,12 +33,8 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
                     {/* Other user messages */}
                     <div className="w-full mb-5">
                         <div className="w-auto text-left text-xl max-w-sm">
-                            { userMsgs.map( (msg: {text: string; date: Timestamp}, index: number) => {
-                                const today = new Date();
+                            { userMsgsSorted.map( (msg: {text: string; date: Timestamp}, index: number) => {
                                 const firstPart = msg.date.toDate().toString().split(" GMT")[0];
-                                console.log(firstPart);
-                                console.log(today);
-
                                 return (
                                     <div key={index} className="bg-gray-200 rounded-lg mb-2 p-3">
                                         <span className="text-xs">{firstPart}</span>
@@ -39,7 +48,7 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
                     <div className="w-full flex justify-end">
                         { myMsgs.length > 0 &&
                             <div className="w-auto text-left text-xl text-white  max-w-sm">
-                            { myMsgs.map( (msg: {text: string; date: Timestamp}, index: number) => {
+                            { myMsgsSorted.map( (msg: {text: string; date: Timestamp}, index: number) => {
                                 const firstPart = msg.date.toDate().toString().split(" GMT")[0];
                                 return (
                                     <div key={index} className="bg-blue-500 rounded-lg mb-2 p-3">
