@@ -22,7 +22,6 @@ const SelectHood = (props: any) => {
     const [ filterData, setFilterData ] = useState<HoodOption[]>([]);
 
     useEffect( () => {
-        // TODO: Add data to DB and fetch from there
         const mappedData = sortedHoods.map( hood => {
             return {
                 label: hood,
@@ -33,7 +32,6 @@ const SelectHood = (props: any) => {
         } );
 
         setHoodObj(mappedData);
-        console.log(mappedData);
         setFilterData(mappedData);
     }, [] );
 

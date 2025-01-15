@@ -14,7 +14,7 @@ interface ChatNameProps {
 
 export interface UserName {
     name: string;
-    id: String;
+    id: string;
 }
 
 const ChatNames = ({ messagesPage, startChat }: ChatNameProps) => {

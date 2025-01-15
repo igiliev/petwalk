@@ -5,44 +5,45 @@ import './chat.css';
 import ChatMessages from "../messages/ChatMessages";
 import { doc, updateDoc, arrayUnion, Timestamp, getDoc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GetStoreData } from "../../public/interfaces/globals";
 import { currUserData } from "../../app/api/helper/users/userService";
 import { usePathname } from "next/navigation";
-import { UserImpl } from "../../app/redux/store";
+import { storeActions, UserImpl } from "../../app/redux/store";
 import ChatNames, { UserName } from "./ChatNames";
 import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
 interface ChatMsgsData {
     text: string;
-    date: Date;
+    date: string;
     senderId: string;
 }
 
 const Chat = () => {
-    const [ chatInput, setChatInput ] = useState('');
-    const [ chatInit, setChatInit ] = useState(true);
-    const [ currentUserUID, setCurrentUserUID ] = useState('');
+    const [ chatInput, setChatInput ] = useState<string>('');
+    const [ chatInit, setChatInit ] = useState<boolean>(true);
+    const [ currentUserUID, setCurrentUserUID ] = useState<string>('');
     const [ myChatMessages, setMyChatMessages ]: any = useState([]);
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
-    const [ allMessagesPage, setAllMessagesPage ] = useState(false);
+    const [ allMessagesPage, setAllMessagesPage ] = useState<boolean>(false);
     const [ selectedUser, setSelectedUser ]: any = useState();
 
     let combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
-    const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
-    const path = usePathname();
+    // const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
     const data = useContext(GlobalDataContext);
     const isSitter: boolean = data?.userType === 'sitter';
+    const path = usePathname();
+    const dispatch = useDispatch();
 
     useEffect( () => {
         const regex = /(?<=userChat\/).*/gm;
         path.includes('/messages') && setAllMessagesPage(true);
-        const userID: string = path !== '/userChat' && !allMessagesPage ? regex.exec(path)![0] : '';
+        const userID: string = path !== '/userChat' && !allMessagesPage ? regex.exec(path)![0] : currentUserId;
         setCurrentUserUID(userID);
         //Feching all the chats user names from local state
 
-    },[path, allMessagesPage] );
+    },[path, allMessagesPage, currentUserId] );
     	
     const handleEnter = async (event: any) => {
         setChatInput(event.target.value);
@@ -55,7 +56,8 @@ const Chat = () => {
         setChatInit(false);
         if(user?.name.length) setSelectedUser(user);
         //if we are in the /messages page get the id from the ChatNames comp
-        if(allMessagesPage) combinedId = user?.id;
+        if(allMessagesPage && combinedId === "") combinedId = user?.id;
+        dispatch(storeActions.setCombinedId(combinedId));
         const firestoreChatRef = doc(db, 'chats', combinedId);
         //Fetching chat data from firestore and storing it in the local state
         try {
@@ -73,6 +75,7 @@ const Chat = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         setChatInput('');
+        
         const userData: UserImpl[] = await currUserData();
         const senderUid: string = userData[0].uid;
         //Adding the typed in chat msg into /chats 
@@ -102,18 +105,25 @@ const Chat = () => {
 
     const updateChatMsgs = async (chatData: any) => {
         const { messages }: any = chatData.data();
-        const storeMyText: string[] = [];
-        const storeUserText: string[] = [];
+        const storeMyText: Array<{text: string; date: string}> = [];
+        const storeUserText: Array<{text: string; date: string}> = [];
     
         if (messages) {
+            // Sort messages by Firestore timestamp (date field)
+            // const sortedMessages = messages.sort((a: ChatMsgsData, b: ChatMsgsData) => {
+            //     return a.date.toMillis() - b.date.toMillis();
+            // });
+            
+            // console.log(messages);
             messages.forEach((msg: ChatMsgsData) => {
                 if (msg.senderId === currentUserUID) {
-                    storeMyText.push(msg.text);
+                    storeMyText.push({text: msg.text, date: msg.date});
                 } else {
-                    storeUserText.push(msg.text);
+                    storeUserText.push({text: msg.text, date: msg.date});
                 }
             });
         }
+
     
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);

@@ -1,4 +1,12 @@
-const ChatMessages = ({myMsgs, userMsgs, chatInit}: any) => {
+import { Timestamp } from "firebase/firestore";
+
+interface ChatMessagesProps {
+    myMsgs:  Array<{text: string; date: Timestamp}>;
+    userMsgs:  Array<{text: string; date: Timestamp}>;
+    chatInit: boolean;
+}
+
+const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
 
     return (
         <div className="messageContainer">
@@ -11,15 +19,35 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: any) => {
                 <div className="interactive-window">
                     {/* Other user messages */}
                     <div className="w-full mb-5">
-                        <div className="bg-gray-200 w-auto text-left text-xl p-3 rounded-lg">
-                            { userMsgs.map( (msg: string) => <p key={Math.random().toString(36).slice(2)}>{msg}</p> )}
+                        <div className="w-auto text-left text-xl max-w-sm">
+                            { userMsgs.map( (msg: {text: string; date: Timestamp}, index: number) => {
+                                const today = new Date();
+                                const firstPart = msg.date.toDate().toString().split(" GMT")[0];
+                                console.log(firstPart);
+                                console.log(today);
+
+                                return (
+                                    <div key={index} className="bg-gray-200 rounded-lg mb-2 p-3">
+                                        <span className="text-xs">{firstPart}</span>
+                                        <p>{msg.text}</p> 
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
                     {/* My messages */}
-                    <div className="w-full">
+                    <div className="w-full flex justify-end">
                         { myMsgs.length > 0 &&
-                            <div className="bg-blue-500 w-auto text-left text-xl text-white p-3 rounded-lg float-right">
-                                { myMsgs.map( (msg: string) => <p key={Math.random().toString(36).slice(2)}>{msg}</p> )}
+                            <div className="w-auto text-left text-xl text-white  max-w-sm">
+                            { myMsgs.map( (msg: {text: string; date: Timestamp}, index: number) => {
+                                const firstPart = msg.date.toDate().toString().split(" GMT")[0];
+                                return (
+                                    <div key={index} className="bg-blue-500 rounded-lg mb-2 p-3">
+                                        <span className="text-xs">{firstPart}</span>
+                                        <p>{msg.text}</p> 
+                                    </div>
+                                )
+                            })}
                             </div>
                         }
                     </div>

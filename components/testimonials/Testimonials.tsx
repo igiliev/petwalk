@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faQuoteLeft,
-  faQuoteRight
-} from "@fortawesome/free-solid-svg-icons";
+import { faQuoteLeft, faQuoteRight } from "@fortawesome/free-solid-svg-icons";
 import man from '../../public/assets/images/white-male1.png';
 import man2 from '../../public/assets/images/man-2.png';
 import woman from '../../public/assets/images/woman.png';
