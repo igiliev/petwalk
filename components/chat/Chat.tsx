@@ -13,10 +13,11 @@ import { storeActions, UserImpl } from "../../app/redux/store";
 import ChatNames, { UserName } from "./ChatNames";
 import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 
-interface ChatMsgsData {
+export interface ChatMsgsData {
     text: string;
     date: string;
-    senderId: string;
+    senderId?: string;
+    isSitter: boolean;
 }
 
 const Chat = () => {
@@ -84,7 +85,7 @@ const Chat = () => {
                 text: chatInput,
                 senderId: senderUid,
                 date: Timestamp.now(),
-                isRead: !isSitter && true
+                isSitter: isSitter
             })
         });
 
@@ -105,26 +106,19 @@ const Chat = () => {
 
     const updateChatMsgs = async (chatData: any) => {
         const { messages }: any = chatData.data();
-        const storeMyText: Array<{text: string; date: string}> = [];
-        const storeUserText: Array<{text: string; date: string}> = [];
+        const storeMyText: Array<ChatMsgsData> = [];
+        const storeUserText: Array<ChatMsgsData> = [];
     
         if (messages) {
-            // Sort messages by Firestore timestamp (date field)
-            // const sortedMessages = messages.sort((a: ChatMsgsData, b: ChatMsgsData) => {
-            //     return a.date.toMillis() - b.date.toMillis();
-            // });
-            
-            // console.log(messages);
             messages.forEach((msg: ChatMsgsData) => {
                 if (msg.senderId === currentUserUID) {
-                    storeMyText.push({text: msg.text, date: msg.date});
+                    storeMyText.push({text: msg.text, date: msg.date, isSitter: msg.isSitter});
                 } else {
-                    storeUserText.push({text: msg.text, date: msg.date});
+                    storeUserText.push({text: msg.text, date: msg.date, isSitter: msg.isSitter});
                 }
             });
         }
 
-    
         setMyChatMessages(storeMyText);
         setSelectedUserChatMsgs(storeUserText);
     };

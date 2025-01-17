@@ -1,25 +1,30 @@
 import { Timestamp } from "firebase/firestore";
 
 interface ChatMessagesProps {
-    myMsgs:  Array<{text: string; date: Timestamp}>;
-    userMsgs:  Array<{text: string; date: Timestamp}>;
+    myMsgs:  Array<MessageProps>;
+    userMsgs:  Array<MessageProps>;
     chatInit: boolean;
 }
 
-const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
+interface MessageProps {
+    text: string;
+    date: Timestamp;
+    isSitter: boolean;
+}
 
+const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
     // Helper function to sort messages by date proximity
-    const sortMessagesByDateProximity = (messages: Array<{ text: string; date: Timestamp }>) => {
+    const sortMessagesByDateProximity = (messages: Array<MessageProps>) => {
         const todayMillis = new Date().getTime();
         return messages.slice().sort((a, b) => {
             const diffA = Math.abs(a.date.toMillis() - todayMillis);
             const diffB = Math.abs(b.date.toMillis() - todayMillis);
-            return diffA + diffB;
+            return diffB - diffA;
         });
     };
 
-    const myMsgsSorted = sortMessagesByDateProximity(myMsgs);
-    const userMsgsSorted = sortMessagesByDateProximity(userMsgs);
+    const combinedMsgsSorted = sortMessagesByDateProximity([...myMsgs, ...userMsgs]);
+    console.log("combinedMsgsSorted", combinedMsgsSorted);
 
     return (
         <div className="messageContainer">
@@ -30,35 +35,19 @@ const ChatMessages = ({myMsgs, userMsgs, chatInit}: ChatMessagesProps) => {
                 </div>
                 :
                 <div className="interactive-window">
-                    {/* Other user messages */}
                     <div className="w-full mb-5">
-                        <div className="w-auto text-left text-xl max-w-sm">
-                            { userMsgsSorted.map( (msg: {text: string; date: Timestamp}, index: number) => {
-                                const firstPart = msg.date.toDate().toString().split(" GMT")[0];
+                        <div className="w-auto text-left text-xl flex flex-col">
+                            { combinedMsgsSorted.map( (msg: MessageProps, index: number) => {
+                                const dateFormatted = msg.date.toDate().toString().split(" GMT")[0];
+
                                 return (
-                                    <div key={index} className="bg-gray-200 rounded-lg mb-2 p-3">
-                                        <span className="text-xs">{firstPart}</span>
+                                    <div key={index} className={`rounded-lg mb-2 p-3 ${msg.isSitter ? 'bg-green-2 text-white text-right self-end' : 'bg-gray-200 self-start'}`}>
+                                        <span className="text-xs">{dateFormatted}</span>
                                         <p>{msg.text}</p> 
                                     </div>
                                 )
                             })}
                         </div>
-                    </div>
-                    {/* My messages */}
-                    <div className="w-full flex justify-end">
-                        { myMsgs.length > 0 &&
-                            <div className="w-auto text-left text-xl text-white  max-w-sm">
-                            { myMsgsSorted.map( (msg: {text: string; date: Timestamp}, index: number) => {
-                                const firstPart = msg.date.toDate().toString().split(" GMT")[0];
-                                return (
-                                    <div key={index} className="bg-blue-500 rounded-lg mb-2 p-3">
-                                        <span className="text-xs">{firstPart}</span>
-                                        <p>{msg.text}</p> 
-                                    </div>
-                                )
-                            })}
-                            </div>
-                        }
                     </div>
                 </div>
             }
