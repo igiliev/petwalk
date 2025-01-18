@@ -1,4 +1,4 @@
-import logo from '../../public/assets/images/mainLogo.png';
+import logo from '../../public/assets/images/footerLogoWhiteTxt.png';
 import Image from 'next/image';
 import Link from 'next/link';
 import './Footer.css';
@@ -7,7 +7,7 @@ const Footer = () => {
     return (
         <footer className='flex w-full bg-green-2 text-white'>
             <div className='image-wrapper pt-1'>
-                <Image src={logo} height="90" width="120" alt="petsit logo" />
+                <Image src={logo} height="90" width="140" alt="petsit logo" />
             </div>
 
             <div className="flex footer-links">                
