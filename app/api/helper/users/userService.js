@@ -2,68 +2,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getDatabase, ref, onValue, set, update, child, get } from "firebase/database";
 import { auth } from "../../../../firebase/config";
 
-// TODO: Change this whole file with a context provider
-export async function getUsers(userType) {
-    const getResponse = async () => {
-        const fetchUsers = await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/${userType === 'owners' ? 'owners.json' : 'petSitters.json' }`);
-        const usersTojson = await fetchUsers.json();
-        const storeSitters = [];
-        const storeOwners = [];
-        
-        // TODO: Do this in a better way, no boilerplate
-        for ( const user in usersTojson ) {
-            let selectedUser, name, dailyRateOption, mail, dailyRate, selectedHoods, selectedServices, userImage, uid;
-            // Getting the inner object where the data is actually stored
-            const insideData = usersTojson[user].sitterData;
-            // Storing only owners specific values so I don't get the undefined error
-            if ( userType === 'owners' ) {
-                selectedUser = insideData.find( userData => userData.regOption ).regOption;
-                name = insideData.find( userData => userData.nameVal ).nameVal;
-                mail = insideData.find( userData => userData.mailVal ).mailVal;
-                userImage = insideData.find( userData => userData.userImg ).userImg;
-            } else {
-                // Storing all other values for sitters
-                selectedUser = insideData.find( userData => userData.regOption ).regOption;
-                name = insideData.find( userData => userData.nameVal ).nameVal;
-                dailyRateOption = insideData.find( userData => userData.rateOption ).rateOption;
-                mail = insideData.find( userData => userData.mailVal ).mailVal;
-                dailyRate = insideData.find( userData => userData.rateVal ).rateVal;
-                selectedHoods = insideData.find( userData => userData.selectedHoods )['selectedHoods'];
-                selectedServices = insideData.find( userData => userData.labelNames )['labelNames'].map( (item) => item.label );
-                userImage = insideData.find( userData => userData.userImg ).userImg;
-                uid = insideData.find( userData => userData.uid ).uid;
-                 //  describtion = insideData.find( userData => userData.selfDescribeVal ).selfDescribeVal;
-            }
-
-            //Adding only the users that have selected to be a sitter
-            if ( userType === 'sitters' ) {
-                storeSitters.push({
-                    name,
-                    mail,
-                    dailyRate,
-                    dailyRateOption,
-                    selectedHoods,
-                    selectedServices,
-                    userImage,
-                    uid,
-                    id: user,
-                    selectedUser
-                });
-            } else {
-                storeOwners.push({
-                    name,
-                    mail,
-                    userImage,
-                    id: user
-                })
-            }
-        }
-        return userType === 'sitters' ? storeSitters : storeOwners;
-    }
-
-    return getResponse();
-}
-
 //Creating the new /userChat collection in the DB
 export function createUserChat(combinedId) {
     const db = getDatabase();
@@ -103,7 +41,9 @@ export async function getSelectedUserChat(id) {
 export async function currUserData() {
     const currUserData = [];
     await onAuthStateChanged(auth, (user) => {
-        currUserData.push(user);
+        if(user) {
+            currUserData.push(user);
+        }
     });
 
     return currUserData;

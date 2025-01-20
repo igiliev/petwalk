@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import ListingItems from "../../components/listingItems/ListingItems";
-import { getUsers } from "../api/helper/users/userService";
+import { getUsers, USER_TYPES } from "../api/helper/users/realtimeDB";
 
-const BecomeSitter = (props: any) => {
+const BecomeSitter = () => {
     const [ storeUsers, setStoreUsers ]: any[] = useState([]);
 
     useEffect( () => {
-        console.log('show owners');
-        getUsers('owners').then( res => {
+        getUsers(USER_TYPES.OWNERS).then( res => {
             return setStoreUsers(res);
         });
     }, [] );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { listAll, ref, getDownloadURL } from "firebase/storage";
 import { storage } from "../../firebase/config";
 import ListingItems from "../../components/listingItems/ListingItems";
-import { getUsers } from '../api/helper/users/userService';
+import { getUsers, USER_TYPES } from '../api/helper/users/realtimeDB';
 
 const FindSitters = () => {
     const [ storeUsers, setStoreUsers ]: any[] = useState([]);
@@ -12,8 +12,7 @@ const FindSitters = () => {
     const userImageLisRef = ref( storage, "/profileImages" );
 
     useEffect( () => {
-        console.log('show sitters');
-        getUsers('sitters').then( res => setStoreUsers(res) );
+        getUsers(USER_TYPES.SITTERS).then( res => setStoreUsers(res) );
 
         listAll(userImageLisRef).then(res => {
             res.items.forEach( item => {

@@ -34,7 +34,6 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                     <p>Предлагани услуги: {servicesLabels}</p>
                     { user.describtion && <p className="py-5"><span>Oписание: </span>{user.describtion}</p>}
                 </div>
-
                     return (
                         <div className="flex lg:flex-row flex-col items-center w-full border bg-white my-5 shadow-lg p-5 rounded-md border-l-4 border-t-0 border-r-0 border-b-0 border-green-2" key={index}>
                             <div className="p-5">

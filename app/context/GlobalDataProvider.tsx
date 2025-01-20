@@ -17,7 +17,6 @@ interface UserDataProps {
 }
 
 export const GlobalDataContext = createContext<UserDataProps | undefined>(undefined);
-
 export const GlobalDataProvider = ({children}: ContextProps) => {
     const [ data, setData ] = useState(undefined);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
@@ -31,7 +30,7 @@ export const GlobalDataProvider = ({children}: ContextProps) => {
             setData(data);
         }
 
-        if( userLoggedin) getUserData();
+        if( userLoggedin && currentUserId ) getUserData();
     }, [currentUserId, userLoggedin] );
 
     return(

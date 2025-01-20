@@ -27,6 +27,7 @@ const RegistrationComplete = () => {
            return console.error('Error signing in: ', error);
        } else {
             userData = [ ...userData, { uid: result?.user.uid } ];
+            dispatch(storeActions.setCurrentUserId(result?.user.uid));
             // Send the data to the BE when we have reached the final step of registration
             await fetch(`https://petwalker-d43e0-default-rtdb.europe-west1.firebasedatabase.app/${owner ? 'owners.json' : 'petSitters.json'}`, {
                 method: 'POST',

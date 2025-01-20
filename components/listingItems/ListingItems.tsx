@@ -62,7 +62,6 @@ const ListingItems = (props: any) => {
         
         if( chatRefSnap.exists() ) {
             const data = chatRefSnap.data();
-            // router.push(`/userChat/${userData.uid}`);
             // If the selected name is in the /chatUsernames db > redirect to the Chat page
             if( !data.names.includes(name) ) {
                 dispatch(storeActions.setUserChatNames(name));
