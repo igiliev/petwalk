@@ -1,5 +1,5 @@
 import Image from "next/image";
-import defaultUserImg from "../../public/assets/images/icons/dog-walking.webp";
+import defaultUserImg from "../../public/assets/images/icons/dog-walker.png";
 import messageIcon from "../../public/assets/images/icons/messenger.png";
 import { useSelector } from "react-redux";
 import Link from "next/link";
@@ -38,8 +38,10 @@ const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element =>
                     {/* <p>Предлагани услуги: {servicesLabels}</p> */}
                     {/* { user.describtion && <p className="py-5"><span>Oписание: </span>{user.describtion}</p>} */}
                 </div>
+                    console.log(user.userImage);
+                    console.log(defaultUserImg);
                     return (
-                        <div className={`${userWrapper} w-full border bg-white my-5 shadow-lg flex relative`} style={{backgroundImage: `url(${user.userImage})`, aspectRatio: "1", backgroundSize: "cover", width: "100%", backgroundPosition: "center"}} key={index}>
+                        <div className={`${userWrapper} w-full border bg-white my-5 shadow-lg flex relative`} style={{backgroundImage: `url(${ user.userImage === 'default' ? defaultUserImg.src : user.userImage})`, aspectRatio: "1", backgroundSize: "cover", width: "100%", backgroundPosition: "center"}} key={index}>
                             {/*<div className="p-5">
                                  <Image src={defaultImg ? defaultUserImg : user.userImage} alt="user profile image" width="90" height="50" className={defaultImg ? '' : `hover:shadow-xl`} /> 
                             </div>
