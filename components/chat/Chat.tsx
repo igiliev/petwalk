@@ -28,9 +28,7 @@ const Chat = () => {
     const [ selectedUserChatMsgs, setSelectedUserChatMsgs ]: any = useState([]);
     const [ allMessagesPage, setAllMessagesPage ] = useState<boolean>(false);
     const [ selectedUser, setSelectedUser ]: any = useState();
-
     let combinedId: any = useSelector<GetStoreData>( state => state.dataStore.combinedId );
-    // const chatData: any = useSelector<GetStoreData>(state => state.dataStore.chatData);
     const currentUserId: string = useSelector((state: any) => state.dataStore.currentUserId);
     const data = useContext(GlobalDataContext);
     const isSitter: boolean = data?.userType === 'sitter';
