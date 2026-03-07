@@ -20,7 +20,7 @@ export interface User {
     name: string;
 }
 
-const UsersList = ({users, startChat, userData}: UsersListProps): JSX.Element => {
+const UsersList = ({users, startChat, userData}: UsersListProps) => {
     const userLoggedin = useSelector<GetStoreData>((state: any) => state.dataStore.userLoggedin);
     const data = useContext(GlobalDataContext);
     const isSitter: boolean = data?.userType === 'sitter';

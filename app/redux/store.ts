@@ -79,9 +79,7 @@ const dataSlice = createSlice({
 });
 
 export const store = configureStore({
-        reducer: {
-        dataStore: dataSlice.reducer
-    }
+    reducer: { dataStore: dataSlice.reducer }
 });
  
 export const storeActions  = dataSlice.actions;
