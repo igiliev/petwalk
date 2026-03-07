@@ -2,7 +2,7 @@ import './globals.css';
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { Providers } from './redux/providers';
-import localFont from '@next/font/local';
+import localFont from 'next/font/local';
 import Script from 'next/script';
 import { GlobalDataProvider } from './context/GlobalDataProvider';
 
@@ -32,7 +32,7 @@ export default function RootLayout({
 }) {
   config.autoAddCss = false;
   return (
-    <html lang="en" className={`${poppins.variable} font-sans`}>
+    <html lang="en" className={poppins.variable}>
       <head>
       <meta name="facebook-domain-verification" content="ger2jyve3tgoqmy40yxi97gfpq46wv" />
         <Script 
