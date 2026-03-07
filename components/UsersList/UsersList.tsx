@@ -7,6 +7,7 @@ import { GetStoreData } from "../../public/interfaces/globals";
 import { useContext } from "react";
 import { GlobalDataContext } from "../../app/context/GlobalDataProvider";
 import styles from './UsersList.module.scss';
+import { JSX } from "react";
 
 const { userWrapper, usersGrid, btnWwrapper, btnWrapperPara } = styles;
 
