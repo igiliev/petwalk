@@ -16,7 +16,7 @@ const Footer = () => {
                     <Link href="/listSitters">Намерете гледач</Link>
                 </div>
 
-                <div className='flex flex-col'>
+                <div className='flex flex-col gap-2'>
                     <h3 className='text-2xl font-semibold mb-2'>За PetSit</h3>
                     <Link href="/help">За нас</Link>
                     <Link href="/">Условия на ползване</Link>
@@ -24,7 +24,7 @@ const Footer = () => {
                     <Link href="/">Настройки на бисквитки</Link>
                 </div>
 
-                <div className='flex flex-col'>
+                <div className='flex flex-col gap-2'>
                     <h3 className='text-2xl font-semibold mb-2'>Поддръжка</h3>
                     <Link href="/help">Свържете се с нас</Link>
                     <Link href="/">Помощен център</Link>
